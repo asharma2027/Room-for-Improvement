@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Room Details | Room Improvement</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <% include('partials/nav') %>
+
+  <main>
+    <h2><%= room.dormName %> - Room <%= room.roomNumber %></h2>
+    <p>Initial CSV notes: <strong><%= room.tags || 'N/A' %></strong></p>
+
+    <!-- Current (Latest) Data or "No entries yet" -->
+    <h3>Latest Submission (Most Recent Resident Data)</h3>
+    <% if (latestEntry) { %>
+      <p><strong>Academic Year:</strong> <%= latestEntry.academicYear %></p>
+      <p><strong>Tags (Optional):</strong> 
+        <% if (latestEntry.tags && latestEntry.tags.length > 0) { %>
+          <%= latestEntry.tags.join(', ') %>
+        <% } else { %>
+          <em>None selected</em>
+        <% } %>
+      </p>
+
+      <h4>Scalars (Likert Scale)</h4>
+      <ul>
+        <li><strong>My house has a good culture:</strong> <%= latestEntry.scalars["my house has a good culture"] %> (1=strongly disagree, 5=strongly agree)</li>
+        <li><strong>My room gets a lot of outside noise:</strong> <%= latestEntry.scalars["my room gets a lot of outside noise"] %> (1=strongly disagree, 5=strongly agree)</li>
+      </ul>
+    <% } else { %>
+      <p><em>No prior submissions for this room.</em></p>
+    <% } %>
+
+    <hr />
+
+    <!-- Form to create a new submission (once per user per room per academic year) -->
+    <h3>Submit Your Data for This Room</h3>
+    <% if (alreadySubmittedThisYear) { %>
+      <p style="color:red;">
+        You have already submitted data for this room for <%= alreadySubmittedThisYear %>.<br/>
+        You can only submit once per academic year.
+      </p>
+    <% } else { %>
+      <form method="POST" action="/rooms/<%= room.id %>/submit">
+        <label for="academicYear">Academic Year:</label>
+        <input type="text" name="academicYear" placeholder="e.g. 2023-2024" required /><br/><br/>
+
+        <p><strong>Optional Tags:</strong> (Check any that apply)</p>
+        <!-- We show the curated tags from the Q&A -->
+        <label><input type="checkbox" name="tags" value="particularly high ceiling" /> particularly high ceiling</label><br/>
+        <label><input type="checkbox" name="tags" value="particularly low ceiling" /> particularly low ceiling</label><br/>
+        <label><input type="checkbox" name="tags" value="particularly big windows" /> particularly big windows</label><br/>
+        <label><input type="checkbox" name="tags" value="particularly small windows" /> particularly small windows</label><br/>
+        <label><input type="checkbox" name="tags" value="issues with ac/heating temperature control" /> issues with ac/heating temperature control</label><br/>
+        <label><input type="checkbox" name="tags" value="drafty windows" /> drafty windows</label><br/>
+        <label><input type="checkbox" name="tags" value="tends to receive good sunlight when sunny" /> tends to receive good sunlight when sunny</label><br/>
+        <label><input type="checkbox" name="tags" value="doesnt tend to receive good sunlight when sunny" /> doesn't tend to receive good sunlight when sunny</label><br/>
+
+        <hr/>
+
+        <p><strong>Required Scalar Questions (1–5, with 3=neutral):</strong></p>
+        <p>
+          <label>My house has a good culture:</label>
+          <select name="scalar_house_culture" required>
+            <option value="1">1 (Strongly Disagree)</option>
+            <option value="2">2 (Somewhat Disagree)</option>
+            <option value="3" selected>3 (Neither)</option>
+            <option value="4">4 (Somewhat Agree)</option>
+            <option value="5">5 (Strongly Agree)</option>
+          </select>
+        </p>
+        <p>
+          <label>My room gets a lot of outside noise:</label>
+          <select name="scalar_outside_noise" required>
+            <option value="1">1 (Strongly Disagree)</option>
+            <option value="2">2 (Somewhat Disagree)</option>
+            <option value="3" selected>3 (Neither)</option>
+            <option value="4">4 (Somewhat Agree)</option>
+            <option value="5">5 (Strongly Agree)</option>
+          </select>
+        </p>
+
+        <button type="submit">Submit for this Academic Year</button>
+      </form>
+    <% } %>
+
+    <hr />
+    <!-- Option to see historical data (all prior submissions) -->
+    <% if (allEntries && allEntries.length > 0) { %>
+      <h3>Historical Data</h3>
+      <p>Below are all previous submissions for this room (oldest first):</p>
+      <% include('partials/roomHistory') %>
+    <% } %>
+
+    <p style="margin-top:2rem;">
+      <a href="/rooms">Back to All Rooms</a>
+    </p>
+  </main>
+
+  <footer style="text-align:center; margin-top:3rem;">
+    <p>&copy; 2025 Room Improvement</p>
+  </footer>
+</body>
+</html>

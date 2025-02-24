@@ -1,0 +1,33 @@
+<!-- This partial is included in roomDetails.ejs for displaying historical data. -->
+
+<table>
+    <thead>
+      <tr>
+        <th>Academic Year</th>
+        <th>Submitted By</th>
+        <th>Date</th>
+        <th>Tags</th>
+        <th>House Culture (1-5)</th>
+        <th>Outside Noise (1-5)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% allEntries.forEach(entry => { %>
+        <tr>
+          <td><%= entry.academicYear %></td>
+          <td><%= entry.userEmail %></td>
+          <td><%= new Date(entry.timestamp).toLocaleString() %></td>
+          <td>
+            <% if (entry.tags && entry.tags.length > 0) { %>
+              <%= entry.tags.join(', ') %>
+            <% } else { %>
+              <em>None</em>
+            <% } %>
+          </td>
+          <td><%= entry.scalars["my house has a good culture"] %></td>
+          <td><%= entry.scalars["my room gets a lot of outside noise"] %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rooms | Room Improvement</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <script>
+    function rowClick(roomId) {
+      window.location.href = "/rooms/" + roomId;
+    }
+  </script>
+</head>
+<body>
+  <% include('partials/nav') %>
+
+  <main>
+    <h1>All Rooms</h1>
+
+    <form method="GET" action="/rooms">
+      <input
+        type="text"
+        name="q"
+        value="<%= query %>"
+        placeholder="Search dorm name, room #, tags..."
+      />
+      <button type="submit">Search</button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Dorm & Room #</th>
+          <th>Tags (Initial CSV info)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% rooms.forEach(room => { %>
+          <tr style="cursor:pointer;" onclick="rowClick('<%= room.id %>')">
+            <td>
+              <strong><%= room.dormName %></strong> - #<%= room.roomNumber %>
+            </td>
+            <td>
+              <%= room.tags %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </main>
+
+  <footer style="text-align:center; margin-top:3rem;">
+    <p>&copy; 2025 Room Improvement</p>
+  </footer>
+</body>
+</html>

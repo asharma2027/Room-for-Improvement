@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Room Improvement</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <% include('partials/nav') %>
+
+  <main>
+    <h1>Welcome to Room Improvement</h1>
+    <% if (user) { %>
+      <p>You are logged in as <strong><%= user.email %></strong>.</p>
+    <% } else { %>
+      <p>
+        Only <strong>@uchicago.edu</strong> emails can register.<br/>
+        Register or Login above to get started.
+      </p>
+    <% } %>
+
+    <hr/>
+
+    <!-- Feedback form at the top of the page as requested -->
+    <h2>Submit Feedback or Room Issues</h2>
+    <p>This form serves two purposes:</p>
+    <ol>
+      <li>Let us know about common problems with rooms</li>
+      <li>Give suggestions for website improvements or new tags/scalars</li>
+    </ol>
+
+    <form method="POST" action="/feedback">
+      <label for="feedbackText">Your Feedback:</label><br/>
+      <textarea name="feedbackText" id="feedbackText" rows="4" cols="60" placeholder="Describe any room problems or website ideas here..."></textarea>
+      <br/>
+      <button type="submit">Submit Feedback</button>
+    </form>
+  </main>
+
+  <footer style="text-align:center; margin-top:3rem;">
+    <p>&copy; 2025 Room Improvement</p>
+  </footer>
+</body>
+</html>
