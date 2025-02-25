@@ -87,12 +87,14 @@ function writeFeedback(arr) {
 
 // Helper to read/write room entries
 function readRoomEntries() {
-  try {
-    return fs.readJSONSync(ROOM_ENTRIES_JSON);
-  } catch {
-    return [];
+    try {
+      const data = fs.readFileSync('./data/roomEntries.json'); // Correct path
+      return JSON.parse(data);
+    } catch (error) {
+      return []; // Ensure array return
+    }
   }
-}
+  
 function writeRoomEntries(arr) {
   fs.writeJSONSync(ROOM_ENTRIES_JSON, arr, { spaces: 2 });
 }
@@ -111,7 +113,7 @@ function readRooms(callback) {
 
 // Write rooms if needed
 function writeRooms(rooms, callback) {
-  const columns = ['id', 'dormName', 'roomNumber', 'tags'];
+  const columns = ['id', 'dorm', 'house', 'roomNumber', 'tags', 'scalars'];
   stringify(rooms, { header: true, columns }, (err, output) => {
     if (err) return callback(err);
     fs.writeFile(ROOMS_CSV, output, 'utf8').then(() => callback(null)).catch(callback);
@@ -287,7 +289,7 @@ app.get('/rooms', ensureAuthenticated, (req, res) => {
     let filtered = rooms;
     if (q) {
       filtered = rooms.filter(r => {
-        const allText = [r.dormName, r.roomNumber, r.tags].join(' ').toLowerCase();
+        const allText = [r.dorm, r.roomNumber, r.tags].join(' ').toLowerCase();
         return allText.includes(q.toLowerCase());
       });
     }
@@ -298,6 +300,16 @@ app.get('/rooms', ensureAuthenticated, (req, res) => {
     });
   });
 });
+
+app.get('/api/houses', (req, res) => {
+    const { dorm } = req.query;
+    const rooms = readRooms();
+    const houses = [...new Set(rooms
+      .filter(r => r.dorm === dorm)
+      .map(r => r.house)
+    )];
+    res.json(houses);
+  });
 
 // Room details
 app.get('/rooms/:id', ensureAuthenticated, (req, res) => {
@@ -383,6 +395,18 @@ app.post('/rooms/:id/submit', ensureAuthenticated, (req, res) => {
 
   res.redirect(`/rooms/${roomId}`);
 });
+
+app.post('/login', (req, res) => {
+    const { email, password } = req.body;
+    const users = readUsers();
+    const user = users.find(u => u.email === email && u.password === password);
+  
+    if (user) {
+      res.redirect('/');
+    } else {
+      res.redirect('/login?error=1'); // Add error parameter
+    }
+  });
 
 // Start server
 app.listen(PORT, () => {

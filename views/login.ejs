@@ -1,13 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Login | Room Improvement</title>
+  <title>Login | Room for Improvement</title>
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
-  <% include('partials/nav') %>
+  <%- include('partials/nav') %>
 
   <main>
+    <div id="error-message" class="error-hidden" style="color: red; margin-bottom: 10px;"></div>
+    <script>
+    // Show error message if login fails
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('error')) {
+        document.getElementById('error-message').textContent = "Email or password is incorrect";
+        document.getElementById('error-message').classList.remove('error-hidden');
+    }
+    </script>
     <h1>Login</h1>
     <form method="POST" action="/login">
       <div>

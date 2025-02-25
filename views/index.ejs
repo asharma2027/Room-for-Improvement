@@ -5,10 +5,9 @@
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
-  <% include('partials/nav') %>
-
+  <%- include('partials/nav') %>
   <main>
-    <h1>Welcome to Room Improvement</h1>
+    <h1>Welcome to Room for Improvement</h1>
     <% if (user) { %>
       <p>You are logged in as <strong><%= user.email %></strong>.</p>
     <% } else { %>
@@ -37,7 +36,7 @@
   </main>
 
   <footer style="text-align:center; margin-top:3rem;">
-    <p>&copy; 2025 Room Improvement</p>
+    <p>&copy; 2025 Room for Improvement</p>
   </footer>
 </body>
 </html>

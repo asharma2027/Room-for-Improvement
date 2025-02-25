@@ -1,16 +1,17 @@
-{
-    "entryId": "abc123",
-    "roomId": "2",
-    "userEmail": "someone@uchicago.edu",
-    "academicYear": "2023-2024",
-    "timestamp": "2025-03-01T14:12:00.000Z",
-    "tags": [
-      "particularly high ceiling",
-      "drafty windows"
-    ],
-    "scalars": {
-      "my house has a good culture": 4,
-      "my room gets a lot of outside noise": 1
+[
+    {
+        "entryId": "abc123",
+        "roomId": "2",
+        "userEmail": "someone@uchicago.edu",
+        "academicYear": "2023-2024",
+        "timestamp": "2025-03-01T14:12:00.000Z",
+        "tags": [
+        "particularly high ceiling",
+        "drafty windows"
+        ],
+        "scalars": {
+        "my house has a good culture": 4,
+        "my room gets a lot of outside noise": 1
+        }
     }
-  }
-  
+]

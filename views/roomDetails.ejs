@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Room Details | Room Improvement</title>
+  <title>Room Details | Room for Improvement</title>
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
-  <% include('partials/nav') %>
+  <%- include('partials/nav') %>
 
   <main>
-    <h2><%= room.dormName %> - Room <%= room.roomNumber %></h2>
+    <h2><%= room.dorm %> - Room <%= room.roomNumber %></h2>
     <p>Initial CSV notes: <strong><%= room.tags || 'N/A' %></strong></p>
 
     <!-- Current (Latest) Data or "No entries yet" -->
@@ -99,7 +99,7 @@
   </main>
 
   <footer style="text-align:center; margin-top:3rem;">
-    <p>&copy; 2025 Room Improvement</p>
+    <p>&copy; 2025 Room for Improvement</p>
   </footer>
 </body>
 </html>

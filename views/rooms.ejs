@@ -10,7 +10,7 @@
   </script>
 </head>
 <body>
-  <% include('partials/nav') %>
+  <%- include('partials/nav') %>
 
   <main>
     <h1>All Rooms</h1>
@@ -25,21 +25,53 @@
       <button type="submit">Search</button>
     </form>
 
+    <div class="filters">
+        <select id="dorm-filter" onchange="filterByDorm(this.value)">
+            <option value="">All Dorms</option>
+            <option value="Snell-Hitchcock">Snell-Hitchcock</option>
+            <option value="I-House">I-House</option>
+            <option value="Woodlawn">Woodlawn</option>
+            <option value="Burton Judson">Burton Judson</option>
+            <option value="Campus North">Campus North</option>
+            <option value="Max Palevsky">Max Palevsky</option>
+        </select>
+        
+        <select id="house-filter" onchange="filterByHouse(this.value)" disabled>
+            <option value="">All Houses</option>
+        </select>
+    </div>
+    
     <table>
       <thead>
         <tr>
-          <th>Dorm & Room #</th>
-          <th>Tags (Initial CSV info)</th>
+          <th>Dorm</th>
+          <th>House</th>
+          <th>Room Number</th>
+          <th>Tags</th>
+          <th>House Culture</th>
+          <th>Noise Level</th>
         </tr>
       </thead>
       <tbody>
         <% rooms.forEach(room => { %>
           <tr style="cursor:pointer;" onclick="rowClick('<%= room.id %>')">
             <td>
-              <strong><%= room.dormName %></strong> - #<%= room.roomNumber %>
+                <%= room.dorm %>
             </td>
             <td>
-              <%= room.tags %>
+                <%= room.house %>
+            </td>
+            <td>
+                <%= room.roomNumber %>
+            </td>
+            <td>
+                <%= room.tags %>
+            </td>
+            <td>
+                <%= room.scalars %>
+            </td>
+            <td>
+                <%= room.scalars %>
             </td>
           </tr>
         <% }) %>
@@ -48,7 +80,7 @@
   </main>
 
   <footer style="text-align:center; margin-top:3rem;">
-    <p>&copy; 2025 Room Improvement</p>
+    <p>&copy; 2025 Room for Improvement</p>
   </footer>
 </body>
 </html>
