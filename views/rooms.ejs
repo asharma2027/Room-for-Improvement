@@ -1,13 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Rooms | Room Improvement</title>
+  <title>Rooms | Room for Improvement</title>
   <link rel="stylesheet" href="/css/styles.css" />
   <script>
     function rowClick(roomId) {
       window.location.href = "/rooms/" + roomId;
     }
+
+    // *** CHANGED *** HIGHLIGHT ROWS ON MOUSEOVER
+    // Add a small script that sets a hover style
+    // (Also add a CSS rule below in an inline <style> block or in styles.css)
+    
+    // *** CHANGED *** AUTO-POPULATE HOUSES
+    // Rely on a server-provided global variable "window.dormHouses"
+    // that maps dorm -> list of houses. Then we update the #house-filter.
+
+    function filterByDorm(selectedDorm) {
+      const houseFilter = document.getElementById("house-filter");
+
+      // If no dorm selected, disable house filter
+      if (!selectedDorm) {
+        houseFilter.disabled = true;
+        houseFilter.innerHTML = '<option value="">All Houses</option>';
+      } else {
+        // Enable house filter and populate from dormHouses
+        houseFilter.disabled = false;
+        const houses = window.dormHouses[selectedDorm] || [];
+        let options = '<option value="">All Houses</option>';
+        houses.forEach(h => {
+          options += `<option value="${h}">${h}</option>`;
+        });
+        houseFilter.innerHTML = options;
+      }
+
+      // CLIENT-SIDE: show/hide rows by dorm
+      const rows = document.querySelectorAll("table tbody tr");
+      rows.forEach((row) => {
+        const rowDorm = row.getAttribute("data-dorm") || "";
+        if (!selectedDorm || rowDorm === selectedDorm) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
+    }
+
+    function filterByHouse(selectedHouse) {
+      const rows = document.querySelectorAll("table tbody tr");
+      rows.forEach((row) => {
+        // if row is already hidden by dorm filter, skip
+        if (row.style.display === "none") return;
+
+        const rowHouse = row.getAttribute("data-house") || "";
+        if (!selectedHouse || rowHouse === selectedHouse) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
+    }
   </script>
+
+  <!-- *** CHANGED *** WE CAN ADD A SIMPLE CSS RULE FOR ROW HOVER HERE OR IN STYLES.CSS -->
+  <style>
+    tr:hover {
+      background-color: #f2f2f2; /* Light gray on mouse over */
+    }
+  </style>
 </head>
 <body>
   <%- include('partials/nav') %>
@@ -15,30 +75,57 @@
   <main>
     <h1>All Rooms</h1>
 
+    <!-- Display top houses info before the table -->
+    <!-- *** CHANGED *** -->
+    <div>
+      <h3>Top 3 Houses - House Culture (Higher = Better)</h3>
+      <% if (topHousesCulture && topHousesCulture.length > 0) { %>
+        <ol>
+          <% topHousesCulture.forEach(h => { %>
+            <li><%= h.houseName %> (avg: <%= h.avg.toFixed(2) %>)</li>
+          <% }) %>
+        </ol>
+      <% } else { %>
+        <p>No data for house culture yet.</p>
+      <% } %>
+
+      <h3>Top 3 Houses - Noise Level (Lower = Better)</h3>
+      <% if (topHousesNoise && topHousesNoise.length > 0) { %>
+        <ol>
+          <% topHousesNoise.forEach(h => { %>
+            <li><%= h.houseName %> (avg: <%= h.avg.toFixed(2) %>)</li>
+          <% }) %>
+        </ol>
+      <% } else { %>
+        <p>No data for noise level yet.</p>
+      <% } %>
+    </div>
+    <hr/>
+
     <form method="GET" action="/rooms">
       <input
         type="text"
         name="q"
         value="<%= query %>"
-        placeholder="Search dorm name, room #, tags..."
+        placeholder="Search dorm name, house, room #, tags..."
       />
       <button type="submit">Search</button>
     </form>
 
     <div class="filters">
-        <select id="dorm-filter" onchange="filterByDorm(this.value)">
-            <option value="">All Dorms</option>
-            <option value="Snell-Hitchcock">Snell-Hitchcock</option>
-            <option value="I-House">I-House</option>
-            <option value="Woodlawn">Woodlawn</option>
-            <option value="Burton Judson">Burton Judson</option>
-            <option value="Campus North">Campus North</option>
-            <option value="Max Palevsky">Max Palevsky</option>
-        </select>
-        
-        <select id="house-filter" onchange="filterByHouse(this.value)" disabled>
-            <option value="">All Houses</option>
-        </select>
+      <select id="dorm-filter" onchange="filterByDorm(this.value)">
+        <option value="">All Dorms</option>
+        <option value="Snell-Hitchcock">Snell-Hitchcock</option>
+        <option value="I-House">I-House</option>
+        <option value="Woodlawn">Woodlawn</option>
+        <option value="Burton Judson">Burton Judson</option>
+        <option value="Campus North">Campus North</option>
+        <option value="Max Palevsky">Max Palevsky</option>
+      </select>
+      
+      <select id="house-filter" onchange="filterByHouse(this.value)" disabled>
+        <option value="">All Houses</option>
+      </select>
     </div>
     
     <table>
@@ -54,25 +141,21 @@
       </thead>
       <tbody>
         <% rooms.forEach(room => { %>
-          <tr style="cursor:pointer;" onclick="rowClick('<%= room.id %>')">
-            <td>
-                <%= room.dorm %>
-            </td>
-            <td>
-                <%= room.house %>
-            </td>
-            <td>
-                <%= room.roomNumber %>
-            </td>
-            <td>
-                <%= room.tags %>
-            </td>
-            <td>
-                <%= room.scalars %>
-            </td>
-            <td>
-                <%= room.scalars %>
-            </td>
+          <!-- *** CHANGED *** add data-dorm and data-house for client-side filtering -->
+          <tr style="cursor:pointer;"
+              data-dorm="<%= room.dorm %>"
+              data-house="<%= room.house %>"
+              onclick="rowClick('<%= room.id %>')">
+            
+            <td><%= room.dorm %></td>
+            <td><%= room.house %></td>
+            <td><%= room.roomNumber %></td>
+            
+            <td><%= room.tags ? room.tags : '' %></td>
+            
+            <td><%= room.houseCultureVal ? room.houseCultureVal : '' %></td>
+            
+            <td><%= room.outsideNoiseVal ? room.outsideNoiseVal : '' %></td>
           </tr>
         <% }) %>
       </tbody>
@@ -82,5 +165,10 @@
   <footer style="text-align:center; margin-top:3rem;">
     <p>&copy; 2025 Room for Improvement</p>
   </footer>
+
+  <!-- *** CHANGED *** PASS DORM-HOUSE MAP TO JAVASCRIPT -->
+  <script>
+    window.dormHouses = <%- JSON.stringify(dormHousesMap) %>;
+  </script>
 </body>
 </html>

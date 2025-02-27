@@ -1,5 +1,5 @@
 {
-    "name": "room-improvement",
+    "name": "room-for-improvement",
     "version": "3.0.0",
     "description": "Website for UChicago dorm data (curated tags, scalars, feedback form, email verification).",
     "main": "server.js",

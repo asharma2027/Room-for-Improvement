@@ -9,7 +9,6 @@
 
   <main>
     <h2><%= room.dorm %> - Room <%= room.roomNumber %></h2>
-    <p>Initial CSV notes: <strong><%= room.tags || 'N/A' %></strong></p>
 
     <!-- Current (Latest) Data or "No entries yet" -->
     <h3>Latest Submission (Most Recent Resident Data)</h3>
@@ -91,6 +90,8 @@
       <h3>Historical Data</h3>
       <p>Below are all previous submissions for this room (oldest first):</p>
       <% include('partials/roomHistory') %>
+    <% } else { %>
+        <p>No data available yet. Be the first to add some!</p>
     <% } %>
 
     <p style="margin-top:2rem;">

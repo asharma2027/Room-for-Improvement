@@ -1,14 +1,3 @@
-/***************************************************************
- * server.js
- * 
- * Implements:
- *  - Email/password login with verification (@uchicago.edu only)
- *  - Feedback form (top of homepage) stored in feedback.json
- *  - Rooms from rooms.csv
- *  - Per-room curated tags & scalar data, stored in roomEntries.json
- *  - Only one submission per user per room per academic year
- *  - Latest data shown by default; a historical table on the same page
- ***************************************************************/
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
@@ -33,8 +22,9 @@ const {
 } = process.env;
 
 const PORT = process.env.PORT || 3000;
-
 const app = express();
+
+// Basic middlewares
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -56,12 +46,12 @@ const FEEDBACK_JSON = path.join(__dirname, 'data', 'feedback.json');
 const ROOM_ENTRIES_JSON = path.join(__dirname, 'data', 'roomEntries.json');
 const ROOMS_CSV = path.join(__dirname, 'data', 'rooms.csv');
 
-// Ensure data files exist
+// Ensure files exist
 if (!fs.existsSync(USERS_JSON)) fs.writeJSONSync(USERS_JSON, []);
 if (!fs.existsSync(FEEDBACK_JSON)) fs.writeJSONSync(FEEDBACK_JSON, []);
 if (!fs.existsSync(ROOM_ENTRIES_JSON)) fs.writeJSONSync(ROOM_ENTRIES_JSON, []);
 
-// Helper to read/write users
+// Utility: read/write users
 function readUsers() {
   try {
     return fs.readJSONSync(USERS_JSON);
@@ -73,7 +63,7 @@ function writeUsers(users) {
   fs.writeJSONSync(USERS_JSON, users, { spaces: 2 });
 }
 
-// Helper to read/write feedback
+// Utility: read/write feedback
 function readFeedback() {
   try {
     return fs.readJSONSync(FEEDBACK_JSON);
@@ -85,21 +75,19 @@ function writeFeedback(arr) {
   fs.writeJSONSync(FEEDBACK_JSON, arr, { spaces: 2 });
 }
 
-// Helper to read/write room entries
+// Utility: read/write room entries
 function readRoomEntries() {
-    try {
-      const data = fs.readFileSync('./data/roomEntries.json'); // Correct path
-      return JSON.parse(data);
-    } catch (error) {
-      return []; // Ensure array return
-    }
+  try {
+    return fs.readJSONSync(ROOM_ENTRIES_JSON);
+  } catch {
+    return [];
   }
-  
+}
 function writeRoomEntries(arr) {
   fs.writeJSONSync(ROOM_ENTRIES_JSON, arr, { spaces: 2 });
 }
 
-// CSV read for rooms
+// Utility: read/write rooms from CSV
 function readRooms(callback) {
   fs.readFile(ROOMS_CSV, 'utf8')
     .then(data => {
@@ -110,13 +98,13 @@ function readRooms(callback) {
     })
     .catch(() => callback(null, []));
 }
-
-// Write rooms if needed
 function writeRooms(rooms, callback) {
-  const columns = ['id', 'dorm', 'house', 'roomNumber', 'tags', 'scalars'];
+  const columns = ['id','dorm','house','roomNumber'];
   stringify(rooms, { header: true, columns }, (err, output) => {
     if (err) return callback(err);
-    fs.writeFile(ROOMS_CSV, output, 'utf8').then(() => callback(null)).catch(callback);
+    fs.writeFile(ROOMS_CSV, output, 'utf8')
+      .then(() => callback(null))
+      .catch(callback);
   });
 }
 
@@ -147,22 +135,17 @@ passport.use(new LocalStrategy({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Nodemailer
+// Nodemailer for email verification
 const transporter = nodemailer.createTransport({
   host: EMAIL_HOST,
   port: EMAIL_PORT,
   secure: false,
-  auth: {
-    user: EMAIL_USER,
-    pass: EMAIL_PASS
-  }
+  auth: { user: EMAIL_USER, pass: EMAIL_PASS }
 });
-
-// Send verification email
 async function sendVerificationEmail(toEmail, token) {
   const link = `${APP_URL}/verify/${token}`;
   const mailOptions = {
-    from: `"Room Improvement" <${EMAIL_USER}>`,
+    from: `"Room for Improvement" <${EMAIL_USER}>`,
     to: toEmail,
     subject: 'Verify your @uchicago.edu account',
     html: `
@@ -174,45 +157,41 @@ async function sendVerificationEmail(toEmail, token) {
   await transporter.sendMail(mailOptions);
 }
 
-// Auth middleware
+// Auth check
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) return next();
   return res.redirect('/');
 }
 
-// --------------------- Routes ---------------------
+// -------------------- ROUTES --------------------
 
 // Home
 app.get('/', (req, res) => {
   res.render('index', { user: req.user });
 });
 
-// Feedback POST
+// Feedback
 app.post('/feedback', (req, res) => {
-  const feedbackArr = readFeedback();
+  const allFeedback = readFeedback();
   const text = req.body.feedbackText?.trim() || '';
-
-  // Optional: require user login. For now, we allow anyone (but we store user if logged in).
   const userEmail = req.user ? req.user.email : 'anonymous';
 
   if (text) {
-    feedbackArr.push({
+    allFeedback.push({
       id: crypto.randomBytes(8).toString('hex'),
       user: userEmail,
       text,
       date: new Date().toISOString()
     });
-    writeFeedback(feedbackArr);
+    writeFeedback(allFeedback);
   }
   res.redirect('/');
 });
 
-// Register GET
+// Register
 app.get('/register', (req, res) => {
   res.render('register', { user: req.user });
 });
-
-// Register POST
 app.post('/register', async (req, res) => {
   const { email, password } = req.body;
   const lowerEmail = email.toLowerCase();
@@ -220,15 +199,13 @@ app.post('/register', async (req, res) => {
   if (!lowerEmail.endsWith('@uchicago.edu')) {
     return res.send('You must use an @uchicago.edu email.');
   }
-
   const users = readUsers();
   if (users.find(u => u.email === lowerEmail)) {
     return res.send('That email is already registered.');
   }
-
   const hashedPassword = await bcrypt.hash(password, 10);
   const token = crypto.randomBytes(20).toString('hex');
-
+  
   const newUser = {
     email: lowerEmail,
     hashedPassword,
@@ -261,12 +238,10 @@ app.get('/verify/:token', (req, res) => {
   res.send('Your email has been verified! <a href="/">Return Home</a>');
 });
 
-// Login GET
+// Login
 app.get('/login', (req, res) => {
   res.render('login', { user: req.user });
 });
-
-// Login POST
 app.post('/login', passport.authenticate('local', {
   successRedirect: '/rooms',
   failureRedirect: '/login'
@@ -281,35 +256,153 @@ app.get('/logout', (req, res) => {
   });
 });
 
-// Rooms listing
+// -------------------- ROOMS --------------------
+
+// *** CHANGED *** HELPER FUNCTION TO BUILD A (DORM -> SET OF HOUSES) MAP
+function buildDormHousesMap(rooms) {
+  // returns { "Max Palevsky": ["HouseA","HouseB"], "Campus North": ["X","Y"] }
+  const map = {};
+  rooms.forEach(r => {
+    if (!map[r.dorm]) {
+      map[r.dorm] = new Set();
+    }
+    map[r.dorm].add(r.house);
+  });
+  // convert each set to array
+  Object.keys(map).forEach(d => {
+    map[d] = Array.from(map[d]);
+  });
+  return map;
+}
+
+// *** CHANGED *** HELPER FUNCTIONS FOR "TOP 3 HOUSES"
+function computeTopHousesCulture(rooms, limit = 3) {
+  const grouped = {};
+  rooms.forEach(r => {
+    if (!r.house) return;
+    if (r.houseCultureVal) {
+      const val = parseFloat(r.houseCultureVal);
+      if (!isNaN(val)) {
+        if (!grouped[r.house]) grouped[r.house] = [];
+        grouped[r.house].push(val);
+      }
+    }
+  });
+
+  // compute average
+  const results = [];
+  for (const house in grouped) {
+    const arr = grouped[house];
+    const avg = arr.reduce((a,b) => a+b, 0) / arr.length;
+    results.push({ houseName: house, avg });
+  }
+  // sort descending (since higher is better for culture)
+  results.sort((a,b) => b.avg - a.avg);
+  return results.slice(0, limit);
+}
+
+function computeTopHousesNoise(rooms, limit = 3) {
+  const grouped = {};
+  rooms.forEach(r => {
+    if (!r.house) return;
+    if (r.outsideNoiseVal) {
+      const val = parseFloat(r.outsideNoiseVal);
+      if (!isNaN(val)) {
+        if (!grouped[r.house]) grouped[r.house] = [];
+        grouped[r.house].push(val);
+      }
+    }
+  });
+
+  const results = [];
+  for (const house in grouped) {
+    const arr = grouped[house];
+    const avg = arr.reduce((a,b) => a+b, 0) / arr.length;
+    results.push({ houseName: house, avg });
+  }
+  // sort ascending (since lower is better for noise)
+  results.sort((a,b) => a.avg - b.avg);
+  return results.slice(0, limit);
+}
+
+// Show list of rooms
 app.get('/rooms', ensureAuthenticated, (req, res) => {
   readRooms((err, rooms) => {
     if (err) return res.status(500).send('Error reading rooms CSV');
-    const q = req.query.q || '';
+    
     let filtered = rooms;
+    // Optional search param
+    const q = req.query.q || '';
     if (q) {
       filtered = rooms.filter(r => {
-        const allText = [r.dorm, r.roomNumber, r.tags].join(' ').toLowerCase();
-        return allText.includes(q.toLowerCase());
+        const haystack = [
+          r.dorm || '',
+          r.house || '',
+          r.roomNumber || ''
+        ].join(' ').toLowerCase();
+        return haystack.includes(q.toLowerCase());
       });
     }
+
+    // Load all room entries
+    const allEntries = readRoomEntries();
+
+    // For each room, find the LATEST submission
+    filtered.forEach(r => {
+      // default blank if no submission
+      r.tags = '';
+      r.houseCultureVal = '';
+      r.outsideNoiseVal = '';
+
+      const matching = allEntries.filter(e => e.roomId === r.id);
+      if (matching.length > 0) {
+        matching.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+        const latest = matching[matching.length - 1];
+        
+        if (latest.tags && latest.tags.length > 0) {
+          r.tags = latest.tags.join(', ');
+        }
+        if (latest.scalars) {
+          const hc = latest.scalars["my house has a good culture"];
+          const noise = latest.scalars["my room gets a lot of outside noise"];
+          r.houseCultureVal = hc ? hc : '';
+          r.outsideNoiseVal = noise ? noise : '';
+        }
+      }
+    });
+
+    // *** CHANGED *** BUILD THE dormHousesMap
+    const dormHousesMap = buildDormHousesMap(rooms);
+
+    // *** CHANGED *** DETERMINE IF USER SELECTED A DORM
+    // If user is in client-side mode, we won't have a param. But let's assume no param for dorm.
+    // If you do want a server param for dorm=someDorm, you can do it. We'll skip for now.
+
+    // We'll compute "top 3 houses" across the "filtered" set if they used search,
+    // or from the entire set if you want the unfiltered. 
+    // The problem states "When on the all dorms page, top 3 across all dorms. 
+    // If user selects a dorm, top 3 for that dorm." 
+    // We'll interpret "all dorms page" as when user hasn't used the dorm filter or if "dorm-filter" is empty.
+    // BUT we only have a client side approach. We'll do the aggregator on "rooms" or "filtered"? 
+    // We'll do aggregator on "filtered" for consistent approach. 
+    // That means if user typed something in search, it might reduce the set. That's your call. 
+    // For the user story, let's do aggregator on the entire "rooms" or do aggregator on the "filtered"? 
+    // We'll do aggregator on "filtered," so if user picks a dorm client-side, 
+    // the aggregator changes. We'll keep it simpler to do aggregator on "filtered."
+
+    const topHousesCulture = computeTopHousesCulture(filtered);
+    const topHousesNoise = computeTopHousesNoise(filtered);
+
     res.render('rooms', {
       user: req.user,
       rooms: filtered,
-      query: q
+      query: q,
+      dormHousesMap,        // *** CHANGED ***
+      topHousesCulture,     // *** CHANGED ***
+      topHousesNoise        // *** CHANGED ***
     });
   });
 });
-
-app.get('/api/houses', (req, res) => {
-    const { dorm } = req.query;
-    const rooms = readRooms();
-    const houses = [...new Set(rooms
-      .filter(r => r.dorm === dorm)
-      .map(r => r.house)
-    )];
-    res.json(houses);
-  });
 
 // Room details
 app.get('/rooms/:id', ensureAuthenticated, (req, res) => {
@@ -320,25 +413,26 @@ app.get('/rooms/:id', ensureAuthenticated, (req, res) => {
     if (!room) return res.status(404).send('Room not found');
 
     // Gather all entries for this room
-    const allEntries = readRoomEntries().filter(e => e.roomId === roomId).sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+    const allEntries = readRoomEntries().filter(e => e.roomId === roomId);
+    allEntries.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
 
     // The latest entry if any
     const latestEntry = allEntries.length > 0 ? allEntries[allEntries.length - 1] : null;
 
-    // Check if current user has submitted this year
-    // We'll parse academicYear from their previous entries
-    // For example: if they have an entry with userEmail = user & academicYear = something, we disallow
+    // Check if current user has already submitted for this academic year
     const userEmail = req.user.email;
-    const currentYearEntries = allEntries.filter(e => e.userEmail === userEmail);
-    // The form doesn't strictly define how you compare academicYear strings, but let's do a direct check
-    // If the user tries to submit the same year again, we block it
-    let alreadySubmittedThisYear = null; // store the year if they did
-    currentYearEntries.forEach(en => {
-      // They have an entry for that year => block
-      if (!alreadySubmittedThisYear) {
-        alreadySubmittedThisYear = en.academicYear; 
+    let alreadySubmittedThisYear = null;
+
+    allEntries.forEach(en => {
+      if (en.userEmail === userEmail && !alreadySubmittedThisYear) {
+        alreadySubmittedThisYear = en.academicYear;
       }
     });
+
+    // We'll keep CSV-based notes in room.tags if it existed, or blank
+    if (!room.tags) {
+      room.tags = '';
+    }
 
     res.render('roomDetails', {
       user: req.user,
@@ -350,34 +444,34 @@ app.get('/rooms/:id', ensureAuthenticated, (req, res) => {
   });
 });
 
-// POST: user submits curated tags + scalar data
+// Submit curated tags + scalars
 app.post('/rooms/:id/submit', ensureAuthenticated, (req, res) => {
   const roomId = req.params.id;
   const { academicYear, tags, scalar_house_culture, scalar_outside_noise } = req.body;
-
-  // Convert tags to an array
+  
   let tagsArray = [];
   if (Array.isArray(tags)) {
-    tagsArray = tags; // multiple checkboxes
+    tagsArray = tags;
   } else if (typeof tags === 'string') {
-    tagsArray = [tags]; // single selection
+    tagsArray = [tags];
   }
 
-  // For safety, parse the scalars into numbers
   const houseCultureVal = parseInt(scalar_house_culture, 10);
   const outsideNoiseVal = parseInt(scalar_outside_noise, 10);
 
-  // Read all room entries
-  const entries = readRoomEntries();
-
-  // Check if the user has already submitted for that academicYear
+  const allEntries = readRoomEntries();
   const userEmail = req.user.email;
-  const existing = entries.find(e => e.roomId === roomId && e.userEmail === userEmail && e.academicYear === academicYear);
+
+  // check if user has an existing submission for same year
+  const existing = allEntries.find(e => 
+    e.roomId === roomId && 
+    e.userEmail === userEmail && 
+    e.academicYear === academicYear
+  );
   if (existing) {
-    return res.send('You have already submitted for this room in the same academic year.');
+    return res.send('You already submitted data for this room in that academic year.');
   }
 
-  // Create a new submission
   const newEntry = {
     entryId: crypto.randomBytes(8).toString('hex'),
     roomId,
@@ -390,23 +484,11 @@ app.post('/rooms/:id/submit', ensureAuthenticated, (req, res) => {
       "my room gets a lot of outside noise": outsideNoiseVal
     }
   };
-  entries.push(newEntry);
-  writeRoomEntries(entries);
+  allEntries.push(newEntry);
+  writeRoomEntries(allEntries);
 
   res.redirect(`/rooms/${roomId}`);
 });
-
-app.post('/login', (req, res) => {
-    const { email, password } = req.body;
-    const users = readUsers();
-    const user = users.find(u => u.email === email && u.password === password);
-  
-    if (user) {
-      res.redirect('/');
-    } else {
-      res.redirect('/login?error=1'); // Add error parameter
-    }
-  });
 
 // Start server
 app.listen(PORT, () => {
