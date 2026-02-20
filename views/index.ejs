@@ -1,41 +1,73 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Room for Improvement</title>
-  <link rel="stylesheet" href="/css/styles.css" />
-</head>
-<body>
-  <%- include('partials/nav') %>
-  <main>
-    <h1>Welcome to Room for Improvement</h1>
-    <% if (user) { %>
-      <p>You are logged in as <strong><%= user.email %></strong>.</p>
-    <% } else { %>
-      <p>
-        Only <strong>@uchicago.edu</strong> emails can register.<br/>
-        Register or Login above to get started.
-      </p>
-    <% } %>
+<%- include('partials/head', { title: 'Home | Room for Improvement' }) %>
 
-    <hr/>
+  <body>
+    <%- include('partials/nav') %>
+      <main>
+        <div class="landing-hero">
+          <h1>Welcome to Room for Improvement</h1>
+          <% if (user) { %>
+            <p>You are logged in as <strong>
+                <%= user.email %>
+              </strong>.</p>
+            <div class="landing-buttons">
+              <a href="/rooms" class="btn-secondary"
+                style="padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 0.5rem; font-weight: 600;">Browse
+                Rooms</a>
+              <a href="/logout" class="btn-secondary"
+                style="padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 0.5rem; font-weight: 600;">Logout</a>
+            </div>
+            <% } else { %>
+              <p>
+                The ultimate guide to UChicago housing. <br>
+                Only <strong>@uchicago.edu</strong> emails can register.
+              </p>
+              <div class="landing-buttons">
+                <a href="/register" class="btn-secondary"
+                  style="padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 0.5rem; font-weight: 600;">Register</a>
+                <a href="/login" class="btn-secondary"
+                  style="padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 0.5rem; font-weight: 600;">Login</a>
+              </div>
+              <% } %>
+        </div>
 
-    <h2>Submit Feedback or Room Issues</h2>
-    <p>This form serves two purposes:</p>
-    <ol>
-      <li>Let us know about common problems with rooms</li>
-      <li>Give suggestions for website improvements or new tags/scalars</li>
-    </ol>
+        <div class="features-grid">
+          <div class="feature-item">
+            <span class="feature-icon">📝</span>
+            <h3>Real Feedback</h3>
+            <p>Submit and view real data regarding room conditions, noise levels, and house culture.</p>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🔍</span>
+            <h3>Smart Search</h3>
+            <p>Filter by dorm, house, and even specific room attributes like ceiling height or window size.</p>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">📊</span>
+            <h3>Data Driven</h3>
+            <p>See aggregated statistics for house culture and noise levels to make informed decisions.</p>
+          </div>
+        </div>
 
-    <form method="POST" action="/feedback">
-      <label for="feedbackText">Your Feedback:</label><br/>
-      <textarea name="feedbackText" id="feedbackText" rows="4" cols="60" placeholder="Describe any room problems or website ideas here..."></textarea>
-      <br/>
-      <button type="submit">Submit Feedback</button>
-    </form>
-  </main>
+        <hr style="margin: 3rem 0; border: 0; border-top: 1px solid #eee;">
 
-  <footer style="text-align:center; margin-top:3rem;">
-    <p>&copy; 2025 Room for Improvement</p>
-  </footer>
-</body>
-</html>
+        <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+          <h2>Submit Feedback or Room Issues</h2>
+          <p style="margin-bottom: 2rem; color: var(--text-secondary);">
+            Help us improve! Let us know about common problems with rooms or give suggestions for the website.
+          </p>
+
+          <form method="POST" action="/feedback" class="form-container" style="text-align: left;">
+            <label for="feedbackText">Your Feedback:</label>
+            <textarea name="feedbackText" id="feedbackText" rows="4"
+              placeholder="Describe any room problems or website ideas here..." required></textarea>
+            <button type="submit" style="width: 100%; margin-top: 1rem;">Submit Feedback</button>
+          </form>
+        </div>
+      </main>
+
+      <footer style="text-align:center; margin-top:3rem;">
+        <p>&copy; 2025 Room for Improvement</p>
+      </footer>
+  </body>
+
+  </html>

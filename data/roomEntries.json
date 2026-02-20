@@ -12694,5 +12694,93 @@
       "my house has a good culture": 5,
       "my room gets a lot of outside noise": 4
     }
+  },
+  {
+    "entryId": "415d747f31805d7d",
+    "roomId": "1",
+    "userEmail": "test@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-05T00:40:06.526Z",
+    "tags": [],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    }
+  },
+  {
+    "entryId": "6ddca539234cc44c",
+    "roomId": "2",
+    "userEmail": "test@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-05T00:41:20.745Z",
+    "tags": [],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    }
+  },
+  {
+    "entryId": "a13de27689c8fed9",
+    "roomId": "3",
+    "userEmail": "test@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-05T00:41:50.498Z",
+    "tags": [],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    }
+  },
+  {
+    "entryId": "b974b102c16f961e",
+    "roomId": "4",
+    "userEmail": "test@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-05T00:44:00.968Z",
+    "tags": [],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Fortress of Solitude"
+  },
+  {
+    "entryId": "5df37c66c776c561",
+    "roomId": "50",
+    "userEmail": "test@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-05T01:28:27.315Z",
+    "tags": [],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Fuck Room"
+  },
+  {
+    "entryId": "b55da025ef7b7298",
+    "roomId": "100",
+    "userEmail": "test@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-05T01:41:25.561Z",
+    "tags": [],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": null
+  },
+  {
+    "entryId": "52d35ef2ca469a22",
+    "roomId": "4",
+    "userEmail": "test@uchicago.edu",
+    "academicYear": "2026-2027",
+    "timestamp": "2026-02-05T01:46:53.203Z",
+    "tags": [],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "The New Fortress"
   }
 ]

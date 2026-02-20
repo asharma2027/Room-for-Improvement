@@ -1,25 +1,41 @@
 <!-- This partial is included in roomDetails.ejs for displaying historical data. -->
 
 <table>
-    <thead>
+  <thead>
+    <tr>
+      <th>Academic Year</th>
+      <th>Submitted By</th>
+      <th>Date</th>
+      <th>Room Name</th>
+      <th>Tags</th>
+      <th>House Culture (1-5)</th>
+      <th>Outside Noise (1-5)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% allEntries.forEach(entry=> { %>
       <tr>
-        <th>Academic Year</th>
-        <th>Submitted By</th>
-        <th>Date</th>
-        <th>Tags</th>
-        <th>House Culture (1-5)</th>
-        <th>Outside Noise (1-5)</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% allEntries.forEach(entry => { %>
-        <tr>
-          <td><%= entry.academicYear %></td>
-          <td><%= entry.userEmail %></td>
-          <td><%= new Date(entry.timestamp).toLocaleString() %></td>
-          <td>
-            <% if (entry.tags && entry.tags.length > 0) { %>
-              <%= entry.tags.join(', ') %>
+        <td>
+          <%= entry.academicYear %>
+        </td>
+        <td>
+          <%= entry.userEmail %>
+        </td>
+        <td>
+          <%= new Date(entry.timestamp).toLocaleString() %>
+        </td>
+        <td>
+          <% if (entry.customName) { %>
+            <strong>
+              <%= entry.customName %>
+            </strong>
+            <% } else { %>
+              <em style="color: var(--text-secondary);">Not set</em>
+              <% } %>
+        </td>
+        <td>
+          <% if (entry.tags && entry.tags.length> 0) { %>
+            <%= entry.tags.join(', ') %>
             <% } else { %>
               <em>None</em>
             <% } %>

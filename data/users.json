@@ -1,8 +1,44 @@
 [
   {
-    "email": "asharma27@uchicago.edu",
-    "hashedPassword": "$2a$10$xZvqUsakD/v1TUnRq2hEW.1VSz7QRAuwqp1kzmKx7lNgsWqvyP.GW",
+    "email": "test@uchicago.edu",
+    "hashedPassword": "$2a$10$mj/s6Q.PevYeuWrxzTSI7.DWeZ.I9uFbdHzYNsxBab1ppf4IIaeC2",
     "verified": true,
     "verificationToken": null
+  },
+  {
+    "email": "testuser@uchicago.edu",
+    "hashedPassword": "$2a$10$lzYmMS3hc1J4hrxzvF4UDuCueNQuPJkHJ3tJ/2jKM8FKOHMQNj7Mi",
+    "verified": false,
+    "verificationToken": "453af18ece61098c888183a1d9339baab2a4dcd9"
+  },
+  {
+    "email": "test2@uchicago.edu",
+    "hashedPassword": "$2a$10$.9x5ZsoDTaPnsILM8U8pgeEQ0tomdDy8incqF2aUENCEEaOrgcGCi",
+    "verified": false,
+    "verificationToken": "6149752dfea203ca4b357545125588b0f2473a35"
+  },
+  {
+    "email": "test3@uchicago.edu",
+    "hashedPassword": "$2a$10$VOQVx0dx77eT7MD/1zSHSOABmMf32t0LSQitemt53fmYrr143txQ.",
+    "verified": false,
+    "verificationToken": "ec61f147da83e237f0df7c9d6044b590408d07e4"
+  },
+  {
+    "email": "a@uchicago.edu",
+    "hashedPassword": "$2a$10$n0jk6MTVSDGsDc/hdyJ.Xe29ajdNsEVMv5irucY2KtVWihUWO35O.",
+    "verified": false,
+    "verificationToken": "0fc2daadd9c64a3ac8e35b1d5b879508b65a19dc"
+  },
+  {
+    "email": "jetski_test@uchicago.edu",
+    "hashedPassword": "$2a$10$1Sf.U9HDHP/8znO5n/ge.uvhT5Lrd1sAmkkkkn72tyh6Op7hJYozy",
+    "verified": false,
+    "verificationToken": "ff7339b8b6236465fe54edb676644c04069f2351"
+  },
+  {
+    "email": "tester@uchicago.edu",
+    "hashedPassword": "$2a$10$x5AIryEzfUobJ1N.38UMp.VRRa8WWBxZmmPqoszvgnT2GTemeQ3OK",
+    "verified": false,
+    "verificationToken": "21e4d38626b8c8b0698bb8badb97d983d3fdb880"
   }
 ]

@@ -99,7 +99,7 @@ function readRooms(callback) {
     .catch(() => callback(null, []));
 }
 function writeRooms(rooms, callback) {
-  const columns = ['id','dorm','house','roomNumber'];
+  const columns = ['id', 'dorm', 'house', 'roomNumber'];
   stringify(rooms, { header: true, columns }, (err, output) => {
     if (err) return callback(err);
     fs.writeFile(ROOMS_CSV, output, 'utf8')
@@ -163,6 +163,13 @@ function ensureAuthenticated(req, res, next) {
   return res.redirect('/');
 }
 
+// Global Middleware to pass 'path' and 'user' to all views
+app.use((req, res, next) => {
+  res.locals.path = req.path;
+  res.locals.user = req.user;
+  next();
+});
+
 // -------------------- ROUTES --------------------
 
 // Home
@@ -205,7 +212,7 @@ app.post('/register', async (req, res) => {
   }
   const hashedPassword = await bcrypt.hash(password, 10);
   const token = crypto.randomBytes(20).toString('hex');
-  
+
   const newUser = {
     email: lowerEmail,
     hashedPassword,
@@ -293,11 +300,11 @@ function computeTopHousesCulture(rooms, limit = 3) {
   const results = [];
   for (const house in grouped) {
     const arr = grouped[house];
-    const avg = arr.reduce((a,b) => a+b, 0) / arr.length;
+    const avg = arr.reduce((a, b) => a + b, 0) / arr.length;
     results.push({ houseName: house, avg });
   }
   // sort descending (since higher is better for culture)
-  results.sort((a,b) => b.avg - a.avg);
+  results.sort((a, b) => b.avg - a.avg);
   return results.slice(0, limit);
 }
 
@@ -317,11 +324,11 @@ function computeTopHousesNoise(rooms, limit = 3) {
   const results = [];
   for (const house in grouped) {
     const arr = grouped[house];
-    const avg = arr.reduce((a,b) => a+b, 0) / arr.length;
+    const avg = arr.reduce((a, b) => a + b, 0) / arr.length;
     results.push({ houseName: house, avg });
   }
   // sort ascending (since lower is better for noise)
-  results.sort((a,b) => a.avg - b.avg);
+  results.sort((a, b) => a.avg - b.avg);
   return results.slice(0, limit);
 }
 
@@ -329,7 +336,7 @@ function computeTopHousesNoise(rooms, limit = 3) {
 app.get('/rooms', ensureAuthenticated, (req, res) => {
   readRooms((err, rooms) => {
     if (err) return res.status(500).send('Error reading rooms CSV');
-    
+
     let filtered = rooms;
     // Optional search param
     const q = req.query.q || '';
@@ -353,12 +360,13 @@ app.get('/rooms', ensureAuthenticated, (req, res) => {
       r.tags = '';
       r.houseCultureVal = '';
       r.outsideNoiseVal = '';
+      r.customName = null;
 
       const matching = allEntries.filter(e => e.roomId === r.id);
       if (matching.length > 0) {
-        matching.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+        matching.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
         const latest = matching[matching.length - 1];
-        
+
         if (latest.tags && latest.tags.length > 0) {
           r.tags = latest.tags.join(', ');
         }
@@ -367,6 +375,9 @@ app.get('/rooms', ensureAuthenticated, (req, res) => {
           const noise = latest.scalars["my room gets a lot of outside noise"];
           r.houseCultureVal = hc ? hc : '';
           r.outsideNoiseVal = noise ? noise : '';
+        }
+        if (latest.customName) {
+          r.customName = latest.customName;
         }
       }
     });
@@ -397,9 +408,12 @@ app.get('/rooms', ensureAuthenticated, (req, res) => {
       user: req.user,
       rooms: filtered,
       query: q,
-      dormHousesMap,        // *** CHANGED ***
-      topHousesCulture,     // *** CHANGED ***
-      topHousesNoise        // *** CHANGED ***
+      dormHousesMap,
+      topHousesCulture,
+      topHousesNoise,
+      // Pre-serialize for client-side
+      dormHousesMapJson: JSON.stringify(dormHousesMap || {}),
+      allRoomsDataJson: JSON.stringify(filtered || [])
     });
   });
 });
@@ -414,20 +428,22 @@ app.get('/rooms/:id', ensureAuthenticated, (req, res) => {
 
     // Gather all entries for this room
     const allEntries = readRoomEntries().filter(e => e.roomId === roomId);
-    allEntries.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+    allEntries.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
     // The latest entry if any
     const latestEntry = allEntries.length > 0 ? allEntries[allEntries.length - 1] : null;
 
-    // Check if current user has already submitted for this academic year
+    // Check if current user has already submitted for this academic year (except test account)
     const userEmail = req.user.email;
     let alreadySubmittedThisYear = null;
 
-    allEntries.forEach(en => {
-      if (en.userEmail === userEmail && !alreadySubmittedThisYear) {
-        alreadySubmittedThisYear = en.academicYear;
-      }
-    });
+    if (userEmail !== 'test@uchicago.edu') {
+      allEntries.forEach(en => {
+        if (en.userEmail === userEmail && !alreadySubmittedThisYear) {
+          alreadySubmittedThisYear = en.academicYear;
+        }
+      });
+    }
 
     // We'll keep CSV-based notes in room.tags if it existed, or blank
     if (!room.tags) {
@@ -447,8 +463,8 @@ app.get('/rooms/:id', ensureAuthenticated, (req, res) => {
 // Submit curated tags + scalars
 app.post('/rooms/:id/submit', ensureAuthenticated, (req, res) => {
   const roomId = req.params.id;
-  const { academicYear, tags, scalar_house_culture, scalar_outside_noise } = req.body;
-  
+  const { academicYear, tags, scalar_house_culture, scalar_outside_noise, customName } = req.body;
+
   let tagsArray = [];
   if (Array.isArray(tags)) {
     tagsArray = tags;
@@ -462,13 +478,13 @@ app.post('/rooms/:id/submit', ensureAuthenticated, (req, res) => {
   const allEntries = readRoomEntries();
   const userEmail = req.user.email;
 
-  // check if user has an existing submission for same year
-  const existing = allEntries.find(e => 
-    e.roomId === roomId && 
-    e.userEmail === userEmail && 
+  // check if user has an existing submission for same year (except test account)
+  const existing = allEntries.find(e =>
+    e.roomId === roomId &&
+    e.userEmail === userEmail &&
     e.academicYear === academicYear
   );
-  if (existing) {
+  if (existing && userEmail !== 'test@uchicago.edu') {
     return res.send('You already submitted data for this room in that academic year.');
   }
 
@@ -482,7 +498,8 @@ app.post('/rooms/:id/submit', ensureAuthenticated, (req, res) => {
     scalars: {
       "my house has a good culture": houseCultureVal,
       "my room gets a lot of outside noise": outsideNoiseVal
-    }
+    },
+    customName: customName && customName.trim() ? customName.trim() : null
   };
   allEntries.push(newEntry);
   writeRoomEntries(allEntries);

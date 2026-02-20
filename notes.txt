@@ -1,0 +1,17 @@
+MAKE SURE TO MAKE AS LITTLE CHANGES TO THE ORIGINAL CODE AS POSSIBLE (except any obvious fixes that stick out) and implement a 'Room Naming' feature:
+
+Right now, the table just lists room numbers. We want to allow verified users to 'claim' a room and give it a custom nickname (e.g., renaming 'Room 101' to 'The Fortress of Solitude').
+
+Here is how it should work:
+
+The Display (UI):
+
+Change the first column to be the Room Name (make the text inside each row slightly larger than other columns).
+If no one has named the room, just display 'Room [Number]' (e.g., 'Room 404').
+If a user submits a custom name, display that instead.
+Censorship: Custom names should be blurred/masked by default. Add a visiblity toggle switch at the top that reveals them.
+If a new user submits a review with a name for an already-named room, the new name replaces the old one on the main list immediately.
+Do not delete the old name. Store it in the room’s historical data alongside that user's specific review so we can see the history of custom names later (the name should be on the same row that contains which tags the user submitted and the likert ratings "
+
+
+// THE BIGGEST ROOM IS ROOM FOR IMPROVEMENT

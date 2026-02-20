@@ -1,174 +1,341 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Rooms | Room for Improvement</title>
-  <link rel="stylesheet" href="/css/styles.css" />
-  <script>
-    function rowClick(roomId) {
-      window.location.href = "/rooms/" + roomId;
-    }
+<%- include('partials/head', { title: 'Rooms | Room for Improvement' }) %>
 
-    // *** CHANGED *** HIGHLIGHT ROWS ON MOUSEOVER
-    // Add a small script that sets a hover style
-    // (Also add a CSS rule below in an inline <style> block or in styles.css)
-    
-    // *** CHANGED *** AUTO-POPULATE HOUSES
-    // Rely on a server-provided global variable "window.dormHouses"
-    // that maps dorm -> list of houses. Then we update the #house-filter.
+  <body>
+    <%- include('partials/nav') %>
 
-    function filterByDorm(selectedDorm) {
-      const houseFilter = document.getElementById("house-filter");
+      <main>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+          <h1 style="margin-bottom: 0;">All Rooms</h1>
+          <form method="GET" action="/rooms" style="display: flex; gap: 0.5rem; margin: 0;">
+            <input type="text" name="q" value="<%= query %>" placeholder="Search..." style="width: 250px;" />
+            <button type="submit" style="padding: 0.75rem;">Search</button>
+          </form>
+        </div>
 
-      // If no dorm selected, disable house filter
-      if (!selectedDorm) {
-        houseFilter.disabled = true;
-        houseFilter.innerHTML = '<option value="">All Houses</option>';
-      } else {
-        // Enable house filter and populate from dormHouses
-        houseFilter.disabled = false;
-        const houses = window.dormHouses[selectedDorm] || [];
-        let options = '<option value="">All Houses</option>';
-        houses.forEach(h => {
-          options += `<option value="${h}">${h}</option>`;
+        <!-- Stats Section -->
+        <div class="top-stats-grid">
+          <div class="stat-card">
+            <h3>🏆 Best House Culture (Higher is Better)</h3>
+            <ol class="stat-list" id="culture-list">
+              <% if (topHousesCulture && topHousesCulture.length> 0) { %>
+                <% topHousesCulture.forEach(h=> { %>
+                  <li><span>
+                      <%= h.houseName %>
+                    </span> <span>
+                      <%= h.avg.toFixed(2) %>
+                    </span></li>
+                  <% }) %>
+                    <% } else { %>
+                      <p>No data available.</p>
+                      <% } %>
+            </ol>
+          </div>
+
+          <div class="stat-card" style="border-left-color: var(--secondary-color);">
+            <h3>🔇 Quietest Houses (Lower is Better)</h3>
+            <ol class="stat-list" id="noise-list">
+              <% if (topHousesNoise && topHousesNoise.length> 0) { %>
+                <% topHousesNoise.forEach(h=> { %>
+                  <li><span>
+                      <%= h.houseName %>
+                    </span> <span>
+                      <%= h.avg.toFixed(2) %>
+                    </span></li>
+                  <% }) %>
+                    <% } else { %>
+                      <p>No data available.</p>
+                      <% } %>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters"
+          style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <div>
+              <label for="dorm-filter" style="margin-bottom: 0.25rem; font-size: 0.85rem;">Filter by Dorm</label>
+              <select id="dorm-filter" onchange="onDormChange(this.value)">
+                <option value="">All Dorms</option>
+                <option value="Snell-Hitchcock">Snell-Hitchcock</option>
+                <option value="I-House">I-House</option>
+                <option value="Woodlawn">Woodlawn</option>
+                <option value="Burton Judson">Burton Judson</option>
+                <option value="Campus North">Campus North</option>
+                <option value="Max Palevsky">Max Palevsky</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="house-filter" style="margin-bottom: 0.25rem; font-size: 0.85rem;">Filter by House</label>
+              <select id="house-filter" onchange="applyFilters()" disabled>
+                <option value="">All Houses</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+            <span style="font-size: 1.3rem; cursor: help;" title="Toggle content filter">🔞</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="censor-toggle" onchange="toggleCensorship()">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 200px;">ROOM</th>
+                <th>Dorm</th>
+                <th>Tags</th>
+                <th>Culture</th>
+                <th>Noise</th>
+              </tr>
+            </thead>
+            <tbody id="rooms-body">
+              <% rooms.forEach(room=> { %>
+                <tr style="cursor:pointer;" data-dorm="<%= room.dorm %>" data-house="<%= room.house %>"
+                  data-room-number="<%= room.roomNumber %>" onclick="window.location='/rooms/<%= room.id %>'">
+
+                  <td style="font-weight: 600; font-size: 1.05em;">
+                    <% if (room.customName) { %>
+                      <div>
+                        <span class="room-name" data-original="<%= room.customName %>">
+                          <%= room.customName %>
+                        </span>
+                        <div
+                          style="font-size: 0.7em; font-weight: 400; color: var(--text-secondary); margin-top: 0.2rem;">
+                          (<%= room.house %>
+                            <%= room.roomNumber %>)
+                        </div>
+                      </div>
+                      <% } else { %>
+                        <span class="room-name" data-original="<%= room.house %> <%= room.roomNumber %>">
+                          <%= room.house %>
+                            <%= room.roomNumber %>
+                        </span>
+                        <% } %>
+                  </td>
+
+                  <td>
+                    <%= room.dorm %>
+                  </td>
+
+                  <% const getTagEmoji=(tag)=> {
+                    const t = tag.toLowerCase();
+                    if (t.includes('sunny') || t.includes('light') || t.includes('bright')) return '☀️';
+                    if (t.includes('dark') || t.includes('dim')) return '🌑';
+                    if (t.includes('loud') || t.includes('noise') || t.includes('busy')) return '🔊';
+                    if (t.includes('quiet') || t.includes('silent')) return '🔇';
+                    if (t.includes('large') || t.includes('spacious') || t.includes('big')) return '🏰';
+                    if (t.includes('small') || t.includes('tiny') || t.includes('cramped')) return '📦';
+                    if (t.includes('high ceiling')) return '🏛️';
+                    if (t.includes('low ceiling')) return '🏠';
+                    if (t.includes('cold') || t.includes('draft') || t.includes('freeze')) return '❄️';
+                    if (t.includes('warm') || t.includes('hot') || t.includes('heat')) return '🔥';
+                    if (t.includes('window')) return '🪟';
+                    if (t.includes('view')) return '👀';
+                    if (t.includes('bathroom') || t.includes('toilet')) return '🚽';
+                    if (t.includes('kitchen')) return '🍳';
+                    if (t.includes('ac') || t.includes('a/c')) return '💨';
+                    return '🏷️';
+                    };
+                    %>
+
+                    <td>
+                      <% if (room.tags) { %>
+                        <div class="tags-container">
+                          <% room.tags.split(', ').forEach(t => { %>
+                              <span class="tag" title="<%= t %>"><%= getTagEmoji(t) %> <%= t %></span>
+                          <% }) %>
+                      </div>
+                    <% } %>
+                </td>
+                
+                <td><%= room.houseCultureVal ? room.houseCultureVal : ' -' %>
+                    </td>
+                    <td>
+                      <%= room.outsideNoiseVal ? room.outsideNoiseVal : '-' %>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+          </table>
+          <p id="no-results" style="display: none; padding: 2rem; text-align: center; color: var(--text-secondary);">No
+            rooms match your filters.</p>
+        </div>
+      </main>
+
+      <footer>
+        <p>&copy; 2025 Room for Improvement</p>
+      </footer>
+
+      <!-- Server Data Injection -->
+      <script id="dorm-houses-data" type="application/json">
+        <%- (typeof dormHousesMapJson !== 'undefined' && dormHousesMapJson) ? dormHousesMapJson : '{}' %>
+      </script>
+      <script id="all-rooms-data" type="application/json">
+        <%- (typeof allRoomsDataJson !== 'undefined' && allRoomsDataJson) ? allRoomsDataJson : '[]' %>
+      </script>
+
+      <script>
+        let dormHousesMap = {};
+        let allRoomsData = [];
+
+        try {
+          const dormDataText = document.getElementById('dorm-houses-data').textContent;
+          const roomsDataText = document.getElementById('all-rooms-data').textContent;
+          if (dormDataText) dormHousesMap = JSON.parse(dormDataText);
+          if (roomsDataText) allRoomsData = JSON.parse(roomsDataText);
+        } catch (e) {
+          console.error("Failed to parse server data", e);
+        }
+
+        function onDormChange(selectedDorm) {
+          const houseFilter = document.getElementById("house-filter");
+
+          // Populate houses
+          if (!selectedDorm) {
+            houseFilter.innerHTML = '<option value="">All Houses</option>';
+            houseFilter.disabled = true;
+          } else {
+            houseFilter.disabled = false;
+            const houses = dormHousesMap[selectedDorm] || [];
+            let options = '<option value="">All Houses</option>';
+            houses.sort().forEach(h => {
+              options += `<option value="${h}">${h}</option>`;
+            });
+            houseFilter.innerHTML = options;
+          }
+          // Reset house selection
+          houseFilter.value = "";
+
+          applyFilters();
+        }
+
+        function applyFilters() {
+          const selectedDorm = document.getElementById("dorm-filter").value;
+          const selectedHouse = document.getElementById("house-filter").value;
+          const rows = document.querySelectorAll("#rooms-body tr");
+          let visibleCount = 0;
+
+          // Filter logic
+          const visibleIndices = [];
+
+          rows.forEach((row, index) => {
+            const rowDorm = row.getAttribute("data-dorm") || "";
+            const rowHouse = row.getAttribute("data-house") || "";
+
+            let show = true;
+            if (selectedDorm && rowDorm !== selectedDorm) show = false;
+            // Only check house if show is still true
+            if (show && selectedHouse && rowHouse !== selectedHouse) show = false;
+
+            if (show) {
+              row.style.display = "";
+              visibleCount++;
+              visibleIndices.push(index);
+            } else {
+              row.style.display = "none";
+            }
+          });
+
+          // Show/Hide no results message
+          document.getElementById("no-results").style.display = visibleCount === 0 ? "block" : "none";
+
+          // Recalculate Stats based on visible rooms
+          updateStats(visibleIndices);
+        }
+
+        function updateStats(visibleIndices) {
+          // Filter the data array based on visible indices
+          const currentRooms = visibleIndices.map(i => allRoomsData[i]);
+
+          // Helper to compute stats
+          function getTop3(rooms, field, sortAscending = false) {
+            const grouped = {}; // { HouseName: [val1, val2] }
+
+            rooms.forEach(r => {
+              if (!r.house) return;
+              const val = parseFloat(r[field]);
+              if (!isNaN(val)) {
+                if (!grouped[r.house]) grouped[r.house] = [];
+                grouped[r.house].push(val);
+              }
+            });
+
+            const results = [];
+            for (const h in grouped) {
+              const arr = grouped[h];
+              const avg = arr.reduce((a, b) => a + b, 0) / arr.length;
+              results.push({ houseName: h, avg });
+            }
+
+            results.sort((a, b) => sortAscending ? a.avg - b.avg : b.avg - a.avg);
+            return results.slice(0, 3);
+          }
+
+          const topCulture = getTop3(currentRooms, 'houseCultureVal', false); // Descending (Higher is better)
+          const topNoise = getTop3(currentRooms, 'outsideNoiseVal', true); // Ascending (Lower is better)
+
+          // Render Lists
+          renderList('culture-list', topCulture);
+          renderList('noise-list', topNoise);
+        }
+
+        function renderList(elementId, items) {
+          const el = document.getElementById(elementId);
+          if (items.length === 0) {
+            el.innerHTML = '<p>No data available.</p>';
+            return;
+          }
+          el.innerHTML = items.map(item =>
+            `<li><span>${item.houseName}</span> <span>${item.avg.toFixed(2)}</span></li>`
+          ).join('');
+        }
+
+        // Profanity filter - common inappropriate words
+        const badWords = ['damn', 'hell', 'fuck', 'shit', 'ass', 'bitch', 'bastard', 'crap', 'piss', 'cock', 'dick', 'pussy', 'slut', 'whore', 'fag', 'nigger', 'nigga', 'cunt', 'twat'];
+
+        function censorText(text) {
+          let censored = text;
+          const lowerText = text.toLowerCase();
+
+          badWords.forEach(word => {
+            const regex = new RegExp('\\b' + word + '\\b', 'gi');
+            censored = censored.replace(regex, (match) => {
+              return '*'.repeat(match.length);
+            });
+          });
+
+          return censored;
+        }
+
+        function toggleCensorship() {
+          const isChecked = document.getElementById('censor-toggle').checked;
+          const roomNames = document.querySelectorAll('.room-name');
+
+          roomNames.forEach(name => {
+            const original = name.getAttribute('data-original');
+            if (original) {
+              if (isChecked) {
+                // Show original
+                name.textContent = original;
+              } else {
+                // Apply censorship
+                name.textContent = censorText(original);
+              }
+            }
+          });
+        }
+
+        // Apply censorship on page load (default state is censored)
+        document.addEventListener('DOMContentLoaded', function () {
+          toggleCensorship();
         });
-        houseFilter.innerHTML = options;
-      }
+      </script>
+  </body>
 
-      // CLIENT-SIDE: show/hide rows by dorm
-      const rows = document.querySelectorAll("table tbody tr");
-      rows.forEach((row) => {
-        const rowDorm = row.getAttribute("data-dorm") || "";
-        if (!selectedDorm || rowDorm === selectedDorm) {
-          row.style.display = "";
-        } else {
-          row.style.display = "none";
-        }
-      });
-    }
-
-    function filterByHouse(selectedHouse) {
-      const rows = document.querySelectorAll("table tbody tr");
-      rows.forEach((row) => {
-        // if row is already hidden by dorm filter, skip
-        if (row.style.display === "none") return;
-
-        const rowHouse = row.getAttribute("data-house") || "";
-        if (!selectedHouse || rowHouse === selectedHouse) {
-          row.style.display = "";
-        } else {
-          row.style.display = "none";
-        }
-      });
-    }
-  </script>
-
-  <!-- *** CHANGED *** WE CAN ADD A SIMPLE CSS RULE FOR ROW HOVER HERE OR IN STYLES.CSS -->
-  <style>
-    tr:hover {
-      background-color: #f2f2f2; /* Light gray on mouse over */
-    }
-  </style>
-</head>
-<body>
-  <%- include('partials/nav') %>
-
-  <main>
-    <h1>All Rooms</h1>
-
-    <!-- Display top houses info before the table -->
-    <!-- *** CHANGED *** -->
-    <div>
-      <h3>Top 3 Houses - House Culture (Higher = Better)</h3>
-      <% if (topHousesCulture && topHousesCulture.length > 0) { %>
-        <ol>
-          <% topHousesCulture.forEach(h => { %>
-            <li><%= h.houseName %> (avg: <%= h.avg.toFixed(2) %>)</li>
-          <% }) %>
-        </ol>
-      <% } else { %>
-        <p>No data for house culture yet.</p>
-      <% } %>
-
-      <h3>Top 3 Houses - Noise Level (Lower = Better)</h3>
-      <% if (topHousesNoise && topHousesNoise.length > 0) { %>
-        <ol>
-          <% topHousesNoise.forEach(h => { %>
-            <li><%= h.houseName %> (avg: <%= h.avg.toFixed(2) %>)</li>
-          <% }) %>
-        </ol>
-      <% } else { %>
-        <p>No data for noise level yet.</p>
-      <% } %>
-    </div>
-    <hr/>
-
-    <form method="GET" action="/rooms">
-      <input
-        type="text"
-        name="q"
-        value="<%= query %>"
-        placeholder="Search dorm name, house, room #, tags..."
-      />
-      <button type="submit">Search</button>
-    </form>
-
-    <div class="filters">
-      <select id="dorm-filter" onchange="filterByDorm(this.value)">
-        <option value="">All Dorms</option>
-        <option value="Snell-Hitchcock">Snell-Hitchcock</option>
-        <option value="I-House">I-House</option>
-        <option value="Woodlawn">Woodlawn</option>
-        <option value="Burton Judson">Burton Judson</option>
-        <option value="Campus North">Campus North</option>
-        <option value="Max Palevsky">Max Palevsky</option>
-      </select>
-      
-      <select id="house-filter" onchange="filterByHouse(this.value)" disabled>
-        <option value="">All Houses</option>
-      </select>
-    </div>
-    
-    <table>
-      <thead>
-        <tr>
-          <th>Dorm</th>
-          <th>House</th>
-          <th>Room Number</th>
-          <th>Tags</th>
-          <th>House Culture</th>
-          <th>Noise Level</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% rooms.forEach(room => { %>
-          <!-- *** CHANGED *** add data-dorm and data-house for client-side filtering -->
-          <tr style="cursor:pointer;"
-              data-dorm="<%= room.dorm %>"
-              data-house="<%= room.house %>"
-              onclick="rowClick('<%= room.id %>')">
-            
-            <td><%= room.dorm %></td>
-            <td><%= room.house %></td>
-            <td><%= room.roomNumber %></td>
-            
-            <td><%= room.tags ? room.tags : '' %></td>
-            
-            <td><%= room.houseCultureVal ? room.houseCultureVal : '' %></td>
-            
-            <td><%= room.outsideNoiseVal ? room.outsideNoiseVal : '' %></td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
-  </main>
-
-  <footer style="text-align:center; margin-top:3rem;">
-    <p>&copy; 2025 Room for Improvement</p>
-  </footer>
-
-  <!-- *** CHANGED *** PASS DORM-HOUSE MAP TO JAVASCRIPT -->
-  <script>
-    window.dormHouses = <%- JSON.stringify(dormHousesMap) %>;
-  </script>
-</body>
-</html>
+  </html>
