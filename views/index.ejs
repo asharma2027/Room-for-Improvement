@@ -4,28 +4,28 @@
     <%- include('partials/nav') %>
       <main>
         <div class="landing-hero">
-          <h1>Welcome to Room for Improvement</h1>
+          <h1>Room for Improvement</h1>
           <% if (user) { %>
-            <p>You are logged in as <strong>
+            <p>Welcome back, <strong>
                 <%= user.email %>
               </strong>.</p>
             <div class="landing-buttons">
-              <a href="/rooms" class="btn-secondary"
-                style="padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 0.5rem; font-weight: 600;">Browse
-                Rooms</a>
+              <a href="/map" class="btn-secondary"
+                style="padding: 0.875rem 1.75rem; text-decoration: none; border-radius: var(--radius-full); font-weight: 600;">Campus
+                Map</a>
               <a href="/logout" class="btn-secondary"
-                style="padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 0.5rem; font-weight: 600;">Logout</a>
+                style="padding: 0.875rem 1.75rem; text-decoration: none; border-radius: var(--radius-full); font-weight: 600; background: rgba(0,0,0,0.1); border-color: transparent;">Logout</a>
             </div>
             <% } else { %>
               <p>
-                The ultimate guide to UChicago housing. <br>
+                The ultimate guide to UChicago housing.<br>
                 Only <strong>@uchicago.edu</strong> emails can register.
               </p>
               <div class="landing-buttons">
                 <a href="/register" class="btn-secondary"
-                  style="padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 0.5rem; font-weight: 600;">Register</a>
+                  style="padding: 0.875rem 1.75rem; text-decoration: none; border-radius: var(--radius-full); font-weight: 600;">Register</a>
                 <a href="/login" class="btn-secondary"
-                  style="padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 0.5rem; font-weight: 600;">Login</a>
+                  style="padding: 0.875rem 1.75rem; text-decoration: none; border-radius: var(--radius-full); font-weight: 600; background: white; color: var(--primary-color);">Login</a>
               </div>
               <% } %>
         </div>

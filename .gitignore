@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Python virtual env
+venv/
+
+# Environment variables (contains secrets)
+.env
+
+# User data (session/auth data you don't want public)
+user_data/
+
+# macOS metadata
+.DS_Store
+**/.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+
+# Build artifacts
+dist/
+build/

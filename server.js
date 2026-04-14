@@ -28,6 +28,8 @@ const app = express();
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/images/emblems', express.static(path.join(__dirname, 'data', 'House Emblems')));
+app.use('/images/dorms', express.static(path.join(__dirname, 'data', 'dorm street views')));
 
 // EJS setup
 app.set('view engine', 'ejs');
@@ -43,8 +45,30 @@ app.use(session({
 // Data paths
 const USERS_JSON = path.join(__dirname, 'data', 'users.json');
 const FEEDBACK_JSON = path.join(__dirname, 'data', 'feedback.json');
-const ROOM_ENTRIES_JSON = path.join(__dirname, 'data', 'roomEntries.json');
+
+const USE_FAKE_DATA = true; // SET TO FALSE TO RESTORE REAL DATA
+const ROOM_ENTRIES_JSON = USE_FAKE_DATA 
+  ? path.join(__dirname, 'data', 'fakeRoomEntries.json') 
+  : path.join(__dirname, 'data', 'roomEntries.json');
+
 const ROOMS_CSV = path.join(__dirname, 'data', 'rooms.csv');
+
+// ── DATA SOURCE TOGGLE ──────────────────────────────────────────────────────
+// Set to true  → load rooms from per-building colored_rooms.csv files (REAL DATA)
+// Set to false → load rooms from the old data/rooms.csv  (legacy placeholder data)
+const USE_FLOORPLAN_CSV = true;
+
+const FLOORPLAN_DIR = path.join(__dirname, 'data', 'floorplans');
+// The six building sub-folders that have colored_rooms.csv files:
+const FLOORPLAN_BUILDINGS = [
+  'Burton-Judson',
+  'I-House',
+  'Max Palevsky',
+  'Renee_Granville-Grossman',
+  'Snell_Hitchcock',
+  'Woodlawn'
+];
+// ────────────────────────────────────────────────────────────────────────────
 
 // Ensure files exist
 if (!fs.existsSync(USERS_JSON)) fs.writeJSONSync(USERS_JSON, []);
@@ -87,8 +111,72 @@ function writeRoomEntries(arr) {
   fs.writeJSONSync(ROOM_ENTRIES_JSON, arr, { spaces: 2 });
 }
 
+// ── NEW: load rooms from per-building colored_rooms.csv files ────────────────
+// Each colored_rooms.csv has columns:
+//   Room Number, Floor, Building Name, House Name, Room Type, Original Image
+// We project these onto the shape the rest of the server expects:
+//   { id, dorm, house, roomNumber, floor, roomType }
+// 'id' is a stable deterministic slug so links/submissions stay consistent
+// across server restarts.
+function readRoomsFromFloorplans(callback) {
+  const allRooms = [];
+  let pending = FLOORPLAN_BUILDINGS.length;
+
+  if (pending === 0) return callback(null, []);
+
+  FLOORPLAN_BUILDINGS.forEach(building => {
+    const csvPath = path.join(FLOORPLAN_DIR, building, 'colored_rooms.csv');
+    fs.readFile(csvPath, 'utf8')
+      .then(data => {
+        parse(data, { columns: true }, (err, rows) => {
+          if (!err && rows) {
+            rows.forEach(row => {
+              const dorm = (row['Building Name'] || '').trim();
+              const house = (row['House Name'] || '').trim();
+              const roomNumber = (row['Room Number'] || '').trim();
+              const floor = (row['Floor'] || '').trim();
+              const roomType = (row['Room Type'] || '').trim();
+
+              if (!dorm || !house || !roomNumber) return; // skip malformed rows
+
+              // Deterministic slug-based ID — stable across restarts.
+              // Includes floor to guard against same room number on multiple floors.
+              const id = `${dorm}__${house}__${roomNumber}__f${floor}`
+                .toLowerCase()
+                .replace(/\s+/g, '_');
+
+              allRooms.push({ id, dorm, house, roomNumber, floor, roomType });
+            });
+          }
+          pending--;
+          if (pending === 0) callback(null, allRooms);
+        });
+      })
+      .catch(() => {
+        // Missing CSV for this building — skip gracefully
+        pending--;
+        if (pending === 0) callback(null, allRooms);
+      });
+  });
+}
+// ────────────────────────────────────────────────────────────────────────────
+
 // Utility: read/write rooms from CSV
+// Branches on USE_FLOORPLAN_CSV — set that flag to false to revert to legacy.
 function readRooms(callback) {
+  if (USE_FLOORPLAN_CSV) {
+    return readRoomsFromFloorplans(callback);
+  }
+  // ── LEGACY PATH (old data/rooms.csv with placeholder data) ─────────────
+  // fs.readFile(ROOMS_CSV, 'utf8')
+  //   .then(data => {
+  //     parse(data, { columns: true }, (err, rooms) => {
+  //       if (err) return callback(err, null);
+  //       callback(null, rooms);
+  //     });
+  //   })
+  //   .catch(() => callback(null, []));
+  // (kept for reference — unreachable while USE_FLOORPLAN_CSV === true)
   fs.readFile(ROOMS_CSV, 'utf8')
     .then(data => {
       parse(data, { columns: true }, (err, rooms) => {
@@ -250,7 +338,7 @@ app.get('/login', (req, res) => {
   res.render('login', { user: req.user });
 });
 app.post('/login', passport.authenticate('local', {
-  successRedirect: '/rooms',
+  successRedirect: '/map',
   failureRedirect: '/login'
 }));
 
@@ -259,6 +347,279 @@ app.get('/logout', (req, res) => {
   req.logout(() => {
     req.session.destroy(() => {
       res.redirect('/');
+    });
+  });
+});
+
+// -------------------- MAP --------------------
+
+// House emblems: distinct color per house for demo
+const HOUSE_COLORS = {
+  // Burton-Judson
+  'Chamberlin': '#c0392b', 'Coulter': '#8e44ad', 'Dodd Mead': '#2980b9',
+  'Linn Mathews': '#16a085', 'Salisbury': '#d35400', 'Vincent': '#27ae60',
+  // Woodlawn
+  'Baker': '#e74c3c', 'Casner': '#9b59b6', 'Chenn': '#3498db',
+  'Eka': '#1abc9c', 'Fama': '#f39c12', 'Gallo': '#e67e22',
+  'Han': '#2ecc71', 'Liew': '#e91e63', 'Markovitz': '#00bcd4',
+  'Rustandy': '#ff5722', 'Yovovich': '#795548',
+  // Snell-Hitchcock
+  'Hitchcock': '#5c6bc0', 'Snell': '#26a69a',
+  // I-House
+  'Booth': '#ef5350', 'Breckinridge': '#ab47bc', 'Phoenix': '#42a5f5',
+  'Shorey': '#66bb6a', 'Thompson': '#ffa726',
+  // Max Palevsky
+  'Alper': '#ec407a', 'Flint': '#7e57c2', 'Graham': '#26c6da',
+  'Hoover': '#d4e157', 'May': '#ff7043', 'Rickert': '#8d6e63',
+  'Wallace': '#78909c', 'Woodward': '#26a69a',
+  // Renee GRC
+  'Cathey': '#f44336', 'Crown': '#673ab7', 'Delgiorno': '#03a9f4',
+  'DelGiorno': '#03a9f4', 'Halperin': '#4caf50', 'Kenwood': '#ff9800', 'Wendt': '#009688'
+};
+
+function getHouseColor(house) {
+  return HOUSE_COLORS[house] || '#800000';
+}
+
+// Compute ranking scores for all houses in a dorm
+function computeDormRankings(dormName, rooms, entries) {
+  const houses = {};
+
+  // Initialize from rooms
+  rooms.filter(r => r.dorm === dormName).forEach(r => {
+    if (!r.house) return;
+    if (!houses[r.house]) {
+      houses[r.house] = {
+        name: r.house,
+        color: getHouseColor(r.house),
+        initials: r.house.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2),
+        emblem: getHouseEmblem(r.house),
+        culture: [], noise: [], sunlight: [], roomSize: [], tempControl: [],
+        roomCount: 0
+      };
+    }
+    houses[r.house].roomCount++;
+  });
+
+  // Aggregate from entries
+  entries.forEach(e => {
+    const room = rooms.find(r => r.id === e.roomId);
+    if (!room || room.dorm !== dormName || !houses[room.house]) return;
+    const h = houses[room.house];
+
+    if (e.scalars) {
+      const c = parseFloat(e.scalars['my house has a good culture']);
+      const n = parseFloat(e.scalars['my room gets a lot of outside noise']);
+      if (!isNaN(c)) h.culture.push(c);
+      if (!isNaN(n)) h.noise.push(n);
+    }
+    if (e.tags && Array.isArray(e.tags)) {
+      const tags = e.tags.map(t => t.toLowerCase());
+      if (tags.some(t => t.includes('sunlight') || t.includes('sunny') || t.includes('bright'))) h.sunlight.push(1);
+      else h.sunlight.push(0);
+      if (tags.some(t => t.includes('big') || t.includes('large') || t.includes('spacious'))) h.roomSize.push(1);
+      else if (tags.some(t => t.includes('small') || t.includes('tiny') || t.includes('cramped'))) h.roomSize.push(-1);
+      else h.roomSize.push(0);
+      if (tags.some(t => t.includes('ac') || t.includes('temperature') || t.includes('drafty') || t.includes('heating'))) h.tempControl.push(0);
+      else h.tempControl.push(1);
+    }
+  });
+
+  const avg = arr => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : null;
+
+  return Object.values(houses).map(h => ({
+    name: h.name,
+    color: h.color,
+    initials: h.initials,
+    emblem: h.emblem,
+    roomCount: h.roomCount,
+    scores: {
+      culture: avg(h.culture),
+      quietness: h.noise.length ? (6 - avg(h.noise)) : null, // invert noise
+      sunlight: avg(h.sunlight),
+      roomSize: avg(h.roomSize),
+      tempControl: avg(h.tempControl)
+    }
+  }));
+}
+
+// Emblems & Backgrounds Mapping
+const houseEmblemsCache = {};
+let emblemFiles = [];
+try { emblemFiles = fs.readdirSync(path.join(__dirname, 'data', 'House Emblems')); } catch(e) {}
+
+function getHouseEmblem(houseName) {
+  if (!houseName) return null;
+  if (houseEmblemsCache[houseName]) return houseEmblemsCache[houseName];
+  
+  const lowerName = houseName.toLowerCase().replace(/[^a-z0-9]/g, '');
+  for (const file of emblemFiles) {
+    if (file === '.DS_Store') continue;
+    const lowerFile = file.toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (lowerFile.includes(lowerName)) {
+      houseEmblemsCache[houseName] = `/images/emblems/${encodeURIComponent(file)}`;
+      return houseEmblemsCache[houseName];
+    }
+  }
+  return null;
+}
+
+const dormBackgroundsCache = {};
+let dormFiles = [];
+try { dormFiles = fs.readdirSync(path.join(__dirname, 'data', 'dorm street views')); } catch(e) {}
+
+function getDormBackground(dormName) {
+  if (!dormName) return null;
+  if (dormBackgroundsCache[dormName]) return dormBackgroundsCache[dormName];
+
+  const lowerName = dormName.toLowerCase().replace(/[^a-z0-9]/g, '');
+  for (const file of dormFiles) {
+    if (file === '.DS_Store') continue;
+    const lowerFile = file.toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (lowerFile.includes(lowerName) || lowerName.includes(lowerFile.replace(/(jpg|jpeg|png|gif)$/, ''))) {
+      dormBackgroundsCache[dormName] = `/images/dorms/${encodeURIComponent(file)}`;
+      return dormBackgroundsCache[dormName];
+    }
+  }
+  if (lowerName.includes('renee') || lowerName.includes('south') || lowerName.includes('burton')) dormBackgroundsCache[dormName] = `/images/dorms/South-Campus-Res-Hall---Main.png`;
+  else if (lowerName.includes('max') || lowerName.includes('north')) dormBackgroundsCache[dormName] = `/images/dorms/campusnorth.jpg`;
+  else if (dormFiles.length > 0) dormBackgroundsCache[dormName] = `/images/dorms/${encodeURIComponent(dormFiles.find(f => f !== '.DS_Store') || 'South-Campus-Res-Hall---Main.png')}`;
+  
+  return dormBackgroundsCache[dormName] || null;
+}
+
+// GET /map - campus map
+app.get('/map', ensureAuthenticated, (req, res) => {
+  readRooms((err, rooms) => {
+    if (err) return res.status(500).send('Error');
+    const dormHousesMap = buildDormHousesMap(rooms);
+    // Build list of all houses for search
+    const allHouses = [];
+    Object.entries(dormHousesMap).forEach(([dorm, houses]) => {
+      houses.forEach(house => {
+        allHouses.push({
+          house, dorm, color: getHouseColor(house),
+          initials: house.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2),
+          emblem: getHouseEmblem(house)
+        });
+      });
+    });
+    res.render('map', { user: req.user, allHousesJson: JSON.stringify(allHouses) });
+  });
+});
+
+// GET /api/houses - JSON for search autocomplete
+app.get('/api/houses', ensureAuthenticated, (req, res) => {
+  readRooms((err, rooms) => {
+    if (err) return res.json([]);
+    const seen = new Set();
+    const houses = [];
+    rooms.forEach(r => {
+      const key = `${r.dorm}::${r.house}`;
+      if (!seen.has(key) && r.house) {
+        seen.add(key);
+        houses.push({
+          house: r.house, dorm: r.dorm, color: getHouseColor(r.house),
+          initials: r.house.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2),
+          emblem: getHouseEmblem(r.house)
+        });
+      }
+    });
+    res.json(houses);
+  });
+});
+
+// GET /dorm/:dorm - house rankings for a dorm
+app.get('/dorm/:dorm', ensureAuthenticated, (req, res) => {
+  const dormName = req.params.dorm;
+  readRooms((err, rooms) => {
+    if (err) return res.status(500).send('Error');
+    const entries = readRoomEntries();
+    const rankings = computeDormRankings(dormName, rooms, entries);
+    if (rankings.length === 0) return res.status(404).send('Dorm not found or no rooms data.');
+    res.render('dormRankings', { user: req.user, dormName, rankings, rankingsJson: JSON.stringify(rankings) });
+  });
+});
+
+// GET /house/:dorm/:house - house room list page
+app.get('/house/:dorm/:house', ensureAuthenticated, (req, res) => {
+  const dormName = req.params.dorm;
+  const houseName = req.params.house;
+  readRooms((err, rooms) => {
+    if (err) return res.status(500).send('Error');
+    const houseRooms = rooms.filter(r => r.dorm === dormName && r.house === houseName);
+    if (houseRooms.length === 0) return res.status(404).send('House not found.');
+    const allEntries = readRoomEntries();
+    
+    // Compute dorm rankings to get this house's placement
+    const rankings = computeDormRankings(dormName, rooms, allEntries);
+    let houseRanks = null;
+    const houseRankObj = rankings.find(r => r.name === houseName);
+    if (houseRankObj) {
+      houseRanks = {};
+      const categoryKeys = [
+        { key: 'culture', ejsKey: 'culture', asc: false },
+        { key: 'noise', ejsKey: 'quietness', asc: true },
+        { key: 'sunlight', ejsKey: 'sunlight', asc: false },
+        { key: 'roomSize', ejsKey: 'roomSize', asc: false },
+        { key: 'tempControl', ejsKey: 'tempControl', asc: false }
+      ];
+      categoryKeys.forEach(cat => {
+        const sorted = [...rankings].filter(r => r.scores[cat.key] !== null).sort((a,b) => {
+          const va = a.scores[cat.key];
+          const vb = b.scores[cat.key];
+          return cat.asc ? va - vb : vb - va;
+        });
+        const rankIndex = sorted.findIndex(r => r.name === houseName);
+        if (rankIndex !== -1) {
+          houseRanks[cat.ejsKey] = rankIndex + 1;
+        } else {
+          houseRanks[cat.ejsKey] = null;
+        }
+      });
+    }
+
+    houseRooms.forEach(r => {
+      r.tags = ''; r.houseCultureVal = ''; r.outsideNoiseVal = ''; r.customName = null;
+      const matching = allEntries.filter(e => e.roomId === r.id);
+      if (matching.length > 0) {
+        matching.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+        const latest = matching[matching.length - 1];
+        if (latest.tags && latest.tags.length > 0) r.tags = latest.tags.join(', ');
+        if (latest.scalars) {
+          r.houseCultureVal = latest.scalars['my house has a good culture'] || '';
+          r.outsideNoiseVal = latest.scalars['my room gets a lot of outside noise'] || '';
+        }
+        if (latest.customName) r.customName = latest.customName;
+      }
+    });
+
+    res.render('housePage', {
+      user: req.user, dormName, houseName,
+      houseColor: getHouseColor(houseName),
+      houseInitials: houseName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2),
+      houseEmblem: getHouseEmblem(houseName),
+      dormBackground: getDormBackground(dormName),
+      rooms: houseRooms,
+      houseRanks
+    });
+  });
+});
+
+// GET /house/:dorm/:house/board - house community board
+app.get('/house/:dorm/:house/board', ensureAuthenticated, (req, res) => {
+  const dormName = req.params.dorm;
+  const houseName = req.params.house;
+  readRooms((err, rooms) => {
+    if (err) return res.status(500).send('Error');
+    const houseRooms = rooms.filter(r => r.dorm === dormName && r.house === houseName);
+    if (houseRooms.length === 0) return res.status(404).send('House not found.');
+    res.render('houseBoard', {
+      user: req.user, dormName, houseName,
+      houseColor: getHouseColor(houseName),
+      houseInitials: houseName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2),
+      houseEmblem: getHouseEmblem(houseName),
+      dormBackground: getDormBackground(dormName)
     });
   });
 });
@@ -509,5 +870,5 @@ app.post('/rooms/:id/submit', ensureAuthenticated, (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server running at ${APP_URL || 'http://localhost:' + PORT}`);
+  console.log(`Server running at ${APP_URL}`);
 });

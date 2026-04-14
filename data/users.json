@@ -40,5 +40,17 @@
     "hashedPassword": "$2a$10$x5AIryEzfUobJ1N.38UMp.VRRa8WWBxZmmPqoszvgnT2GTemeQ3OK",
     "verified": false,
     "verificationToken": "21e4d38626b8c8b0698bb8badb97d983d3fdb880"
+  },
+  {
+    "email": "jetski@uchicago.edu",
+    "hashedPassword": "$2a$10$ApjOLK3hJlgJW1Ie3rNXWeP.u7Pl07PoZqKrFztZobpw2bO1Y3uQ2",
+    "verified": false,
+    "verificationToken": "c1dfa57913556c906ab565cda5a19b208ca664bb"
+  },
+  {
+    "email": "test1@uchicago.edu",
+    "hashedPassword": "$2a$10$H//.41nvMC6pZ8ZMPrjU9OZNBhnDp2S5Nzol0KcbMqO1F0SbZZDOu",
+    "verified": false,
+    "verificationToken": "4c2ccc860adf271a5ce8b3a7d05e21eaf0df94c8"
   }
 ]

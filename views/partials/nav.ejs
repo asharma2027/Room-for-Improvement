@@ -1,12 +1,17 @@
-<nav>
+<nav class="glass">
   <ul>
-    <li><a href="/" class="<%= path === '/' ? 'active' : '' %>">Home</a></li>
+    <li><a href="/" class="<%= path === '/' ? 'active' : '' %>"
+        style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.35rem; color: var(--primary-color);">Room
+        for Improvement</a></li>
     <% if (typeof user !=='undefined' && user) { %>
-      <li><a href="/rooms" class="<%= path.startsWith('/rooms') ? 'active' : '' %>">Rooms</a></li>
+      <li><a href="/map" class="<%= path === '/map' ? 'active' : '' %>">Campus
+          Map</a></li>
+      <li><a href="/rooms" class="<%= path === '/rooms' ? 'active' : '' %>">All Rooms</a></li>
       <li><a href="/logout">Logout</a></li>
       <% } else { %>
         <li><a href="/register" class="<%= path === '/register' ? 'active' : '' %>">Register</a></li>
-        <li><a href="/login" class="<%= path === '/login' ? 'active' : '' %>">Login</a></li>
+        <li><a href="/login" class="<%= path === '/login' ? 'active' : '' %>"
+            style="background: var(--primary-color); color: white;">Login</a></li>
         <% } %>
   </ul>
 </nav>
