@@ -1,43 +1,50 @@
-<%- include('partials/head', { title: 'Login | Room for Improvement' }) %>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login | Room for Improvement</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <%- include('partials/nav') %>
 
-  <body>
-    <%- include('partials/nav') %>
+  <main>
+    <div id="error-message" class="error-hidden" style="color: red; margin-bottom: 10px;"></div>
+    <script>
+    const AUTO_FILL_TEST_CREDENTIALS = true; // Toggle: set to false to disable auto-fill
 
-      <main>
-        <div id="error-message" class="error-hidden"
-          style="color: var(--error-color); margin-bottom: 10px; text-align: center; display: none;"></div>
-        <script>
-          const urlParams = new URLSearchParams(window.location.search);
-          if (urlParams.has('error')) {
-            const errEl = document.getElementById('error-message');
-            errEl.textContent = "Email or password is incorrect";
-            errEl.classList.remove('error-hidden');
-            errEl.style.display = 'block';
-          }
-        </script>
+    // Show error message if login fails
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('error')) {
+        document.getElementById('error-message').textContent = "Email or password is incorrect";
+        document.getElementById('error-message').classList.remove('error-hidden');
+    }
 
-        <div style="max-width: 400px; margin: 2rem auto;">
-          <h1 style="text-align: center; margin-bottom: 2rem;">Login</h1>
-          <form method="POST" action="/login" class="form-container">
-            <div style="margin-bottom: 1rem;">
-              <label>Email (@uchicago.edu):</label>
-              <input type="email" name="email" required placeholder="you@uchicago.edu" />
-            </div>
-            <div style="margin-bottom: 1.5rem;">
-              <label>Password:</label>
-              <input type="password" name="password" required />
-            </div>
-            <button type="submit" style="width: 100%;">Login</button>
-            <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem;">
-              Don't have an account? <a href="/register">Register</a>
-            </p>
-          </form>
-        </div>
-      </main>
+    // Auto-fill test credentials when enabled
+    document.addEventListener('DOMContentLoaded', function () {
+        if (AUTO_FILL_TEST_CREDENTIALS) {
+            const emailInput = document.querySelector('input[name="email"]');
+            const passwordInput = document.querySelector('input[name="password"]');
+            if (emailInput) emailInput.value = 'test@uchicago.edu';
+            if (passwordInput) passwordInput.value = 'test';
+        }
+    });
+    </script>
+    <h1>Login</h1>
+    <form method="POST" action="/login">
+      <div>
+        <label>Email (@uchicago.edu):</label>
+        <input type="email" name="email" required />
+      </div>
+      <div>
+        <label>Password:</label>
+        <input type="password" name="password" required />
+      </div>
+      <button type="submit">Login</button>
+    </form>
+  </main>
 
-      <footer>
-        <p>&copy; 2025 Room for Improvement</p>
-      </footer>
-  </body>
-
-  </html>
+  <footer style="text-align:center; margin-top:3rem;">
+    <p>&copy; 2025 Room for Improvement</p>
+  </footer>
+</body>
+</html>
