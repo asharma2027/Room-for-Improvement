@@ -99,7 +99,7 @@ function readRooms(callback) {
     .catch(() => callback(null, []));
 }
 function writeRooms(rooms, callback) {
-  const columns = ['id','dorm','house','roomNumber'];
+  const columns = ['id', 'dorm', 'house', 'roomNumber'];
   stringify(rooms, { header: true, columns }, (err, output) => {
     if (err) return callback(err);
     fs.writeFile(ROOMS_CSV, output, 'utf8')
@@ -134,6 +134,13 @@ passport.use(new LocalStrategy({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Inject template locals available to all views
+app.use((req, res, next) => {
+  res.locals.path = req.path;
+  res.locals.user = req.user || (req.session && req.session.user) || null;
+  next();
+});
 
 // Nodemailer for email verification
 const transporter = nodemailer.createTransport({
@@ -205,7 +212,7 @@ app.post('/register', async (req, res) => {
   }
   const hashedPassword = await bcrypt.hash(password, 10);
   const token = crypto.randomBytes(20).toString('hex');
-  
+
   const newUser = {
     email: lowerEmail,
     hashedPassword,
@@ -293,11 +300,11 @@ function computeTopHousesCulture(rooms, limit = 3) {
   const results = [];
   for (const house in grouped) {
     const arr = grouped[house];
-    const avg = arr.reduce((a,b) => a+b, 0) / arr.length;
+    const avg = arr.reduce((a, b) => a + b, 0) / arr.length;
     results.push({ houseName: house, avg });
   }
   // sort descending (since higher is better for culture)
-  results.sort((a,b) => b.avg - a.avg);
+  results.sort((a, b) => b.avg - a.avg);
   return results.slice(0, limit);
 }
 
@@ -317,11 +324,11 @@ function computeTopHousesNoise(rooms, limit = 3) {
   const results = [];
   for (const house in grouped) {
     const arr = grouped[house];
-    const avg = arr.reduce((a,b) => a+b, 0) / arr.length;
+    const avg = arr.reduce((a, b) => a + b, 0) / arr.length;
     results.push({ houseName: house, avg });
   }
   // sort ascending (since lower is better for noise)
-  results.sort((a,b) => a.avg - b.avg);
+  results.sort((a, b) => a.avg - b.avg);
   return results.slice(0, limit);
 }
 
@@ -335,7 +342,7 @@ app.get('/map', ensureAuthenticated, (req, res) => {
 app.get('/rooms', ensureAuthenticated, (req, res) => {
   readRooms((err, rooms) => {
     if (err) return res.status(500).send('Error reading rooms CSV');
-    
+
     let filtered = rooms;
     // Optional search param
     const q = req.query.q || '';
@@ -362,9 +369,9 @@ app.get('/rooms', ensureAuthenticated, (req, res) => {
 
       const matching = allEntries.filter(e => e.roomId === r.id);
       if (matching.length > 0) {
-        matching.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+        matching.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
         const latest = matching[matching.length - 1];
-        
+
         if (latest.tags && latest.tags.length > 0) {
           r.tags = latest.tags.join(', ');
         }
@@ -420,7 +427,7 @@ app.get('/rooms/:id', ensureAuthenticated, (req, res) => {
 
     // Gather all entries for this room
     const allEntries = readRoomEntries().filter(e => e.roomId === roomId);
-    allEntries.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+    allEntries.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
     // The latest entry if any
     const latestEntry = allEntries.length > 0 ? allEntries[allEntries.length - 1] : null;
@@ -454,7 +461,7 @@ app.get('/rooms/:id', ensureAuthenticated, (req, res) => {
 app.post('/rooms/:id/submit', ensureAuthenticated, (req, res) => {
   const roomId = req.params.id;
   const { academicYear, tags, scalar_house_culture, scalar_outside_noise } = req.body;
-  
+
   let tagsArray = [];
   if (Array.isArray(tags)) {
     tagsArray = tags;
@@ -469,9 +476,9 @@ app.post('/rooms/:id/submit', ensureAuthenticated, (req, res) => {
   const userEmail = req.user.email;
 
   // check if user has an existing submission for same year
-  const existing = allEntries.find(e => 
-    e.roomId === roomId && 
-    e.userEmail === userEmail && 
+  const existing = allEntries.find(e =>
+    e.roomId === roomId &&
+    e.userEmail === userEmail &&
     e.academicYear === academicYear
   );
   if (existing) {
