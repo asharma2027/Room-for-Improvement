@@ -1,0 +1,573 @@
+<%- include('partials/head', { title: houseName + ' Board | Room for Improvement' }) %>
+
+    <body>
+        <%- include('partials/nav') %>
+
+        <style>
+            /* ── Board page variables ─────────────────────────────────────────── */
+            .board-wrap {
+                max-width: 1500px;
+                margin: 0 auto;
+                padding: 0rem 0.5rem 3rem;
+            }
+
+            /* ── Compact identity strip ───────────────────────────────────────── */
+            .board-identity {
+                display: flex;
+                align-items: center;
+                gap: 0.85rem;
+                padding: 0.9rem 1.25rem;
+                background: linear-gradient(135deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.42) 100%);
+                <% if (typeof dormBackground !== 'undefined' && dormBackground) { %>
+                background-image: linear-gradient(rgba(0,0,0,0.56), rgba(0,0,0,0.56)), url('<%= dormBackground %>');
+                background-size: cover;
+                background-position: center 35%;
+                <% } %>
+                border-radius: 0 0 1rem 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .board-emblem-img {
+                width: 42px;
+                height: 42px;
+                border-radius: 50%;
+                object-fit: cover;
+                background: #fff;
+                border: 2px solid rgba(255,255,255,0.28);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                flex-shrink: 0;
+            }
+
+            .board-identity-text {
+                flex: 1;
+                min-width: 0;
+            }
+            .board-identity-dorm {
+                font-size: 0.7rem;
+                font-weight: 600;
+                color: rgba(255,255,255,0.62);
+                text-transform: uppercase;
+                letter-spacing: 0.07em;
+                margin: 0;
+            }
+            .board-identity-name {
+                font-size: 1.2rem;
+                font-weight: 800;
+                color: #fff;
+                margin: 0;
+                line-height: 1.25;
+                text-shadow: 0 1px 4px rgba(0,0,0,0.35);
+            }
+            .board-identity-sub {
+                font-size: 0.7rem;
+                color: rgba(255,255,255,0.55);
+                margin: 0.45rem 0 0; /* Lowered slightly */
+            }
+
+            .board-back-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.3rem;
+                background: rgba(255,255,255,0.14);
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                border: 1px solid rgba(255,255,255,0.2);
+                border-radius: 2rem;
+                padding: 0.35rem 0.75rem;
+                color: rgba(255,255,255,0.9);
+                font-size: 0.75rem;
+                font-weight: 600;
+                text-decoration: none;
+                white-space: nowrap;
+                transition: background 0.18s;
+                flex-shrink: 0;
+            }
+            .board-back-btn:hover { background: rgba(255,255,255,0.24); }
+
+            /* ── Section label ────────────────────────────────────────────────── */
+            .section-eyebrow {
+                display: flex;
+                align-items: center;
+                gap: 0.45rem;
+                font-size: 0.88rem;
+                font-weight: 800;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                color: var(--text-secondary);
+                margin: 0 0 0.5rem;
+                padding-bottom: 0.25rem;
+                border-bottom: 1.5px solid var(--border-color);
+            }
+
+            /* ── Top information row (Trivia + Tips) ────────────────────────── */
+            .top-info-section {
+                display: flex;
+                flex-wrap: wrap;
+                background: #fff;
+                border: 1px solid var(--border-color);
+                border-radius: 1rem;
+                overflow: hidden;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+                margin-bottom: 1.5rem;
+            }
+            .top-info-column {
+                flex: 1;
+                min-width: 300px;
+                padding: 1.1rem 1.4rem 0.8rem;
+                display: flex;
+                flex-direction: column;
+            }
+            .top-info-column:first-child {
+                border-right: 1px solid var(--border-color);
+            }
+            @media (max-width: 650px) {
+                .top-info-column:first-child { border-right: none; border-bottom: 1px solid var(--border-color); }
+            }
+
+            .info-item {
+                display: flex;
+                gap: 0.6rem;
+                padding: 0.5rem 0 0.35rem 0; /* increased top padding to match added bottom padding */
+                border-bottom: 1px solid #f1f5f9;
+                font-size: 0.96rem; /* bigger size */
+                color: var(--text-primary);
+                line-height: 1.1; /* tighter line-height to offset vertical padding */
+                align-items: flex-start;
+            }
+            .info-item:last-child {
+                border-bottom: none;
+            }
+            .info-bullet {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: var(--primary-color);
+                margin-top: 0.35rem;
+                flex-shrink: 0;
+            }
+            .info-icon {
+                font-size: 1rem;
+                flex-shrink: 0;
+                margin-top: 0.05rem;
+            }
+            
+            /* Client-side slider pagination */
+            .info-page-wrapper {
+                overflow: hidden;
+                flex: 1;
+            }
+            .info-page-container {
+                display: flex;
+                transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            }
+            .info-page {
+                flex: 0 0 100%;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+            .info-pagination {
+                display: flex;
+                justify-content: flex-end;
+                gap: 0.4rem;
+                margin-top: 0.5rem;
+                align-items: center;
+                height: 30px;
+            }
+            .info-page-btn {
+                background: #f8f9fa;
+                border: 1px solid #e2e8f0;
+                border-radius: 0.4rem;
+                width: 28px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                color: var(--text-secondary);
+                transition: all 0.2s;
+                font-size: 1.1rem;
+                font-weight: bold;
+            }
+            .info-page-btn:hover:not([disabled]) { background: #edf2f7; color: var(--primary-color); }
+            .info-page-btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+
+            /* ── Floating Quotes (House Chatter) ────────────────────────────── */
+            @keyframes chatterFloat {
+                0% { transform: translateY(0px) rotate(0deg); }
+                25% { transform: translateY(-4px) rotate(0.5deg); }
+                50% { transform: translateY(0px) rotate(0deg); }
+                75% { transform: translateY(4px) rotate(-0.5deg); }
+                100% { transform: translateY(0px) rotate(0deg); }
+            }
+            .chatter-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1.5rem;
+                justify-content: center;
+                padding: 0.5rem 0 2rem;
+            }
+            .chatter-bubble {
+                background: transparent;
+                border-radius: 1.5rem;
+                border-bottom-left-radius: 0.25rem;
+                padding: 1.1rem 1.4rem;
+                border: none;
+                box-shadow: none;
+                max-width: 320px;
+                flex: 1 1 280px;
+                position: relative;
+                animation: chatterFloat 6s ease-in-out infinite;
+                transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            }
+            .chatter-bubble:hover {
+                transform: scale(1.05) translateY(-4px) !important;
+                z-index: 10;
+            }
+            .chatter-bubble:nth-child(even) {
+                animation-delay: -1.5s;
+                animation-duration: 7s;
+                border-bottom-left-radius: 1.5rem;
+                border-bottom-right-radius: 0.25rem;
+            }
+            .chatter-bubble:nth-child(3n) {
+                animation-delay: -3s;
+                animation-duration: 5s;
+            }
+            .chatter-bubble::before {
+                content: '\201C';
+                position: absolute;
+                top: 0.5rem;
+                left: -0.3rem;
+                font-size: 3.5rem;
+                color: rgba(0,0,0,0.08);
+                line-height: 1;
+                font-family: Georgia, serif;
+                z-index: 0;
+            }
+            .chatter-text {
+                font-size: 0.9rem;
+                font-style: italic;
+                color: var(--text-primary);
+                line-height: 1.5;
+                position: relative;
+                z-index: 1;
+            }
+            .chatter-author {
+                margin-top: 0.6rem;
+                font-size: 0.75rem;
+                color: var(--text-secondary);
+                font-weight: 600;
+                text-align: right;
+                position: relative;
+                z-index: 1;
+            }
+
+            /* ── Section Highlights ──────────────────────────────────────────── */
+            @keyframes highlightPulse {
+                0% { box-shadow: 0 0 0 0 rgba(128, 0, 0, 0); background-color: rgba(128, 0, 0, 0); }
+                50% { box-shadow: 0 0 0 6px rgba(128, 0, 0, 0.4); background-color: rgba(128, 0, 0, 0.15); border-radius: 1rem; }
+                100% { box-shadow: 0 0 0 0 rgba(128, 0, 0, 0); background-color: rgba(128, 0, 0, 0); }
+            }
+            .highlight-section {
+                animation: highlightPulse 1.5s ease-out 2;
+            }
+        </style>
+
+        <!-- ── Compact identity strip ── -->
+        <div class="board-identity">
+            <a href="/house/<%= encodeURIComponent(dormName) %>/<%= encodeURIComponent(houseName) %>" style="text-decoration:none; display:inline-block; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <% if (typeof houseEmblem !== 'undefined' && houseEmblem) { %>
+                <img src="<%= houseEmblem %>" alt="<%= houseName %>" class="board-emblem-img">
+                <% } else { %>
+                <div class="board-emblem-img" style="background:<%= houseColor %>; display:flex; align-items:center; justify-content:center;">
+                    <span style="color:white; font-weight:800; font-size:0.95rem;"><%= houseInitials %></span>
+                </div>
+                <% } %>
+            </a>
+            <div class="board-identity-text">
+                <p class="board-identity-dorm">
+                    <a href="/dorm/<%= encodeURIComponent(dormName) %>" style="color:inherit; text-decoration:underline;">
+                        <%= dormName.replace(/_/g,'-') %>
+                    </a>
+                </p>
+                <h1 class="board-identity-name"><%= houseName %> Board</h1>
+                <p class="board-identity-sub">Community trivia, quotes &amp; insider tips</p>
+            </div>
+            <a href="/house/<%= encodeURIComponent(dormName) %>/<%= encodeURIComponent(houseName) %>" class="board-back-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+                Back
+            </a>
+        </div>
+
+        <!-- ── Main content ── -->
+        <div class="board-wrap">
+
+            <!-- Top Side-by-Side: Trivia (left) + Tips (right) -->
+            <div class="top-info-section">
+                <!-- TRIVIA -->
+                <div class="top-info-column" id="trivia">
+                    <p class="section-eyebrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="#7c3aed"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>
+                        House Trivia
+                    </p>
+                    <% var triviaItems = ({
+                        'Burton-Judson': [
+                            'B-J was built in 1931 and is one of the oldest residential complexes on campus.',
+                            'The courtyard at B-J is one of the most photographed spots on the UChicago campus.',
+                            'Burton-Judson has six distinct houses, each with its own personality and lounge.',
+                            'The dining hall at B-J serves as a social hub — not just a place to eat.'
+                        ],
+                        'Woodlawn': [
+                            'Woodlawn Residential Commons opened in 2016, making it one of the newest dorms.',
+                            'Woodlawn has eleven houses — the most of any residential commons on campus.',
+                            'The building features a rooftop terrace with views of the city skyline.',
+                            'Woodlawn is directly across from the Midway Plaisance, great for morning runs.'
+                        ],
+                        'Snell_Hitchcock': [
+                            'Snell-Hitchcock is one of the only co-ed houses in the South Campus cluster.',
+                            'The tower rooms in Hitchcock are legendary for their panoramic views.',
+                            'S-H dates back to 1902 — more history than most campus buildings combined.',
+                            'Snell Hall has a grand common room students use for study groups all night.'
+                        ],
+                        'I-House': [
+                            'International House hosts students from over 100 countries every year.',
+                            'I-House has its own weekly cultural events, from film screenings to music nights.',
+                            'The building opened in 1932 and was designed to foster global community.',
+                            'I-House residents have access to a dedicated cultural programming budget.'
+                        ],
+                        'Max Palevsky': [
+                            'Max Palevsky is the northernmost residential commons, right next to Regenstein Library.',
+                            'The dorm has eight houses, each named after a UChicago donor or alum.',
+                            'Max P rooms are known for having above-average square footage for singles.',
+                            'The courtyard hosts free outdoor concerts each spring quarter.'
+                        ],
+                        'Renee_Granville-Grossman': [
+                            'RGG is the southernmost residential commons on campus, close to the Metra station.',
+                            'The dorm opened in 2010 as part of a major south campus residential expansion.',
+                            'RGG houses are smaller and tend to have a tighter-knit community feel.',
+                            'The building includes a 24-hour study lounge open to all RGG residents.'
+                        ]
+                    })[dormName] || [
+                        'UChicago residential houses each have their own unique traditions.',
+                        'House lounges are the unofficial headquarters of first-year social life.',
+                        'Many dorm buildings have architectural features worth looking up — literally.',
+                        'Every dorm has its own distinct culture that completely changes your college experience.'
+                    ]; 
+                    
+                    // Group into pages of 2 items each
+                    var triviaPages = [];
+                    for(var i=0; i<triviaItems.length; i+=2) {
+                        triviaPages.push(triviaItems.slice(i, i+2));
+                    }
+                    %>
+                    
+                    <div class="info-page-wrapper">
+                        <div class="info-page-container" id="trivia-slider" data-current="0" data-total="<%= triviaPages.length %>">
+                            <% triviaPages.forEach(function(page) { %>
+                                <div class="info-page">
+                                    <% page.forEach(function(item) { %>
+                                    <div class="info-item">
+                                        <span class="info-bullet"></span>
+                                        <p class="trivia-text" style="margin:0;"><%= item %></p>
+                                    </div>
+                                    <% }); %>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                    <% if (triviaPages.length > 1) { %>
+                    <div class="info-pagination">
+                        <button class="info-page-btn" onclick="slideInfo('trivia', -1)" id="trivia-prev" disabled>←</button>
+                        <button class="info-page-btn" onclick="slideInfo('trivia', 1)" id="trivia-next">→</button>
+                    </div>
+                    <% } %>
+                </div>
+
+                <!-- TIPS -->
+                <div class="top-info-column" id="tips">
+                    <p class="section-eyebrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="#ea580c"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                        Insider Tips
+                    </p>
+                    <% var tipEmojis = ['📍','🔑','🌅','⚡','🧊','🚿','📚','🎯'];
+                       var tipItems = ({
+                        'Burton-Judson': [
+                            'Claim a study spot in the common room early — they fill up around 8pm.',
+                            'The laundry machines on odd-numbered floors are almost always available.',
+                            'Bring your own fan. Old buildings get warm and windows only open a crack.',
+                            'The bike storage near the south entrance has more space than most people realize.'
+                        ],
+                        'Woodlawn': [
+                            'Upper-floor east-facing rooms get sunrise light — great if you\'re a morning person.',
+                            'The rooftop lounge is accessible from floor 7 and almost always empty on weekdays.',
+                            'Reserve the house common room in advance for any group event — it books up fast.',
+                            'The Metra is a 10-minute walk, making weekend trips downtown very feasible.'
+                        ],
+                        'Snell_Hitchcock': [
+                            'Tower rooms look amazing but get cold in winter — pack an extra blanket.',
+                            'The grand common room is best for studying between 9am and noon on weekdays.',
+                            'Room selection: floors 3–5 strike the best balance of light and quiet.',
+                            'The building has surprisingly good cell reception for a historic structure.'
+                        ],
+                        'I-House': [
+                            'Cultural event invites come through the house email list — subscribe early.',
+                            'The garden courtyard is almost always quieter than indoor common spaces.',
+                            'Rooms on the north side face the street; south-side rooms face the quad.',
+                            'The dining program often features international cuisine — check weekly menus.'
+                        ],
+                        'Max Palevsky': [
+                            'Regenstein Library has lockers you can rent by the quarter — invaluable.',
+                            'The main courtyard is the best spot for an outdoor study session in spring.',
+                            'Rooms on the top floors of the east wing get the longest afternoon light.',
+                            'The house lounge kitchen gets restocked with event food late on Friday nights.'
+                        ],
+                        'Renee_Granville-Grossman': [
+                            'The 24-hour study lounge is genuinely underused — golden for late-night cramming.',
+                            'South-facing rooms get the most direct light throughout the day.',
+                            'The Metra stop is 5 minutes on foot — fastest route downtown on campus.',
+                            'Keep an eye on the house bulletin board for unofficial subletting during breaks.'
+                        ]
+                    })[dormName] || [
+                        'Introduce yourself to your RA in week one — they know everything.',
+                        'Upper floors tend to be quieter and get more natural light.',
+                        'Always check the house group chat before buying something for the common room.',
+                        'The main floor printers are reliable, but have a backup plan for finals week.'
+                    ]; 
+                    
+                    var tipsPages = [];
+                    for(var i=0; i<tipItems.length; i+=2) {
+                        tipsPages.push(tipItems.slice(i, i+2));
+                    }
+                    %>
+                    <div class="info-page-wrapper">
+                        <div class="info-page-container" id="tips-slider" data-current="0" data-total="<%= tipsPages.length %>">
+                            <% tipsPages.forEach(function(page, pageIdx) { %>
+                                <div class="info-page">
+                                    <% page.forEach(function(tip, idx) { 
+                                        var emojiIndex = (pageIdx * 2) + idx;
+                                    %>
+                                    <div class="info-item">
+                                        <span class="info-icon"><%= tipEmojis[emojiIndex % tipEmojis.length] %></span>
+                                        <p class="trivia-text" style="margin:0;"><%= tip %></p>
+                                    </div>
+                                    <% }); %>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                    <% if (tipsPages.length > 1) { %>
+                    <div class="info-pagination">
+                        <button class="info-page-btn" onclick="slideInfo('tips', -1)" id="tips-prev" disabled>←</button>
+                        <button class="info-page-btn" onclick="slideInfo('tips', 1)" id="tips-next">→</button>
+                    </div>
+                    <% } %>
+                </div>
+            </div><!-- end top-info-section -->
+
+            <!-- QUOTES (House Chatter) -->
+            <div id="quotes" style="margin-top:2rem;">
+                <div class="chatter-container">
+                    <% var quoteItems = ({
+                        'Burton-Judson': [
+                            {q:'The courtyard in winter with snow is something you\'ll never forget.'},
+                            {q:'My RA was genuinely the most helpful person I met first year.'},
+                            {q:'B-J has this old-campus energy that just can\'t be replicated.'},
+                            {q:'I made my closest friends in the first two weeks of living here.'}
+                        ],
+                        'Woodlawn': [
+                            {q:'Modern, clean, and social. Couldn\'t have asked for a better first year.'},
+                            {q:'The house culture at Woodlawn is real — you actually feel like you belong.'},
+                            {q:'Love the views from the upper floors. Sunsets hit different up there.'},
+                            {q:'Eleven houses means there\'s always something going on somewhere.'}
+                        ],
+                        'Snell_Hitchcock': [
+                            {q:'Living in the tower was a bucket-list experience. Absolutely stunning views.'},
+                            {q:'S-H has this gothic charm that grows on you the longer you stay.'},
+                            {q:'The community dinners our house put on were the highlight of my year.'},
+                            {q:'Old dorm, yes — but the character and history more than make up for it.'}
+                        ],
+                        'I-House': [
+                            {q:'I came from overseas and I-House made me feel at home immediately.'},
+                            {q:'The cultural events we had every weekend were genuinely world-class.'},
+                            {q:'You\'ll meet someone from literally everywhere. It\'s incredible.'},
+                            {q:'The building has a warmth that\'s hard to describe but easy to feel.'}
+                        ],
+                        'Max Palevsky': [
+                            {q:'Being next to Reg meant I could roll out of bed and into a study session.'},
+                            {q:'Max P rooms are bigger than I expected. Really helped with sanity.'},
+                            {q:'The courtyard in spring is the best place on campus to decompress.'},
+                            {q:'Eight houses means you can always find your people, whatever your vibe.'}
+                        ],
+                        'Renee_Granville-Grossman': [
+                            {q:'The tight-knit community at RGG is something you won\'t find at bigger dorms.'},
+                            {q:'Having the Metra this close saved me so much time on trips downtown.'},
+                            {q:'The study lounge is always open and surprisingly never overcrowded.'},
+                            {q:'RGG feels like a hidden gem — quieter, but genuinely great community.'}
+                        ]
+                    })[dormName] || [
+                        {q:'The best part of living here was everything I didn\'t expect.'},
+                        {q:'You find your people faster than you think you will.'},
+                        {q:'House culture is what you make it — but it usually makes itself.'}
+                    ]; %>
+                    <% quoteItems.forEach(function(item) { %>
+                    <div class="chatter-bubble">
+                        <p class="chatter-text"><%= item.q %></p>
+                        <p class="chatter-author">anonymous · <span style="color:<%= houseColor %>;"><%= houseName %></span></p>
+                    </div>
+                    <% }); %>
+                </div>
+            </div>
+
+            
+
+        </div>
+
+        <footer><p>&copy; 2025 Room for Improvement</p></footer>
+
+        <script>
+        // Pagination logic for slider
+        function slideInfo(sectionId, dir) {
+            var slider = document.getElementById(sectionId + '-slider');
+            if (!slider) return;
+            var current = parseInt(slider.getAttribute('data-current'), 10);
+            var total = parseInt(slider.getAttribute('data-total'), 10);
+            var next = current + dir;
+            if (next < 0 || next >= total) return;
+            
+            slider.style.transform = 'translateX(-' + (next * 100) + '%)';
+            slider.setAttribute('data-current', next);
+            
+            document.getElementById(sectionId + '-prev').disabled = (next === 0);
+            document.getElementById(sectionId + '-next').disabled = (next === total - 1);
+        }
+
+        // Smooth-scroll to anchor on page load if hash is present and add highlight
+        (function() {
+            function highlightAnchor() {
+                var hash = window.location.hash;
+                if (!hash) return;
+                var el = document.querySelector(hash);
+                if (!el) return;
+                
+                // Add highlight class
+                el.classList.add('highlight-section');
+                setTimeout(function() {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 120);
+
+                // Remove highlight class after animation finishes (3s)
+                setTimeout(function() {
+                    el.classList.remove('highlight-section');
+                }, 3000);
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', highlightAnchor);
+            } else {
+                highlightAnchor();
+            }
+        })();
+        </script>
+
+    </body>
+</html>

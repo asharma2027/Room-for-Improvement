@@ -1,0 +1,306 @@
+<%- include('partials/head', { title: dormName + ' Rankings | Room for Improvement' }) %>
+
+    <body>
+        <%- include('partials/nav') %>
+
+            <main style="max-width:1300px; margin:0 auto; padding:2rem 1.5rem;">
+
+                <!-- Header -->
+                <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem;">
+                    <a href="/map"
+                        style="display:flex; align-items:center; gap:0.4rem; color:var(--text-secondary); font-size:0.9rem; font-weight:500;">
+                        ← Map
+                    </a>
+                    <span style="color:var(--border-color);">|</span>
+                    <h1 style="margin:0; font-size:1.75rem;">
+                        <%= dormName.replace(/_/g, '-' ) %> — House Rankings
+                    </h1>
+                </div>
+
+                <!-- Emblem Strip -->
+                <div
+                    style="background:#fff; border-radius:1rem; box-shadow:var(--shadow-md); padding:1.25rem 1.5rem; margin-bottom:1.75rem;">
+                    <p
+                        style="margin:0 0 1rem; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-secondary); font-weight:600;">
+                        Click emblem to highlight in rankings, double-click to access house page
+                    </p>
+                    <div id="emblem-strip" style="display:flex; flex-wrap:wrap; gap:1rem; align-items:center;">
+                        <% rankings.forEach((h, i)=> { %>
+                            <div class="emblem" data-house="<%= i %>" onclick="selectHouse(<%= i %>)"
+                                ondblclick="window.location='/house/<%= encodeURIComponent(dormName) %>/<%= encodeURIComponent(h.name) %>'"
+                                title="<%= h.name %>"
+                                style="display:flex; flex-direction:column; align-items:center; gap:0.35rem; cursor:pointer; transition:transform 0.2s;">
+                                <div class="emblem-circle" id="emblem-<%= i %>" style="width:52px; height:52px; border-radius:50%; background:<%= h.color %>; <%= h.emblem ? `background-image:url('${h.emblem}'); background-size:cover; background-position:center; background-color:#fff;` : '' %>
+                        display:flex; align-items:center; justify-content:center;
+                        box-shadow: 0 3px 10px rgba(0,0,0,0.18);
+                        border: 3px solid transparent; transition: all 0.25s; position:relative; overflow:hidden;">
+                                    <% if (!h.emblem) { %>
+                                        <span
+                                            style="color:white; font-weight:800; font-size:0.85rem; letter-spacing:0.02em;">
+                                            <%= h.initials %>
+                                        </span>
+                                        <% } %>
+                                </div>
+                                <span
+                                    style="font-size:0.7rem; font-weight:600; color:var(--text-secondary); text-align:center; max-width:64px; line-height:1.2;">
+                                    <%= h.name %>
+                                </span>
+                            </div>
+                            <% }) %>
+                    </div>
+                </div>
+
+                <!-- Rankings Board -->
+                <div id="rankings-board"
+                    style="display:grid; grid-template-columns: repeat(5, 1fr); gap:1rem; align-items:start;">
+
+                    <% const categories=[ { key: 'culture' , icon: '🏆' , label: 'House Culture' ,
+                        note: 'Higher = better' }, { key: 'quietness' , icon: '🔇' , label: 'Quietness' ,
+                        note: 'Higher = quieter' }, { key: 'sunlight' , icon: '☀️' , label: 'Sunlight' ,
+                        note: 'Higher = sunnier' }, { key: 'roomSize' , icon: '📦' , label: 'Room Size' ,
+                        note: 'Higher = bigger' }, { key: 'tempControl' , icon: '❄️' , label: 'Temp Control' ,
+                        note: 'Higher = better HVAC' } ]; %>
+
+                        <% categories.forEach((cat, catIdx)=> { %>
+                            <div class="ranking-column-wrapper">
+                                <!-- Column header -->
+                                <div
+                                    style="text-align:center; padding:0.85rem 0.5rem 0.65rem; background:#fff; border-radius:0.75rem 0.75rem 0 0; border-bottom:2px solid var(--border-color); box-shadow:var(--shadow-sm);">
+                                    <div style="font-size:2rem; line-height:1; margin-bottom:0.3rem;">
+                                        <%= cat.icon %>
+                                    </div>
+                                    <div style="font-weight:700; font-size:0.9rem; color:var(--text-primary);">
+                                        <%= cat.label %>
+                                    </div>
+                                    <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:0.2rem;">
+                                        <%= cat.note %>
+                                    </div>
+                                </div>
+
+                                <!-- Scrollable list -->
+                                <div class="ranking-scroll" id="scroll-<%= catIdx %>" style="background:#fff; border-radius:0 0 0.75rem 0.75rem; box-shadow:var(--shadow-md);
+                      height:440px; overflow-y:scroll; scroll-behavior:smooth;">
+                                    <% // Sort houses by this category (descending if higher is better) const
+                                        sorted=[...rankings].sort((a, b)=> {
+                                        const va = a.scores[cat.key];
+                                        const vb = b.scores[cat.key];
+                                        if (va === null && vb === null) return 0;
+                                        if (va === null) return 1;
+                                        if (vb === null) return -1;
+                                        return vb - va;
+                                        });
+                                        %>
+
+                                        <!-- Podium for Top 3 -->
+                                        <% if (sorted.length> 0) { %>
+                                            <div class="podium-container">
+                                                <!-- 2nd Place -->
+                                                <% if (sorted[1]) { const h2=sorted[1]; const
+                                                    h2Idx=rankings.findIndex(r=> r.name === h2.name);
+                                                    %>
+                                                    <div class="podium-place podium-2"
+                                                        id="row-<%= catIdx %>-<%= h2Idx %>"
+                                                        data-house-idx="<%= h2Idx %>"
+                                                        onclick="window.location='/house/<%= encodeURIComponent(dormName) %>/<%= encodeURIComponent(h2.name) %>'">
+                                                        <div class="podium-name">
+                                                            <%= h2.name %>
+                                                        </div>
+                                                        <div class="podium-emblem"
+                                                            style="background:<%= h2.color %>; <%= h2.emblem ? `background-image:url('${h2.emblem}'); background-size:cover; background-position:center; background-color:#fff;` : '' %>">
+                                                            <% if (!h2.emblem) { %>
+                                                                <%= h2.initials %>
+                                                                    <% } %>
+                                                        </div>
+                                                        <div class="podium-step">2</div>
+                                                    </div>
+                                                    <% } %>
+                                                        <!-- 1st Place -->
+                                                        <% if (sorted[0]) { const h1=sorted[0]; const
+                                                            h1Idx=rankings.findIndex(r=> r.name === h1.name);
+                                                            %>
+                                                            <div class="podium-place podium-1"
+                                                                id="row-<%= catIdx %>-<%= h1Idx %>"
+                                                                data-house-idx="<%= h1Idx %>"
+                                                                onclick="window.location='/house/<%= encodeURIComponent(dormName) %>/<%= encodeURIComponent(h1.name) %>'">
+                                                                <div class="podium-name" style="font-size:0.75rem;">
+                                                                    <%= h1.name %>
+                                                                </div>
+                                                                <div class="podium-emblem"
+                                                                    style="background:<%= h1.color %>; <%= h1.emblem ? `background-image:url('${h1.emblem}'); background-size:cover; background-position:center; background-color:#fff;` : '' %>">
+                                                                    <% if (!h1.emblem) { %>
+                                                                        <%= h1.initials %>
+                                                                            <% } %>
+                                                                </div>
+                                                                <div class="podium-step">1</div>
+                                                            </div>
+                                                            <% } %>
+                                                                <!-- 3rd Place -->
+                                                                <% if (sorted[2]) { const h3=sorted[2]; const
+                                                                    h3Idx=rankings.findIndex(r=> r.name === h3.name);
+                                                                    %>
+                                                                    <div class="podium-place podium-3"
+                                                                        id="row-<%= catIdx %>-<%= h3Idx %>"
+                                                                        data-house-idx="<%= h3Idx %>"
+                                                                        onclick="window.location='/house/<%= encodeURIComponent(dormName) %>/<%= encodeURIComponent(h3.name) %>'">
+                                                                        <div class="podium-name">
+                                                                            <%= h3.name %>
+                                                                        </div>
+                                                                        <div class="podium-emblem"
+                                                                            style="background:<%= h3.color %>; <%= h3.emblem ? `background-image:url('${h3.emblem}'); background-size:cover; background-position:center; background-color:#fff;` : '' %>">
+                                                                            <% if (!h3.emblem) { %>
+                                                                                <%= h3.initials %>
+                                                                                    <% } %>
+                                                                        </div>
+                                                                        <div class="podium-step">3</div>
+                                                                    </div>
+                                                                    <% } %>
+                                            </div>
+                                            <% } %>
+
+                                                <!-- Rest of the ranks (4+) -->
+                                                <% sorted.forEach((h, rank)=> {
+                                                    if (rank < 3) return; // Skip top 3, they are on podium const
+                                                        houseIdx=rankings.findIndex(r=> r.name === h.name);
+                                                        %>
+                                                        <div class="rank-row" id="row-<%= catIdx %>-<%= houseIdx %>"
+                                                            data-house-idx="<%= houseIdx %>"
+                                                            onclick="window.location='/house/<%= encodeURIComponent(dormName) %>/<%= encodeURIComponent(h.name) %>'"
+                                                            style="display:flex; align-items:center; gap:0.65rem; padding:0.65rem 0.85rem;
+                                          border-bottom:1px solid #f3f4f6; cursor:pointer; transition:background 0.15s;"
+                                                            onmouseenter="this.style.background='#fdf2f2'"
+                                                            onmouseleave="restoreRowBg(this)">
+
+                                                            <div style="width:24px; text-align:center; flex-shrink:0;">
+                                                                <span
+                                                                    style="font-size:0.85rem; font-weight:800; color:#888;">
+                                                                    <%= rank + 1 %>.
+                                                                </span>
+                                                            </div>
+
+                                                            <div style="flex:1; min-width:0;">
+                                                                <div
+                                                                    style="font-weight:600; font-size:0.85rem; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                                                    <%= h.name %>
+                                                                </div>
+                                                            </div>
+
+                                                            <div style="text-align:right;">
+                                                                <% if (h.scores[cat.key] !==null) { %>
+                                                                    <div
+                                                                        style="font-size:0.75rem; font-weight:700; color:var(--text-secondary);">
+                                                                        <%= h.scores[cat.key].toFixed(2) %>
+                                                                    </div>
+                                                                    <% } else { %>
+                                                                        <div
+                                                                            style="font-size:0.7rem; color:#ccc; font-style:italic;">
+                                                                            --
+                                                                        </div>
+                                                                        <% } %>
+                                                            </div>
+                                                        </div>
+                                                        <% }) %>
+                                </div>
+                            </div>
+                            <% }) %>
+                </div>
+
+                <!-- Hint -->
+                <p style="text-align:center; color:var(--text-secondary); font-size:0.85rem; margin-top:1.25rem;">
+                    💡 Click any row to view all rooms in that house &nbsp;·&nbsp; Click an emblem above to slot-scroll
+                    all rankings
+                </p>
+            </main>
+
+            <footer>
+                <p>&copy; 2025 Room for Improvement</p>
+            </footer>
+
+            <script id="rankings-data" type="application/json"><%- rankingsJson %></script>
+            <script>
+                const rankings = JSON.parse(document.getElementById('rankings-data').textContent);
+                const NUM_CATS = 5;
+                let selectedHouseIdx = null;
+
+                // Build sorted index arrays (one per category) so we know position of each house in each list
+                const catKeys = ['culture', 'quietness', 'sunlight', 'roomSize', 'tempControl'];
+                const sortedByCategory = catKeys.map(key =>
+                    [...rankings]
+                        .map((h, i) => ({ ...h, origIdx: i }))
+                        .sort((a, b) => {
+                            const va = a.scores[key], vb = b.scores[key];
+                            if (va === null && vb === null) return 0;
+                            if (va === null) return 1; if (vb === null) return -1;
+                            return vb - va;
+                        })
+                );
+
+                function selectHouse(houseIdx) {
+                    // Deselect previous
+                    if (selectedHouseIdx !== null) {
+                        deselectHouse(selectedHouseIdx);
+                    }
+                    if (selectedHouseIdx === houseIdx) { selectedHouseIdx = null; return; }
+                    selectedHouseIdx = houseIdx;
+
+                    // Highlight emblem
+                    const embEl = document.getElementById('emblem-' + houseIdx);
+                    embEl.style.border = '3px solid white';
+                    embEl.style.boxShadow = '0 0 0 3px ' + rankings[houseIdx].color + ', 0 4px 16px rgba(0,0,0,0.3)';
+                    embEl.style.transform = 'scale(1.15)';
+
+                    // Slot-scroll each column to center this house
+                    for (let catIdx = 0; catIdx < NUM_CATS; catIdx++) {
+                        scrollToHouse(catIdx, houseIdx);
+                        highlightRow(catIdx, houseIdx);
+                    }
+                }
+
+                function deselectHouse(houseIdx) {
+                    const embEl = document.getElementById('emblem-' + houseIdx);
+                    if (embEl) {
+                        embEl.style.border = '3px solid transparent';
+                        embEl.style.boxShadow = '0 3px 10px rgba(0,0,0,0.18)';
+                        embEl.style.transform = '';
+                    }
+                    for (let catIdx = 0; catIdx < NUM_CATS; catIdx++) {
+                        unhighlightRow(catIdx, houseIdx);
+                    }
+                }
+
+                function scrollToHouse(catIdx, houseIdx) {
+                    const scroll = document.getElementById('scroll-' + catIdx);
+                    const row = document.getElementById('row-' + catIdx + '-' + houseIdx);
+                    if (!scroll || !row) return;
+                    // Center the row within the scrollable container
+                    const rowTop = row.offsetTop;
+                    const rowH = row.offsetHeight;
+                    const containerH = scroll.clientHeight;
+                    const target = rowTop - (containerH / 2) + (rowH / 2);
+                    scroll.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+                }
+
+                function highlightRow(catIdx, houseIdx) {
+                    const row = document.getElementById('row-' + catIdx + '-' + houseIdx);
+                    if (row) {
+                        row.style.background = rankings[houseIdx].color + '22';
+                        row.style.borderLeft = '4px solid ' + rankings[houseIdx].color;
+                    }
+                }
+
+                function unhighlightRow(catIdx, houseIdx) {
+                    const row = document.getElementById('row-' + catIdx + '-' + houseIdx);
+                    if (row) { row.style.background = ''; row.style.borderLeft = ''; }
+                }
+
+                function restoreRowBg(el) {
+                    const idx = parseInt(el.getAttribute('data-house-idx'));
+                    if (idx === selectedHouseIdx) {
+                        el.style.background = rankings[idx].color + '22';
+                    } else {
+                        el.style.background = '';
+                    }
+                }
+            </script>
+    </body>
+
+    </html>

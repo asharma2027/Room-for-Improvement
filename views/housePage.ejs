@@ -1,0 +1,592 @@
+<%- include('partials/head', { title: houseName + ' | Room for Improvement' }) %>
+
+    <body>
+        <%- include('partials/nav') %>
+
+        <style>
+            /* Preview pill shared styles */
+            .preview-pill {
+                position: absolute;
+                z-index: 10;
+                display: flex;
+                align-items: center;
+                gap: 0.55rem;
+                padding: 0.5rem 0.8rem 0.5rem 0.65rem;
+                background: rgba(255,255,255,0.12);
+                backdrop-filter: blur(14px) saturate(1.8);
+                -webkit-backdrop-filter: blur(14px) saturate(1.8);
+                border: 1px solid rgba(255,255,255,0.2);
+                border-radius: 2rem;
+                text-decoration: none;
+                color: rgba(255,255,255,0.95);
+                text-align: left;
+                max-width: 230px;
+                box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+                transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.18s ease;
+                cursor: pointer;
+                overflow: hidden;
+            }
+            .preview-pill:hover {
+                background: rgba(255,255,255,0.22);
+                box-shadow: 0 6px 28px rgba(0,0,0,0.35);
+                transform: translateY(-2px);
+            }
+            .preview-pill-icon {
+                flex-shrink: 0;
+                width: 15px;
+                height: 15px;
+                opacity: 0.82;
+            }
+            .preview-pill-text {
+                font-size: 0.7rem;
+                font-weight: 500;
+                letter-spacing: 0.01em;
+                line-height: 1.4;
+                flex: 1;
+                min-width: 0;
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                position: relative;
+            }
+            /* Swipe transition for rotating text */
+            .preview-pill-text.swiping-up {
+                transform: translateY(-120%);
+                opacity: 0;
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+            }
+            .preview-pill-text.preparing {
+                transform: translateY(120%);
+                opacity: 0;
+                transition: none; /* Instant reset to bottom */
+            }
+            .preview-pill-text.visible {
+                transform: translateY(0);
+                opacity: 1;
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+            }
+            .preview-pill-arrow {
+                flex-shrink: 0;
+                opacity: 0.8;
+            }
+        </style>
+
+            <main style="max-width:1200px; margin:0 auto; padding:2rem 1.5rem;">
+
+                <!-- Header Banner -->
+                <div class="house-banner" style="background-color: var(--primary-dark); <% if (typeof dormBackground !== 'undefined' && dormBackground) { %>background-image: linear-gradient(rgba(0,0,0,0.48), rgba(0,0,0,0.72)), url('<%= dormBackground %>'); background-size: cover; background-position: center;<% } %> position: relative; overflow: visible;">
+
+                    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; z-index:2;">
+                        <!-- House emblem -->
+                        <% if (typeof houseEmblem !== 'undefined' && houseEmblem) { %>
+                        <img src="<%= houseEmblem %>" alt="<%= houseName %> emblem" style="width:72px; height:72px; border-radius:50%; box-shadow: 0 4px 16px rgba(0,0,0,0.4); border: 3px solid rgba(255,255,255,0.2); margin-bottom:1rem; object-fit: cover; background-color: #fff;">
+                        <% } else { %>
+                        <div style="width:72px; height:72px; border-radius:50%; background:<%= houseColor %>;
+                                display:flex; align-items:center; justify-content:center;
+                                box-shadow: 0 4px 16px rgba(0,0,0,0.4); border: 3px solid rgba(255,255,255,0.2); margin-bottom:1rem;">
+                            <span style="color:white; font-weight:800; font-size:1.5rem; letter-spacing:0.02em;">
+                                <%= houseInitials %>
+                            </span>
+                        </div>
+                        <% } %>
+                        <h1 style="margin:0; font-size:2.5rem; font-weight:800; text-shadow:0 2px 4px rgba(0,0,0,0.5); color:white; text-align:center; display:flex; flex-direction:column; align-items:center;">
+                            <span style="border-bottom:none; text-decoration:none;"><%= houseName %></span>
+                            <div style="font-size: 1.35rem; font-weight:600; margin-top:0.25rem; white-space:nowrap; text-shadow:0 1px 3px rgba(0,0,0,0.4);">
+                                (<a href="/dorm/<%= encodeURIComponent(dormName) %>" style="color:rgba(255,255,255,0.85); text-decoration:none;"><%= dormName.replace(/_/g,'-') %></a>)
+                            </div>
+                        </h1>
+                    </div>
+
+                    <!-- ── PREVIEW PILL: TRIVIA (top-left) ── -->
+                    <a class="preview-pill" id="pill-trivia"
+                       href="/house/<%= encodeURIComponent(dormName) %>/<%= encodeURIComponent(houseName) %>/board#trivia"
+                       style="top: 1rem; left: 1.25rem;"
+                       title="House Trivia">
+                        <!-- Lightbulb icon -->
+                        <svg class="preview-pill-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgba(255,255,255,0.85)">
+                            <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/>
+                        </svg>
+                        <span class="preview-pill-text visible" id="pill-trivia-text">Loading…</span>
+                        <!-- Arrow -->
+                        <svg class="preview-pill-arrow" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M13 6l6 6-6 6"/>
+                        </svg>
+                    </a>
+
+                    <!-- ── PREVIEW PILL: STATIC BOARD LINK (top-right) ── -->
+                    <a class="preview-pill" id="pill-board"
+                       href="/house/<%= encodeURIComponent(dormName) %>/<%= encodeURIComponent(houseName) %>/board"
+                       style="top: 1rem; right: 1.25rem; background: rgba(128, 0, 0, 0.85); border-color: rgba(255,100,100,0.3);"
+                       title="House Board">
+                        <svg class="preview-pill-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgba(255,255,255,0.95)">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-7-2h2v-2h-2v2zm0-4h2V7h-2v6z"/>
+                        </svg>
+                        <span class="preview-pill-text visible" style="color:white; font-weight:600;">Click to access house board</span>
+                        <svg class="preview-pill-arrow" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.95)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M13 6l6 6-6 6"/>
+                        </svg>
+                    </a>
+
+                    <!-- ── PREVIEW PILL: QUOTES (bottom-right, raised ~half height) ── -->
+                    <a class="preview-pill" id="pill-quotes"
+                       href="/house/<%= encodeURIComponent(dormName) %>/<%= encodeURIComponent(houseName) %>/board#quotes"
+                       style="bottom: 2.6rem; right: 1.25rem;"
+                       title="Anonymous Quotes">
+                        <!-- Double-quote / speech icon -->
+                        <svg class="preview-pill-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgba(255,255,255,0.85)">
+                            <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
+                        </svg>
+                        <span class="preview-pill-text visible" id="pill-quotes-text">Loading…</span>
+                        <svg class="preview-pill-arrow" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M13 6l6 6-6 6"/>
+                        </svg>
+                    </a>
+
+                    <!-- ── PREVIEW PILL: INSIDER TIPS (bottom-left, level with quotes) ── -->
+                    <a class="preview-pill" id="pill-tips"
+                       href="/house/<%= encodeURIComponent(dormName) %>/<%= encodeURIComponent(houseName) %>/board#tips"
+                       style="bottom: 2.6rem; left: 1.25rem;"
+                       title="Insider Tips">
+                        <!-- Map-pin / location icon -->
+                        <svg class="preview-pill-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgba(255,255,255,0.85)">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
+                        <span class="preview-pill-text visible" id="pill-tips-text">Loading…</span>
+                        <svg class="preview-pill-arrow" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M13 6l6 6-6 6"/>
+                        </svg>
+                    </a>
+
+                </div><!-- end house-banner -->
+
+                <!-- Inline Stats Row -->
+                <div class="house-stats-row" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:nowrap; overflow-x:auto;">
+                    <% const ratedRooms=rooms.filter(r=> r.houseCultureVal || r.outsideNoiseVal);
+                        const cultureRated = rooms.filter(r => r.houseCultureVal);
+                        const avgCulture = cultureRated.length ? (cultureRated.reduce((s,r) => s +
+                        parseFloat(r.houseCultureVal), 0) / cultureRated.length).toFixed(1) : null;
+                        const noiseRated = rooms.filter(r => r.outsideNoiseVal);
+                        const avgNoise = noiseRated.length ? (noiseRated.reduce((s,r) => s +
+                        parseFloat(r.outsideNoiseVal), 0) / noiseRated.length).toFixed(1) : null;
+                        %>
+                        <div style="display:flex; gap:1rem; flex-wrap:nowrap; align-items:center;">
+                            <div class="house-stat-mini">
+                                <span class="house-stat-val" style="color:<%= houseColor %>;">
+                                    <%= rooms.length %>
+                                </span>
+                                <span class="house-stat-lbl">Total Rooms</span>
+                            </div>
+                            <div class="house-stat-mini"
+                                style="border-left:1px solid var(--border-color); padding-left:1rem;">
+                                <span class="house-stat-val" style="color:var(--accent-color);">
+                                    <%= ratedRooms.length> 0 ? ratedRooms.length : '—' %>
+                                </span>
+                                <span class="house-stat-lbl">Reviews</span>
+                            </div>
+                            <% if (avgCulture !==null) { %>
+                                <div class="house-stat-mini"
+                                    style="border-left:1px solid var(--border-color); padding-left:1rem;">
+                                    <span class="house-stat-val" style="color:var(--success-color);">
+                                        <%= avgCulture %>/5
+                                    </span>
+                                    <span class="house-stat-lbl">Culture</span>
+                                </div>
+                                <% } %>
+                                    <% if (avgNoise !==null) { %>
+                                        <div class="house-stat-mini"
+                                            style="border-left:1px solid var(--border-color); padding-left:1rem;">
+                                            <span class="house-stat-val" style="color:var(--error-color);">
+                                                <%= avgNoise %>/5
+                                            </span>
+                                            <span class="house-stat-lbl">Noise</span>
+                                        </div>
+                                        <% } %>
+                        </div>
+                        
+                        <!-- House Rankings Display -->
+                        <% if (typeof houseRanks !== 'undefined' && houseRanks) { 
+                            const categoryIcons = {
+                                culture: { icon: '🏆', label: 'Culture' },
+                                quietness: { icon: '🔇', label: 'Quietness' },
+                                sunlight: { icon: '☀️', label: 'Sunlight' },
+                                roomSize: { icon: '📦', label: 'Room Size' },
+                                tempControl: { icon: '❄️', label: 'Temp Control' }
+                            };
+                            const activeRanks = Object.entries(houseRanks).filter(([k,v]) => v !== null);
+                            if (activeRanks.length > 0) {
+                        %>
+                            <div style="display:flex; gap:0.75rem; flex-wrap:nowrap; align-items:center; padding-left:1rem; border-left:1px solid var(--border-color); margin-left:auto;">
+                                <% activeRanks.sort((a,b) => a[1] - b[1]).forEach(([cat, rank]) => { 
+                                    const isTop3 = rank <= 3;
+                                %>
+                                    <div class="house-stat-mini" style="align-items:center;">
+                                        <span class="house-stat-val" style="font-size:1.1rem; color:<%= isTop3 ? 'var(--primary-color)' : 'var(--text-primary)' %>;">
+                                            <span style="font-size:0.8rem; margin-right:2px;"><%= categoryIcons[cat].icon %></span>#<%= rank %>
+                                        </span>
+                                        <span class="house-stat-lbl"><%= categoryIcons[cat].label %></span>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        <% 
+                            }
+                        } %>
+                    </div>
+                </div>
+
+                <!-- Navigation aligned to table left edge -->
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; padding-left:0.5rem; padding-right:0.5rem;">
+                    <div style="display:flex; align-items:center; gap:1.25rem;">
+                        <a href="/dorm/<%= encodeURIComponent(dormName) %>" class="dorm-pill"
+                            style="background-color: var(--primary-light); padding:0.4rem 1rem; font-size:0.8rem;">
+                            ← Rankings
+                        </a>
+                        <a href="/map" style="color:var(--text-secondary); font-size:0.9rem; font-weight:600; text-decoration:none;">Campus Map</a>
+                        <span style="color:var(--border-color);">|</span>
+                        <a href="/rooms" style="color:var(--text-secondary); font-size:0.9rem; font-weight:600; text-decoration:none;">All Rooms</a>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:0.5rem;">
+                        <span style="font-size: 1.3rem; cursor:help;" title="Toggle content filter">🔞</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="censor-toggle" onchange="toggleCensorship()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Room Table -->
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:200px;">Room</th>
+                                <th>Floor</th>
+                                <th>Type</th>
+                                <th>Tags</th>
+                                <th>Culture</th>
+                                <th>Noise</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% rooms.sort((a,b)=> { 
+                                const hasReviewA = (a.houseCultureVal || a.customName || a.tags) ? 1 : 0;
+                                const hasReviewB = (b.houseCultureVal || b.customName || b.tags) ? 1 : 0;
+                                if (hasReviewA !== hasReviewB) return hasReviewB - hasReviewA;
+                                
+                                if (hasReviewA && hasReviewB) {
+                                    const nameA = a.customName ? a.customName.toLowerCase() : "";
+                                    const nameB = b.customName ? b.customName.toLowerCase() : "";
+                                    
+                                    if (nameA === 'shitbox suite' && nameB !== 'shitbox suite') return -1;
+                                    if (nameB === 'shitbox suite' && nameA !== 'shitbox suite') return 1;
+
+                                    if (nameA && nameB && nameA !== nameB) {
+                                        return nameA.localeCompare(nameB);
+                                    }
+                                    if (nameA && !nameB) return -1;
+                                    if (!nameA && nameB) return 1;
+                                }
+                                
+                                const n = (x) => parseInt(x.roomNumber) || 0; 
+                                return n(a)-n(b);
+                            }).forEach(room => { %>
+                                <tr style="cursor:pointer;" onclick="window.location='/rooms/<%= room.id %>'">
+                                    <td style="font-weight:600; font-size:1.05em;">
+                                        <% if (room.customName) { %>
+                                            <div>
+                                                <span class="room-name" data-original="<%= room.customName %>" style="color:#800000;">
+                                                    <%= room.customName %>
+                                                </span>
+                                                <div
+                                                    style="font-size:0.75em; font-style:italic; font-weight:400; color:var(--text-secondary); margin-top:0.15rem;">
+                                                    (<%= room.roomType %> <%= room.roomNumber %>)</div>
+                                            </div>
+                                            <% } else { %>
+                                                <span>
+                                                    <%= room.roomType %> <%= room.roomNumber %>
+                                                </span>
+                                                <% } %>
+                                    </td>
+                                    <td>
+                                        <%= room.floor || '—' %>
+                                    </td>
+                                    <td>
+                                        <span
+                                            style="display:inline-block; padding:0.2em 0.6em; border-radius:0.4rem; font-size:0.78rem; font-weight:600;
+                             background: <%= room.roomType && room.roomType.toLowerCase().includes('double') ? '#dbeafe' : room.roomType && room.roomType.toLowerCase().includes('suite') ? '#f3e8ff' : '#f3f4f6' %>;
+                             color: <%= room.roomType && room.roomType.toLowerCase().includes('double') ? '#1d4ed8' : room.roomType && room.roomType.toLowerCase().includes('suite') ? '#7c3aed' : '#374151' %>;">
+                                            <%= room.roomType || 'Single' %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <% if (room.tags) { %>
+                                            <div style="display:flex; flex-wrap:wrap; gap:0.25rem; max-width:280px;">
+                                                <% room.tags.split(', ').forEach(t => { %>
+                      <span class="tag"><%= t %></span>
+                    <% }) %>
+                  </div>
+                <% } else { %>
+                  <span style="color:#ccc; font-size:0.85rem;">—</span>
+                <% } %>
+              </td>
+              <td>
+                <% if (room.houseCultureVal) { %>
+                  <div style="display:flex; align-items:center; gap:0.4rem;">
+                    <div style="width:<%= (parseFloat(room.houseCultureVal)/5*48) %>px; height:6px; background:#10b981; border-radius:3px; min-width:4px;"></div>
+                    <span style="font-size:0.85rem; font-weight:600;"><%= room.houseCultureVal %></span>
+                  </div>
+                <% } else { %>
+                  <span style="color:#ccc;">—</span>
+                <% } %>
+              </td>
+              <td>
+                <% if (room.outsideNoiseVal) { %>
+                  <div style="display:flex; align-items:center; gap:0.4rem;">
+                    <div style="width:<%= (parseFloat(room.outsideNoiseVal)/5*48) %>px; height:6px; background:#ef4444; border-radius:3px; min-width:4px;"></div>
+                    <span style="font-size:0.85rem; font-weight:600;"><%= room.outsideNoiseVal %></span>
+                  </div>
+                <% } else { %>
+                  <span style="color:#ccc;">—</span>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer><p>&copy; 2025 Room for Improvement</p></footer>
+
+  <script>
+  // ── Rotating preview pill content ──────────────────────────────────────────
+  (function() {
+    var dorm = '<%= dormName %>';
+
+    // Per-dorm trivia
+    var TRIVIA = {
+      'Burton-Judson': [
+        'B-J was built in 1931 and is one of the oldest residential complexes on campus.',
+        'The courtyard at B-J is one of the most photographed spots on the UChicago campus.',
+        'Burton-Judson has six distinct houses, each with its own personality and lounge.',
+        'The dining hall at B-J serves as a social hub — not just a place to eat.'
+      ],
+      'Woodlawn': [
+        'Woodlawn Residential Commons opened in 2016, making it one of the newest dorms.',
+        'Woodlawn has eleven houses — the most of any residential commons on campus.',
+        'The building features a rooftop terrace with views of the city skyline.',
+        'Woodlawn is directly across from the Midway Plaisance, great for morning runs.'
+      ],
+      'Snell_Hitchcock': [
+        'Snell-Hitchcock is one of the only co-ed houses in the South Campus cluster.',
+        'The tower rooms in Hitchcock are legendary for their panoramic views.',
+        'S-H dates back to 1902 — it has more history than most campus buildings combined.',
+        'Snell Hall has a grand common room that students use for study groups all night.'
+      ],
+      'I-House': [
+        'International House hosts students from over 100 countries every year.',
+        'I-House has its own weekly cultural events, from film screenings to music nights.',
+        'The building opened in 1932 and was designed to foster global community.',
+        'I-House residents have access to a dedicated cultural programming budget.'
+      ],
+      'Max Palevsky': [
+        'Max Palevsky is the northernmost residential commons, right next to Regenstein Library.',
+        'The dorm has eight houses, each named after a UChicago donor or alum.',
+        'Max P rooms are known for having above-average square footage for singles.',
+        'The courtyard between buildings hosts free outdoor concerts each spring quarter.'
+      ],
+      'Renee_Granville-Grossman': [
+        'RGG is the southernmost residential commons on campus, close to the Metra station.',
+        'The dorm opened in 2010 as part of a major south campus residential expansion.',
+        'RGG houses are smaller and tend to have a tighter-knit community feel.',
+        'The building includes a 24-hour study lounge open to all RGG residents.'
+      ]
+    };
+
+    // Per-dorm anonymous quotes
+    var QUOTES = {
+      'Burton-Judson': [
+        '"The courtyard in winter with snow is something you\'ll never forget."',
+        '"My RA was genuinely the most helpful person I met first year."',
+        '"B-J has this old-campus energy that just can\'t be replicated."',
+        '"I made my closest friends in the first two weeks of living here."'
+      ],
+      'Woodlawn': [
+        '"Modern, clean, and social. Couldn\'t have asked for a better first year."',
+        '"The house culture at Woodlawn is real — you actually feel like you belong."',
+        '"Love the views from the upper floors. Sunsets hit different up there."',
+        '"Having eleven houses means there\'s always something going on somewhere."'
+      ],
+      'Snell_Hitchcock': [
+        '"Living in the tower was a bucket-list experience. Absolutely stunning views."',
+        '"S-H has this gothic charm that grows on you the longer you stay."',
+        '"The community dinners our house put on were the highlight of my year."',
+        '"Old dorm, yes — but the character and history more than make up for it."'
+      ],
+      'I-House': [
+        '"I came from overseas and I-House made me feel at home immediately."',
+        '"The cultural events we had every weekend were genuinely world-class."',
+        '"You\'ll meet someone from literally everywhere. It\'s incredible."',
+        '"The building has a warmth to it that\'s hard to describe but easy to feel."'
+      ],
+      'Max Palevsky': [
+        '"Being next to Reg meant I could roll out of bed and into a study session."',
+        '"Max P rooms are bigger than I expected. Really helped with sanity."',
+        '"The courtyard in spring is the best place on campus to decompress."',
+        '"Eight houses means you can always find your people, whatever your vibe."'
+      ],
+      'Renee_Granville-Grossman': [
+        '"The tight-knit community at RGG is something you won\'t find at bigger dorms."',
+        '"Having the Metra this close saved me so much time on trips downtown."',
+        '"The study lounge is always open and surprisingly never overcrowded."',
+        '"RGG feels like a hidden gem — quieter, but genuinely great community."'
+      ]
+    };
+
+    // Per-dorm insider tips
+    var TIPS = {
+      'Burton-Judson': [
+        'Claim a study spot in the common room early — they fill up around 8pm.',
+        'The laundry machines on odd-numbered floors are almost always available.',
+        'Bring your own fan. Old buildings get warm and windows only open a crack.',
+        'The bike storage near the south entrance has more space than most people realize.'
+      ],
+      'Woodlawn': [
+        'Upper-floor east-facing rooms get sunrise light — great if you\'re a morning person.',
+        'The rooftop lounge is accessible from floor 7 and almost always empty on weekdays.',
+        'Reserve the house common room in advance for any group event — books up fast.',
+        'The Metra is a 10-minute walk, making weekend trips downtown very feasible.'
+      ],
+      'Snell_Hitchcock': [
+        'Tower rooms look amazing but get cold in winter — pack an extra blanket.',
+        'The grand common room is best for studying between 9am and noon on weekdays.',
+        'Room selection: floors 3–5 strike the best balance of light and quiet.',
+        'The building has surprisingly good cell reception for a historic structure.'
+      ],
+      'I-House': [
+        'Cultural event invites come through the house email list — subscribe early.',
+        'The garden courtyard is almost always quieter than indoor common spaces.',
+        'Rooms on the north side face the street; rooms on the south side face the quad.',
+        'The dining program often features international cuisine — check weekly menus.'
+      ],
+      'Max Palevsky': [
+        'Pro tip: Regenstein Library has lockers you can rent by the quarter.',
+        'The main courtyard is the best spot for an outdoor study session in spring.',
+        'Rooms on the top floors of the east wing get the longest afternoon light.',
+        'The house lounge kitchen gets restocked with event food late on Friday nights.'
+      ],
+      'Renee_Granville-Grossman': [
+        'The 24-hour study lounge is genuinely underused — golden for late-night cramming.',
+        'South-facing rooms get the most direct light throughout the day.',
+        'The Metra stop is 5 minutes on foot — fastest route downtown on campus.',
+        'Keep an eye on the house bulletin board for unofficial subletting during breaks.'
+      ]
+    };
+
+    // Fallback generic data if dorm isn't matched
+    var genericTrivia = [
+      'UChicago residential houses each have their own unique culture and traditions.',
+      'House lounges are the unofficial headquarters of first-year social life.',
+      'Many dorm buildings have architectural features worth looking up — literally.'
+    ];
+    var genericQuotes = [
+      '"The best part of living here was everything I didn\'t expect."',
+      '"You find your people faster than you think you will."',
+      '"House culture is what you make it — but it usually makes itself."'
+    ];
+    var genericTips = [
+      'Introduce yourself to your RA in week one — they know everything.',
+      'Upper floors tend to be quieter and get more natural light.',
+      'Always check the house group chat before buying something for the common room.'
+    ];
+
+    var triviaList  = TRIVIA[dorm]  || genericTrivia;
+    var quotesList  = QUOTES[dorm]  || genericQuotes;
+    var tipsList    = TIPS[dorm]    || genericTips;
+
+    function rotator(elId, items, delayMs) {
+      if (!items || items.length === 0) return;
+      var el = document.getElementById(elId);
+      if (!el) return;
+      var idx = Math.floor(Math.random() * items.length);
+      el.textContent = items[idx];
+      if (items.length <= 1) return; // no need to rotate
+
+      var DISPLAY_MS = 5000; // 5 seconds per item
+      
+      setTimeout(function() {
+        setInterval(function() {
+          // Swipe out up
+          el.classList.remove('visible');
+          el.classList.add('swiping-up');
+          
+          setTimeout(function() {
+            // Instantly move to bottom
+            idx = (idx + 1) % items.length;
+            el.textContent = items[idx];
+            el.classList.remove('swiping-up');
+            el.classList.add('preparing');
+            
+            // Allow browser to render the instant move, then swipe in
+            requestAnimationFrame(function() {
+              requestAnimationFrame(function() {
+                el.classList.remove('preparing');
+                el.classList.add('visible');
+              });
+            });
+          }, 400); // Wait for swipe out to finish
+        }, DISPLAY_MS);
+      }, delayMs);
+    }
+
+    // Stagger starts to avoid sensory overload
+    rotator('pill-trivia-text', triviaList, 0);
+    rotator('pill-quotes-text', quotesList, 1500);
+    rotator('pill-tips-text',   tipsList, 3000);
+  })();
+  </script>
+
+  <script>
+    // Profanity filter - common inappropriate words
+    const badWords = ['damn', 'hell', 'fuck', 'shit', 'ass', 'bitch', 'bastard', 'crap', 'piss', 'cock', 'dick', 'pussy', 'slut', 'whore', 'fag', 'nigger', 'nigga', 'cunt', 'twat'];
+
+    function censorText(text) {
+      let censored = text;
+      const lowerText = text.toLowerCase();
+
+      badWords.forEach(word => {
+        const regex = new RegExp(word, 'gi');
+        censored = censored.replace(regex, (match) => {
+          return '*'.repeat(match.length);
+        });
+      });
+
+      return censored;
+    }
+
+    function toggleCensorship() {
+      const isChecked = document.getElementById('censor-toggle').checked;
+      const roomNames = document.querySelectorAll('.room-name');
+
+      roomNames.forEach(name => {
+        const original = name.getAttribute('data-original');
+        if (original) {
+          if (isChecked) {
+            // Show original
+            name.textContent = original;
+          } else {
+            // Apply censorship
+            name.textContent = censorText(original);
+          }
+        }
+      });
+    }
+
+    // Apply censorship on page load (default state is censored)
+    document.addEventListener('DOMContentLoaded', function () {
+      toggleCensorship();
+    });
+  </script>
+
+</body>
+</html>

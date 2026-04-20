@@ -1,1 +1,5628 @@
-[]
+[
+  {
+    "entryId": "96c6a2ca64da0d80",
+    "roomId": "burton-judson__salisbury__830a__f3",
+    "userEmail": "student833@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-21T16:44:31.436Z",
+    "tags": [
+      "Sunny",
+      "Big windows",
+      "Quiet",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "da316f7b7178ee76",
+    "roomId": "burton-judson__salisbury__838__f3",
+    "userEmail": "student910@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-05T10:48:16.887Z",
+    "tags": [
+      "Spacious",
+      "Good culture",
+      "Drafty",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "d29fd90c5321a8b6",
+    "roomId": "burton-judson__salisbury__831__f3",
+    "userEmail": "student532@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-10T20:08:06.284Z",
+    "tags": [
+      "Big windows",
+      "AC works well",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "28ee3a2320511d89",
+    "roomId": "burton-judson__salisbury__837__f3",
+    "userEmail": "student359@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-25T05:49:16.710Z",
+    "tags": [
+      "Great view",
+      "Drafty",
+      "Social",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "906010601dee1125",
+    "roomId": "burton-judson__salisbury__828__f2",
+    "userEmail": "student712@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-23T20:34:33.282Z",
+    "tags": [
+      "Quiet",
+      "Loud outside",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "dfd38ab272f73655",
+    "roomId": "burton-judson__salisbury__824__f2",
+    "userEmail": "student594@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-19T16:31:27.497Z",
+    "tags": [
+      "Loud outside",
+      "Social",
+      "Quiet",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "8e0d754fd83c3e61",
+    "roomId": "burton-judson__vincent__415b__f1",
+    "userEmail": "student882@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-21T05:56:33.711Z",
+    "tags": [
+      "Social",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "9e38c4d96ce6fc98",
+    "roomId": "burton-judson__vincent__421__f2",
+    "userEmail": "student735@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-17T06:27:00.428Z",
+    "tags": [
+      "Big windows",
+      "Loud outside",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "e87b7a3e29fd3eac",
+    "roomId": "burton-judson__vincent__423__f2",
+    "userEmail": "student198@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-03T05:13:30.387Z",
+    "tags": [
+      "Good culture",
+      "Social",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "41ff42a1de38b3df",
+    "roomId": "burton-judson__vincent__449a__f4",
+    "userEmail": "student587@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-11T11:37:26.221Z",
+    "tags": [
+      "Loud outside",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "f207358a32c84e38",
+    "roomId": "burton-judson__vincent__448__f4",
+    "userEmail": "student335@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-16T14:43:36.814Z",
+    "tags": [
+      "AC works well",
+      "Big windows",
+      "Great view",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "6727328fce29e388",
+    "roomId": "burton-judson__vincent__447__f4",
+    "userEmail": "student457@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-21T23:45:44.761Z",
+    "tags": [
+      "Good culture",
+      "Social",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "08bdcd966e4c49ce",
+    "roomId": "burton-judson__vincent__441__f4",
+    "userEmail": "student391@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-26T03:10:39.477Z",
+    "tags": [
+      "Close to stairs",
+      "Good culture",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "5238280ca0960469",
+    "roomId": "burton-judson__salisbury__841__f4",
+    "userEmail": "student49@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-17T16:58:40.361Z",
+    "tags": [
+      "Drafty",
+      "Big windows",
+      "Good culture",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "402699276327be03",
+    "roomId": "burton-judson__salisbury__842__f4",
+    "userEmail": "student723@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-13T20:10:35.777Z",
+    "tags": [
+      "Close to stairs",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "6f07a784b8351775",
+    "roomId": "burton-judson__salisbury__814__f1",
+    "userEmail": "student847@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-11T04:29:45.800Z",
+    "tags": [
+      "Great view",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "2ddd629b98413ced",
+    "roomId": "burton-judson__linn_mathews__639a__f3",
+    "userEmail": "student285@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-06T17:27:49.852Z",
+    "tags": [
+      "Tiny",
+      "Close to stairs",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "a8163069a79b7c0d",
+    "roomId": "burton-judson__linn_mathews__639e__f3",
+    "userEmail": "student382@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-25T12:06:23.909Z",
+    "tags": [
+      "Loud outside",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "575319f37fe8c089",
+    "roomId": "burton-judson__linn_mathews__634__f3",
+    "userEmail": "student673@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-30T10:02:13.834Z",
+    "tags": [
+      "AC works well",
+      "Big windows",
+      "Drafty",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "e469e6cf505594ea",
+    "roomId": "burton-judson__linn_mathews__730b__f3",
+    "userEmail": "student950@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-29T04:16:40.790Z",
+    "tags": [
+      "Quiet",
+      "Good culture",
+      "Great view",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "71917f1522483fa8",
+    "roomId": "burton-judson__linn_mathews__643__f4",
+    "userEmail": "student191@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-25T21:16:58.998Z",
+    "tags": [
+      "Great view",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "41eab839b963ea1c",
+    "roomId": "burton-judson__linn_mathews__744__f4",
+    "userEmail": "student527@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-27T18:23:01.385Z",
+    "tags": [
+      "AC works well",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "f0bd762606c15bd0",
+    "roomId": "burton-judson__linn_mathews__620__f2",
+    "userEmail": "student618@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-12T04:04:25.647Z",
+    "tags": [
+      "Quiet",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "bbbd45ed556ec18a",
+    "roomId": "burton-judson__linn_mathews__621__f2",
+    "userEmail": "student976@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-11-30T12:34:45.846Z",
+    "tags": [
+      "Drafty",
+      "AC works well",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "9ab7712d4408dd12",
+    "roomId": "burton-judson__linn_mathews__622__f2",
+    "userEmail": "student857@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-22T18:04:38.478Z",
+    "tags": [
+      "Big windows",
+      "Great view",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "0321fed6bb10f3b4",
+    "roomId": "burton-judson__linn_mathews__623__f2",
+    "userEmail": "student944@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-25T19:15:22.782Z",
+    "tags": [
+      "Big windows",
+      "Tiny",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "bce9809f6c038a86",
+    "roomId": "burton-judson__linn_mathews__722__f2",
+    "userEmail": "student816@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-23T22:02:49.970Z",
+    "tags": [
+      "AC works well",
+      "Tiny",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "16023bcb16336418",
+    "roomId": "burton-judson__dodd_mead__115__f1",
+    "userEmail": "student410@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-31T06:26:23.751Z",
+    "tags": [
+      "Quiet",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "5542b5e76a951529",
+    "roomId": "burton-judson__dodd_mead__240__f4",
+    "userEmail": "student541@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-12T19:14:49.820Z",
+    "tags": [
+      "Quiet",
+      "Drafty",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "d07f58a36b3ccd00",
+    "roomId": "burton-judson__dodd_mead__143__f4",
+    "userEmail": "student828@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-11T18:48:40.700Z",
+    "tags": [
+      "Great view",
+      "Spacious",
+      "Drafty",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "0f410370ba0b4317",
+    "roomId": "burton-judson__coulter__534__f3",
+    "userEmail": "student477@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-12T02:57:07.494Z",
+    "tags": [
+      "Big windows",
+      "Close to stairs",
+      "Social",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "d575645bb965e79f",
+    "roomId": "burton-judson__coulter__537__f3",
+    "userEmail": "student638@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-22T05:44:15.565Z",
+    "tags": [
+      "Good culture",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "6bdd3fb8ecafe83d",
+    "roomId": "burton-judson__coulter__555__f5",
+    "userEmail": "student783@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-15T14:28:53.584Z",
+    "tags": [
+      "Big windows",
+      "Drafty",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "dcc78bad2aff98db",
+    "roomId": "burton-judson__chamberlin__349__f4",
+    "userEmail": "student817@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-11-30T08:34:19.014Z",
+    "tags": [
+      "Tiny",
+      "Good culture",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "0ee1cfb44926a706",
+    "roomId": "burton-judson__chamberlin__340a__f4",
+    "userEmail": "student53@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-31T12:16:44.264Z",
+    "tags": [
+      "AC works well",
+      "Quiet",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "4e975d4ab806b2fc",
+    "roomId": "burton-judson__chamberlin__354__f5",
+    "userEmail": "student900@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-09T20:32:27.261Z",
+    "tags": [
+      "Great view",
+      "Sunny",
+      "Big windows",
+      "Drafty",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "1567de7a89f3a76e",
+    "roomId": "burton-judson__chamberlin__313__f1",
+    "userEmail": "student907@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-23T03:54:49.959Z",
+    "tags": [
+      "Tiny",
+      "Big windows",
+      "Loud outside",
+      "Spacious",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "e4da493a7f4b5586",
+    "roomId": "i-house__breckinridge__842__f8",
+    "userEmail": "student822@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-04T22:48:58.090Z",
+    "tags": [
+      "Drafty",
+      "Big windows",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "d3f90a7257a362ef",
+    "roomId": "i-house__breckinridge__848__f8",
+    "userEmail": "student35@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-20T07:47:24.358Z",
+    "tags": [
+      "Sunny",
+      "Good culture",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "5d142bedfc7ac3d0",
+    "roomId": "i-house__breckinridge__850__f8",
+    "userEmail": "student758@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-25T11:26:03.456Z",
+    "tags": [
+      "Social",
+      "Spacious",
+      "Drafty",
+      "Sunny",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "cac8d99c9517695c",
+    "roomId": "i-house__breckinridge__868__f8",
+    "userEmail": "student502@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-18T23:11:58.469Z",
+    "tags": [
+      "Tiny",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "1546155b350457c6",
+    "roomId": "i-house__breckinridge__870__f8",
+    "userEmail": "student213@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-13T20:28:25.701Z",
+    "tags": [
+      "Loud outside",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "674428565613c417",
+    "roomId": "i-house__breckinridge__937__f9",
+    "userEmail": "student261@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-06T03:32:35.114Z",
+    "tags": [
+      "Drafty",
+      "Sunny",
+      "Social",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "aa3ebb38b17e0d4d",
+    "roomId": "i-house__breckinridge__940__f9",
+    "userEmail": "student835@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-10T05:52:02.516Z",
+    "tags": [
+      "Spacious",
+      "Loud outside",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "e0abc0cab70c05da",
+    "roomId": "i-house__breckinridge__943__f9",
+    "userEmail": "student202@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-09T13:41:40.172Z",
+    "tags": [
+      "Tiny",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "dc0e40d4a0a51ecb",
+    "roomId": "i-house__booth__343__f3",
+    "userEmail": "student841@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-18T18:28:41.678Z",
+    "tags": [
+      "Social",
+      "Close to stairs",
+      "Sunny",
+      "Quiet",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "704fd1b8f43fa0a5",
+    "roomId": "i-house__booth__355__f3",
+    "userEmail": "student126@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-01T11:33:37.814Z",
+    "tags": [
+      "Sunny",
+      "AC works well",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "43a75c1c896b78ee",
+    "roomId": "i-house__booth__371__f3",
+    "userEmail": "student955@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-25T10:32:49.504Z",
+    "tags": [
+      "Big windows",
+      "Social",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "257b039bef1eb09f",
+    "roomId": "i-house__booth__376__f3",
+    "userEmail": "student227@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-03T17:32:13.903Z",
+    "tags": [
+      "Social",
+      "Tiny",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "6741b58eef3ce5bc",
+    "roomId": "i-house__breckinridge__762__f7",
+    "userEmail": "student62@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-17T21:08:28.533Z",
+    "tags": [
+      "Big windows",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "ce5477bf155db843",
+    "roomId": "i-house__breckinridge__777__f7",
+    "userEmail": "student820@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-15T19:23:13.535Z",
+    "tags": [
+      "Drafty",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "ecd47b84761ad87d",
+    "roomId": "i-house__thompson__412__f4",
+    "userEmail": "student158@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-02T23:19:36.962Z",
+    "tags": [
+      "Sunny",
+      "AC works well",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "ed9b04e2fcb96453",
+    "roomId": "i-house__thompson__418__f4",
+    "userEmail": "student36@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-30T14:22:29.814Z",
+    "tags": [
+      "Loud outside",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "aedce2b1f951698a",
+    "roomId": "i-house__thompson__425__f4",
+    "userEmail": "student967@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-24T06:57:08.310Z",
+    "tags": [
+      "AC works well",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "fc8c84054c797171",
+    "roomId": "i-house__booth__238__f2",
+    "userEmail": "student809@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-03T21:28:51.063Z",
+    "tags": [
+      "Social",
+      "Drafty",
+      "Big windows",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "ee91ad68726e2ebd",
+    "roomId": "i-house__booth__241__f2",
+    "userEmail": "student116@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-15T14:51:54.927Z",
+    "tags": [
+      "Good culture",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "de56abda7e348cb1",
+    "roomId": "i-house__booth__243__f2",
+    "userEmail": "student855@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-12T10:18:41.874Z",
+    "tags": [
+      "Spacious",
+      "Great view",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "1b02d9e431476db3",
+    "roomId": "i-house__booth__256__f2",
+    "userEmail": "student33@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-19T16:53:01.491Z",
+    "tags": [
+      "Spacious",
+      "Close to stairs",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "dbdbbe6471b5ed58",
+    "roomId": "i-house__booth__260__f2",
+    "userEmail": "student950@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-23T20:49:47.925Z",
+    "tags": [
+      "Quiet",
+      "Tiny",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "f26cb40d4b7e45a2",
+    "roomId": "i-house__booth__274__f2",
+    "userEmail": "student716@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-22T20:52:09.487Z",
+    "tags": [
+      "Sunny",
+      "Close to stairs",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "af847d0985b81ae6",
+    "roomId": "i-house__booth__276__f2",
+    "userEmail": "student599@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-16T14:06:14.401Z",
+    "tags": [
+      "Great view",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "25536d992e68a8a0",
+    "roomId": "i-house__booth__288__f2",
+    "userEmail": "student253@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-06T02:07:40.954Z",
+    "tags": [
+      "Tiny",
+      "Quiet",
+      "Spacious",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "15c5f305a4e9d565",
+    "roomId": "i-house__booth__290__f2",
+    "userEmail": "student8@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-03T17:17:52.905Z",
+    "tags": [
+      "Social",
+      "Quiet",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "2ccffc9326e328f9",
+    "roomId": "i-house__thompson__525__f5",
+    "userEmail": "student80@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-15T11:41:11.620Z",
+    "tags": [
+      "Tiny",
+      "Big windows",
+      "Great view",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "ba845d7e2467d8d9",
+    "roomId": "i-house__thompson__528__f5",
+    "userEmail": "student571@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-22T17:23:55.183Z",
+    "tags": [
+      "Big windows",
+      "Good culture",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "adba058abb47b259",
+    "roomId": "i-house__thompson__529__f5",
+    "userEmail": "student41@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-21T11:51:47.998Z",
+    "tags": [
+      "Loud outside",
+      "AC works well",
+      "Sunny",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "3c56d7f925d39be4",
+    "roomId": "i-house__thompson__530__f5",
+    "userEmail": "student96@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-24T22:40:45.928Z",
+    "tags": [
+      "Tiny",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "815a413e39a77d27",
+    "roomId": "i-house__thompson__531__f5",
+    "userEmail": "student961@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-17T14:24:36.251Z",
+    "tags": [
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "3cda439a65dd3c5e",
+    "roomId": "i-house__thompson__303__f3",
+    "userEmail": "student513@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-07T06:58:25.192Z",
+    "tags": [
+      "Quiet",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "6e461a2f0806e630",
+    "roomId": "i-house__thompson__206__f2",
+    "userEmail": "student795@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-04T11:30:45.743Z",
+    "tags": [
+      "Tiny",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "1da964916f472c70",
+    "roomId": "i-house__phoenix__449__f4",
+    "userEmail": "student476@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-26T11:04:15.634Z",
+    "tags": [
+      "AC works well",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "627f59b84af88d99",
+    "roomId": "i-house__phoenix__451__f4",
+    "userEmail": "student791@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-02T16:35:38.045Z",
+    "tags": [
+      "Good culture",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "838de2279ee5db86",
+    "roomId": "i-house__phoenix__450__f4",
+    "userEmail": "student483@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-10T09:39:28.872Z",
+    "tags": [
+      "Quiet",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "3637a0bb149323f5",
+    "roomId": "i-house__shorey__707__f7",
+    "userEmail": "student431@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-04T17:17:16.384Z",
+    "tags": [
+      "Drafty",
+      "Loud outside",
+      "AC works well",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "f5e3431d4149c219",
+    "roomId": "i-house__shorey__725__f7",
+    "userEmail": "student571@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-22T22:46:03.408Z",
+    "tags": [
+      "Loud outside",
+      "Quiet",
+      "Spacious",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "30319049005b99c2",
+    "roomId": "i-house__shorey__728__f7",
+    "userEmail": "student703@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-16T02:55:36.411Z",
+    "tags": [
+      "Tiny",
+      "Good culture",
+      "Spacious",
+      "Social",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "f780d38225c625e9",
+    "roomId": "i-house__shorey__729__f7",
+    "userEmail": "student263@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-13T00:11:52.315Z",
+    "tags": [
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "988d020aafbec9ef",
+    "roomId": "i-house__shorey__703__f7",
+    "userEmail": "student57@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-21T12:36:10.793Z",
+    "tags": [
+      "Sunny",
+      "Good culture",
+      "Tiny",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "ea84a74e27cdde86",
+    "roomId": "i-house__shorey__607__f6",
+    "userEmail": "student693@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-12T13:29:32.537Z",
+    "tags": [
+      "AC works well",
+      "Quiet",
+      "Social",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "6e6abb8bd51af9e8",
+    "roomId": "i-house__shorey__615__f6",
+    "userEmail": "student374@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-12T09:56:42.157Z",
+    "tags": [
+      "Great view",
+      "Good culture",
+      "Spacious",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "0aeb9f2da6313d4a",
+    "roomId": "i-house__shorey__619__f6",
+    "userEmail": "student901@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-09T10:42:04.346Z",
+    "tags": [
+      "Drafty",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "55c925257349c24d",
+    "roomId": "i-house__shorey__628__f6",
+    "userEmail": "student632@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-27T02:56:11.440Z",
+    "tags": [
+      "Sunny",
+      "Great view",
+      "Tiny",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "2b0ee3ead920faf2",
+    "roomId": "i-house__shorey__633__f6",
+    "userEmail": "student119@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-14T03:07:52.641Z",
+    "tags": [
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "70bfd01fc818171b",
+    "roomId": "i-house__phoenix__540__f5",
+    "userEmail": "student450@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-24T12:35:17.751Z",
+    "tags": [
+      "Social",
+      "Quiet",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "0795bcccc83332a2",
+    "roomId": "i-house__phoenix__550__f5",
+    "userEmail": "student369@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-21T02:40:59.725Z",
+    "tags": [
+      "Quiet",
+      "Close to stairs",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "44b324836132a182",
+    "roomId": "i-house__phoenix__564__f5",
+    "userEmail": "student206@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-12T04:08:51.288Z",
+    "tags": [
+      "Spacious",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "52cc4fb6d52717a3",
+    "roomId": "i-house__phoenix__653__f6",
+    "userEmail": "student898@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-08T05:00:12.987Z",
+    "tags": [
+      "Quiet",
+      "Close to stairs",
+      "Spacious",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "dceaddf2dbab9e12",
+    "roomId": "i-house__phoenix__642__f6",
+    "userEmail": "student147@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-19T05:55:20.873Z",
+    "tags": [
+      "Great view",
+      "Drafty",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "78f6f11969b2726c",
+    "roomId": "i-house__phoenix__646__f6",
+    "userEmail": "student274@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-19T21:01:07.042Z",
+    "tags": [
+      "Great view",
+      "Drafty",
+      "Sunny",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "2c7724bf7ce2846d",
+    "roomId": "i-house__phoenix__664__f6",
+    "userEmail": "student450@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-03T16:26:09.762Z",
+    "tags": [
+      "Loud outside",
+      "Good culture",
+      "Great view",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "180b93e6d28ae8dd",
+    "roomId": "i-house__phoenix__671__f6",
+    "userEmail": "student319@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-31T13:57:21.987Z",
+    "tags": [
+      "Close to stairs",
+      "Drafty",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "48e0d4e48ae58827",
+    "roomId": "max_palevsky__graham__c311a__f3",
+    "userEmail": "student614@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-17T02:23:51.880Z",
+    "tags": [
+      "Close to stairs",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "e7e9a38a2b31107a",
+    "roomId": "max_palevsky__graham__c301b__f3",
+    "userEmail": "student985@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-12T16:17:23.519Z",
+    "tags": [
+      "Drafty",
+      "Sunny",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "e193d54a82c70c92",
+    "roomId": "max_palevsky__graham__c314a__f3",
+    "userEmail": "student973@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-01T16:35:58.596Z",
+    "tags": [
+      "Good culture",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "580f9c550c95d5fc",
+    "roomId": "max_palevsky__graham__c314b__f3",
+    "userEmail": "student252@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-06T12:10:07.906Z",
+    "tags": [
+      "Good culture",
+      "Loud outside",
+      "Sunny",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "1c78b699b849924b",
+    "roomId": "max_palevsky__alper__e306b__f3",
+    "userEmail": "student361@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-24T15:46:32.969Z",
+    "tags": [
+      "Good culture",
+      "Big windows",
+      "Spacious",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "a679a399d2fe0cea",
+    "roomId": "max_palevsky__alper__e417b__f4",
+    "userEmail": "student913@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-07T20:11:49.832Z",
+    "tags": [
+      "Social",
+      "Good culture",
+      "Great view",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "14706c4a937b8a55",
+    "roomId": "max_palevsky__alper__e419b__f4",
+    "userEmail": "student132@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-31T05:44:08.460Z",
+    "tags": [
+      "Great view",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "13e851998632e362",
+    "roomId": "max_palevsky__graham__c405a__f4",
+    "userEmail": "student477@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-15T14:39:25.564Z",
+    "tags": [
+      "Good culture",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "e28429438533c310",
+    "roomId": "max_palevsky__graham__c412a__f4",
+    "userEmail": "student361@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-08T21:07:30.627Z",
+    "tags": [
+      "Sunny",
+      "Good culture",
+      "Spacious",
+      "Loud outside",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "35b2fa15bde778c5",
+    "roomId": "max_palevsky__graham__c410a__f4",
+    "userEmail": "student393@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-02T23:07:22.564Z",
+    "tags": [
+      "AC works well",
+      "Drafty",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "d2653de8fe40f29e",
+    "roomId": "max_palevsky__graham__c406a__f4",
+    "userEmail": "student898@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-03T06:55:41.820Z",
+    "tags": [
+      "Sunny",
+      "Close to stairs",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "4bcdacb5bba5b79e",
+    "roomId": "max_palevsky__woodward__c425a__f4",
+    "userEmail": "student99@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-13T18:32:03.563Z",
+    "tags": [
+      "Loud outside",
+      "Sunny",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "7bcc270384509807",
+    "roomId": "max_palevsky__woodward__c426b__f4",
+    "userEmail": "student791@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-02T09:52:29.875Z",
+    "tags": [
+      "Quiet",
+      "Drafty",
+      "Tiny",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "bf783e4e081f84ef",
+    "roomId": "max_palevsky__woodward__c326a__f3",
+    "userEmail": "student783@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-04T22:35:15.533Z",
+    "tags": [
+      "Close to stairs",
+      "Great view",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "9260afb8a563e438",
+    "roomId": "max_palevsky__woodward__c328a__f3",
+    "userEmail": "student307@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-21T23:03:56.864Z",
+    "tags": [
+      "Drafty",
+      "Tiny",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "eaf8c7e81a63e2ba",
+    "roomId": "max_palevsky__flint__c106b__f1",
+    "userEmail": "student933@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-15T02:27:37.088Z",
+    "tags": [
+      "Loud outside",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "acc425abcf78c521",
+    "roomId": "max_palevsky__flint__c205b__f2",
+    "userEmail": "student963@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-30T02:12:57.513Z",
+    "tags": [
+      "Drafty",
+      "Good culture",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "e5269272a062aa97",
+    "roomId": "max_palevsky__flint__c216b__f2",
+    "userEmail": "student516@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-10T23:55:06.157Z",
+    "tags": [
+      "AC works well",
+      "Drafty",
+      "Big windows",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "81885610494dd08b",
+    "roomId": "max_palevsky__flint__c214a__f2",
+    "userEmail": "student295@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-08T03:07:22.560Z",
+    "tags": [
+      "Drafty",
+      "Sunny",
+      "Great view",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "19404d37af75c1f2",
+    "roomId": "max_palevsky__flint__c206b__f2",
+    "userEmail": "student49@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-24T23:03:49.725Z",
+    "tags": [
+      "Big windows",
+      "Spacious",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "3579d92a3e8068d7",
+    "roomId": "max_palevsky__flint__c204b__f2",
+    "userEmail": "student457@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-14T15:49:46.655Z",
+    "tags": [
+      "Good culture",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "9ad65e172184d80e",
+    "roomId": "max_palevsky__rickert__w310a__f3",
+    "userEmail": "student338@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-21T20:26:41.297Z",
+    "tags": [
+      "Quiet",
+      "Spacious",
+      "Big windows",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "6e211c9452e9e214",
+    "roomId": "max_palevsky__rickert__w301b__f3",
+    "userEmail": "student348@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-22T05:11:59.877Z",
+    "tags": [
+      "Spacious",
+      "Sunny",
+      "Great view",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "8970f860402f636d",
+    "roomId": "max_palevsky__rickert__w406a__f4",
+    "userEmail": "student530@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-17T15:27:27.623Z",
+    "tags": [
+      "Loud outside",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "8eb28b5d2b33e0cc",
+    "roomId": "max_palevsky__rickert__w416a__f4",
+    "userEmail": "student607@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-04T19:22:48.560Z",
+    "tags": [
+      "Sunny",
+      "Social",
+      "Close to stairs",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "0f79a05649517d10",
+    "roomId": "max_palevsky__rickert__w422a__f4",
+    "userEmail": "student247@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-15T13:35:13.151Z",
+    "tags": [
+      "Quiet",
+      "Good culture",
+      "Tiny",
+      "Big windows",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "50174b5b20ea02c1",
+    "roomId": "max_palevsky__wallace__w120a__f1",
+    "userEmail": "student454@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-04T11:18:14.463Z",
+    "tags": [
+      "Drafty",
+      "AC works well",
+      "Close to stairs",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "fec228fe3f3e2472",
+    "roomId": "max_palevsky__wallace__w122a__f1",
+    "userEmail": "student374@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-07T05:52:40.252Z",
+    "tags": [
+      "Quiet",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "d38d88a3fc928af2",
+    "roomId": "max_palevsky__wallace__w108b__f1",
+    "userEmail": "student379@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-02T21:26:17.270Z",
+    "tags": [
+      "Good culture",
+      "Social",
+      "Sunny",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "85187ea0208fa0e8",
+    "roomId": "max_palevsky__wallace__w104a__f1",
+    "userEmail": "student146@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-10T01:52:25.521Z",
+    "tags": [
+      "Spacious",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "e8ac0b4e0c22d824",
+    "roomId": "max_palevsky__wallace__w113a__f1",
+    "userEmail": "student282@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-04T07:12:00.609Z",
+    "tags": [
+      "Tiny",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "2fa35f7be9661d7c",
+    "roomId": "max_palevsky__wallace__w214a__f2",
+    "userEmail": "student651@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-14T15:54:23.049Z",
+    "tags": [
+      "Big windows",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "34b77568048633c5",
+    "roomId": "max_palevsky__wallace__w220a__f2",
+    "userEmail": "student263@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-30T08:26:31.249Z",
+    "tags": [
+      "Great view",
+      "Drafty",
+      "Tiny",
+      "Big windows",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "d81d854aaec7bd06",
+    "roomId": "max_palevsky__wallace__w222b__f2",
+    "userEmail": "student598@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-15T15:29:24.011Z",
+    "tags": [
+      "Great view",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "cf63ac8ca36ba26b",
+    "roomId": "max_palevsky__wallace__w210a__f2",
+    "userEmail": "student873@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-09T05:24:27.271Z",
+    "tags": [
+      "AC works well",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "9071f0c2db778787",
+    "roomId": "max_palevsky__wallace__w208a__f2",
+    "userEmail": "student389@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-16T13:08:35.467Z",
+    "tags": [
+      "Great view",
+      "Drafty",
+      "Social",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "5a6aea52f1cf91be",
+    "roomId": "max_palevsky__wallace__w211b__f2",
+    "userEmail": "student505@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-20T02:13:13.276Z",
+    "tags": [
+      "Social",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "cd14f9121be122b7",
+    "roomId": "max_palevsky__woodward__c225b__f2",
+    "userEmail": "student977@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-07T16:43:25.437Z",
+    "tags": [
+      "Sunny",
+      "Big windows",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "71accece5d0fa22b",
+    "roomId": "max_palevsky__woodward__c225a__f2",
+    "userEmail": "student309@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-25T04:54:21.263Z",
+    "tags": [
+      "Quiet",
+      "Good culture",
+      "Drafty",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "b9685cb8295790ab",
+    "roomId": "max_palevsky__woodward__c224b__f2",
+    "userEmail": "student284@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-24T17:01:59.529Z",
+    "tags": [
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "1842fb11b44086de",
+    "roomId": "max_palevsky__woodward__c123a__f1",
+    "userEmail": "student280@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-05T07:01:20.768Z",
+    "tags": [
+      "Tiny",
+      "Close to stairs",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "4e2def94bb8e8ced",
+    "roomId": "max_palevsky__woodward__c127b__f1",
+    "userEmail": "student552@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-31T19:27:47.222Z",
+    "tags": [
+      "Tiny",
+      "Good culture",
+      "Drafty",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "2de49e52c497b317",
+    "roomId": "max_palevsky__woodward__c124b__f1",
+    "userEmail": "student194@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-21T11:26:01.745Z",
+    "tags": [
+      "Drafty",
+      "Loud outside",
+      "Spacious",
+      "Social",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "6c6f1fb83b916c6a",
+    "roomId": "max_palevsky__hoover__e326b__f3",
+    "userEmail": "student717@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-22T10:35:47.149Z",
+    "tags": [
+      "Tiny",
+      "Loud outside",
+      "Big windows",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "2b6a1908a592b794",
+    "roomId": "max_palevsky__may__e119a__f1",
+    "userEmail": "student185@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-30T14:15:22.994Z",
+    "tags": [
+      "Loud outside",
+      "Close to stairs",
+      "Tiny",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "8671900b8287b2c2",
+    "roomId": "max_palevsky__may__e111b__f1",
+    "userEmail": "student675@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-23T19:11:42.281Z",
+    "tags": [
+      "Quiet",
+      "Tiny",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "8dff762789e2b074",
+    "roomId": "max_palevsky__may__e105b__f1",
+    "userEmail": "student926@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-23T19:28:35.783Z",
+    "tags": [
+      "Good culture",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "cf24747638cccfdd",
+    "roomId": "max_palevsky__hoover__e135a__f1",
+    "userEmail": "student832@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-09T05:59:56.908Z",
+    "tags": [
+      "Social",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "c3906ed7e6141038",
+    "roomId": "max_palevsky__hoover__e133b__f1",
+    "userEmail": "student457@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-05T00:55:14.110Z",
+    "tags": [
+      "Quiet",
+      "Social",
+      "Sunny",
+      "Spacious",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "1f2616b172966b53",
+    "roomId": "max_palevsky__hoover__e129b__f1",
+    "userEmail": "student7@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-06T21:24:28.422Z",
+    "tags": [
+      "Social",
+      "AC works well",
+      "Tiny",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "11acf8d18957561b",
+    "roomId": "max_palevsky__hoover__e128b__f1",
+    "userEmail": "student836@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-05T13:01:46.557Z",
+    "tags": [
+      "Big windows",
+      "Loud outside",
+      "Great view",
+      "Sunny",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "02516083a40f22cc",
+    "roomId": "max_palevsky__hoover__e126b__f1",
+    "userEmail": "student307@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-09T13:34:23.743Z",
+    "tags": [
+      "Good culture",
+      "Big windows",
+      "Great view",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "49c37b4e2c1aab81",
+    "roomId": "max_palevsky__hoover__e228a__f2",
+    "userEmail": "student663@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-19T00:46:31.774Z",
+    "tags": [
+      "Good culture",
+      "Close to stairs",
+      "Tiny",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "c5e2c6120b492b20",
+    "roomId": "max_palevsky__hoover__e224a__f2",
+    "userEmail": "student586@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-05T23:04:10.601Z",
+    "tags": [
+      "Loud outside",
+      "Quiet",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "6d35ed3409acffba",
+    "roomId": "max_palevsky__may__e214b__f2",
+    "userEmail": "student975@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-27T11:20:12.752Z",
+    "tags": [
+      "Loud outside",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "8c8741bc13290d6c",
+    "roomId": "max_palevsky__may__e217b__f2",
+    "userEmail": "student983@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-20T10:28:14.176Z",
+    "tags": [
+      "Spacious",
+      "AC works well",
+      "Quiet",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "b4f29f3b500599f7",
+    "roomId": "max_palevsky__may__e201b__f2",
+    "userEmail": "student521@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-16T22:34:09.705Z",
+    "tags": [
+      "Loud outside",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "90a83b6a24455913",
+    "roomId": "max_palevsky__may__e207b__f2",
+    "userEmail": "student725@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-01T01:51:45.598Z",
+    "tags": [
+      "Social",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "b3195491abdaf2bf",
+    "roomId": "max_palevsky__may__e209a__f2",
+    "userEmail": "student813@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-20T16:42:08.124Z",
+    "tags": [
+      "Spacious",
+      "Quiet",
+      "Social",
+      "Loud outside",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "a5ff90fe05b4c73a",
+    "roomId": "max_palevsky__hoover__e427a__f4",
+    "userEmail": "student892@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-18T13:03:52.435Z",
+    "tags": [
+      "Spacious",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "1e9f8a6828dcf4f9",
+    "roomId": "max_palevsky__hoover__e424b__f4",
+    "userEmail": "student69@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-28T12:44:32.707Z",
+    "tags": [
+      "Loud outside",
+      "AC works well",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "cf43c7bc2ce4d499",
+    "roomId": "max_palevsky__hoover__e422a__f4",
+    "userEmail": "student767@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-04T08:10:25.931Z",
+    "tags": [
+      "Big windows",
+      "Drafty",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "f06fe88bdfd9cac7",
+    "roomId": "renee_granville-grossman__halperin__w402__f4",
+    "userEmail": "student242@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-28T15:04:05.012Z",
+    "tags": [
+      "Social",
+      "Quiet",
+      "Drafty",
+      "Close to stairs",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "60baa3be9151b641",
+    "roomId": "renee_granville-grossman__crown__c818__f8",
+    "userEmail": "student242@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-19T09:13:55.996Z",
+    "tags": [
+      "Close to stairs",
+      "Loud outside",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "2a5a8ca22642c1c6",
+    "roomId": "renee_granville-grossman__crown__c914__f9",
+    "userEmail": "student556@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-03T16:58:10.940Z",
+    "tags": [
+      "Social",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "e368d6b8059d21c2",
+    "roomId": "renee_granville-grossman__crown__c912__f9",
+    "userEmail": "student399@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-10T14:47:48.384Z",
+    "tags": [
+      "Close to stairs",
+      "Sunny",
+      "Spacious",
+      "Loud outside",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "87b865e515f3f247",
+    "roomId": "renee_granville-grossman__crown__c514__f5",
+    "userEmail": "student569@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-24T02:42:10.931Z",
+    "tags": [
+      "AC works well",
+      "Social",
+      "Drafty",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "ea39300ed37571de",
+    "roomId": "renee_granville-grossman__crown__c515__f5",
+    "userEmail": "student26@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-14T18:14:24.382Z",
+    "tags": [
+      "Spacious",
+      "Big windows",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "c432fc6d46648f32",
+    "roomId": "renee_granville-grossman__crown__c619__f6",
+    "userEmail": "student562@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-16T06:33:53.972Z",
+    "tags": [
+      "Spacious",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "6442ee257072acf6",
+    "roomId": "renee_granville-grossman__cathey__e539__f5",
+    "userEmail": "student80@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-08T02:53:11.024Z",
+    "tags": [
+      "Drafty",
+      "Close to stairs",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "e37168f427043564",
+    "roomId": "renee_granville-grossman__cathey__e531__f5",
+    "userEmail": "student192@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-11-29T05:59:58.076Z",
+    "tags": [
+      "Big windows",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "3b6c2ef36d1fa5ef",
+    "roomId": "renee_granville-grossman__cathey__e339__f3",
+    "userEmail": "student384@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-23T03:09:44.379Z",
+    "tags": [
+      "Close to stairs",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "71dcf7e7c54ff3ef",
+    "roomId": "renee_granville-grossman__cathey__e433__f4",
+    "userEmail": "student16@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-13T21:44:50.405Z",
+    "tags": [
+      "Good culture",
+      "Loud outside",
+      "Drafty",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "00447288ddb6e5ea",
+    "roomId": "renee_granville-grossman__cathey__e132__f1",
+    "userEmail": "student242@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-09T21:34:57.266Z",
+    "tags": [
+      "Spacious",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "26f2c12ed72703c2",
+    "roomId": "renee_granville-grossman__wendt__e712__f7",
+    "userEmail": "student779@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-19T07:11:10.858Z",
+    "tags": [
+      "Tiny",
+      "Close to stairs",
+      "Great view",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "735f0639d5b1a464",
+    "roomId": "renee_granville-grossman__wendt__e719__f7",
+    "userEmail": "student546@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-23T02:15:16.347Z",
+    "tags": [
+      "Close to stairs",
+      "Drafty",
+      "Quiet",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "285e073c3ad1d5cd",
+    "roomId": "renee_granville-grossman__kenwood__w545__f5",
+    "userEmail": "student645@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-20T13:26:56.095Z",
+    "tags": [
+      "AC works well",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "6fd17c4f5719f5bd",
+    "roomId": "renee_granville-grossman__kenwood__w547__f5",
+    "userEmail": "student851@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-19T18:32:51.222Z",
+    "tags": [
+      "Loud outside",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "fcfdc0e5e9ea512c",
+    "roomId": "renee_granville-grossman__wendt__e511__f5",
+    "userEmail": "student123@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-12T06:59:43.435Z",
+    "tags": [
+      "Spacious",
+      "Loud outside",
+      "Great view",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "f0bbacbe4469fe5d",
+    "roomId": "renee_granville-grossman__wendt__e516__f5",
+    "userEmail": "student485@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-12T23:34:13.948Z",
+    "tags": [
+      "Quiet",
+      "Sunny",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "35329916c19ab9b3",
+    "roomId": "renee_granville-grossman__wendt__e523__f5",
+    "userEmail": "student48@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-08T01:30:33.947Z",
+    "tags": [
+      "Good culture",
+      "Social",
+      "Great view",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "f06a84ec291897d3",
+    "roomId": "renee_granville-grossman__kenwood__w443__f4",
+    "userEmail": "student81@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-13T17:40:26.531Z",
+    "tags": [
+      "Sunny",
+      "Great view",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "e7b827c1000ffe6e",
+    "roomId": "renee_granville-grossman__kenwood__w451__f4",
+    "userEmail": "student84@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-03T01:12:12.419Z",
+    "tags": [
+      "Sunny",
+      "AC works well",
+      "Drafty",
+      "Quiet",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "d56a2c4e1141f8e2",
+    "roomId": "renee_granville-grossman__kenwood__w454__f4",
+    "userEmail": "student532@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-27T19:41:56.427Z",
+    "tags": [
+      "Quiet",
+      "Tiny",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "e140122ff8d9752a",
+    "roomId": "renee_granville-grossman__wendt__e603__f6",
+    "userEmail": "student744@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-04T10:25:19.171Z",
+    "tags": [
+      "Tiny",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "2797cdb9064be179",
+    "roomId": "renee_granville-grossman__wendt__e814__f8",
+    "userEmail": "student438@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-29T14:21:05.382Z",
+    "tags": [
+      "Spacious",
+      "Loud outside",
+      "Great view",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "a5ffe43b5a223984",
+    "roomId": "renee_granville-grossman__wendt__e811__f8",
+    "userEmail": "student840@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-21T01:09:36.778Z",
+    "tags": [
+      "Sunny",
+      "AC works well",
+      "Social",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "37106e94f2feceb8",
+    "roomId": "renee_granville-grossman__wendt__e816__f8",
+    "userEmail": "student944@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-18T01:20:56.176Z",
+    "tags": [
+      "Big windows",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "e815fc9d0127a664",
+    "roomId": "renee_granville-grossman__wendt__e820__f8",
+    "userEmail": "student370@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-14T09:18:10.681Z",
+    "tags": [
+      "Spacious",
+      "Drafty",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "c17bc7bcc688b9df",
+    "roomId": "renee_granville-grossman__wendt__e815__f8",
+    "userEmail": "student229@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-02T12:18:36.239Z",
+    "tags": [
+      "Close to stairs",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "530936effc557267",
+    "roomId": "renee_granville-grossman__delgiorno__w502__f5",
+    "userEmail": "student375@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-06T08:04:32.774Z",
+    "tags": [
+      "Tiny",
+      "Sunny",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "cf721fbc58594aa1",
+    "roomId": "renee_granville-grossman__delgiorno__w526__f5",
+    "userEmail": "student658@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-06T16:23:28.148Z",
+    "tags": [
+      "Spacious",
+      "Quiet",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "171b20899d60e553",
+    "roomId": "renee_granville-grossman__delgiorno__w815__f8",
+    "userEmail": "student45@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-11T17:44:13.111Z",
+    "tags": [
+      "Big windows",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "3377d7cc620db52f",
+    "roomId": "renee_granville-grossman__delgiorno__w828__f8",
+    "userEmail": "student252@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-03T18:11:31.786Z",
+    "tags": [
+      "Spacious",
+      "Tiny",
+      "Loud outside",
+      "AC works well",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "ae053b43fa52605e",
+    "roomId": "renee_granville-grossman__delgiorno__w607__f6",
+    "userEmail": "student223@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-15T00:03:08.984Z",
+    "tags": [
+      "Quiet",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "57f54812c96f8f8e",
+    "roomId": "renee_granville-grossman__delgiorno__w613__f6",
+    "userEmail": "student262@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-11T18:32:58.447Z",
+    "tags": [
+      "Tiny",
+      "Sunny",
+      "Big windows",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "7acf886079f5e5aa",
+    "roomId": "renee_granville-grossman__delgiorno__w614__f6",
+    "userEmail": "student690@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-10T05:03:49.519Z",
+    "tags": [
+      "Quiet",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "c0e9cdad6865397b",
+    "roomId": "renee_granville-grossman__delgiorno__w627__f6",
+    "userEmail": "student397@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-20T20:00:01.683Z",
+    "tags": [
+      "Spacious",
+      "Great view",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "d7c0ede3a5dcc3b4",
+    "roomId": "snell_hitchcock__snell__222__f2",
+    "userEmail": "student140@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-20T14:14:57.760Z",
+    "tags": [
+      "Big windows",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "b58736902931a1b0",
+    "roomId": "snell_hitchcock__hitchcock__321__f3",
+    "userEmail": "student924@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-05T10:25:11.059Z",
+    "tags": [
+      "Tiny",
+      "Close to stairs",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "ba371eb3fe430264",
+    "roomId": "snell_hitchcock__hitchcock__525__f2",
+    "userEmail": "student703@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-15T05:59:08.511Z",
+    "tags": [
+      "Spacious",
+      "Social",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "a4fda84efd804ce7",
+    "roomId": "snell_hitchcock__hitchcock__221__f2",
+    "userEmail": "student91@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-04T16:05:13.112Z",
+    "tags": [
+      "Sunny",
+      "Social",
+      "Great view",
+      "Loud outside",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "f4a775f0511570a2",
+    "roomId": "snell_hitchcock__hitchcock__322__f2",
+    "userEmail": "student180@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-06T09:30:21.253Z",
+    "tags": [
+      "Drafty",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "3240deb06a841fe8",
+    "roomId": "snell_hitchcock__hitchcock__323__f2",
+    "userEmail": "student644@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-03T03:57:38.773Z",
+    "tags": [
+      "Sunny",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "d649b3df8a1f106b",
+    "roomId": "snell_hitchcock__hitchcock__324__f2",
+    "userEmail": "student325@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-21T10:04:29.441Z",
+    "tags": [
+      "Tiny",
+      "Good culture",
+      "Spacious",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "704e2f8ee8c17dda",
+    "roomId": "snell_hitchcock__hitchcock__526__f2",
+    "userEmail": "student680@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-11T20:57:43.597Z",
+    "tags": [
+      "Great view",
+      "Loud outside",
+      "Spacious",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "e582c366ff7097df",
+    "roomId": "snell_hitchcock__hitchcock__115__f1",
+    "userEmail": "student568@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-15T06:27:11.518Z",
+    "tags": [
+      "Close to stairs",
+      "Sunny",
+      "Spacious",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "36274eae96675525",
+    "roomId": "snell_hitchcock__hitchcock__145__f4",
+    "userEmail": "student121@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-09T00:20:59.081Z",
+    "tags": [
+      "Loud outside",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "bcb3072cd9ef3c70",
+    "roomId": "snell_hitchcock__hitchcock__147__f4",
+    "userEmail": "student883@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-22T04:44:36.650Z",
+    "tags": [
+      "Good culture",
+      "AC works well",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "481d10bd50c23772",
+    "roomId": "snell_hitchcock__hitchcock__241__f4",
+    "userEmail": "student413@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-10T06:27:17.655Z",
+    "tags": [
+      "Social",
+      "Drafty",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "ccaf01cac8f79ef3",
+    "roomId": "snell_hitchcock__hitchcock__441__f4",
+    "userEmail": "student230@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-15T16:53:24.775Z",
+    "tags": [
+      "Big windows",
+      "Good culture",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "9fb8d73d88499abd",
+    "roomId": "snell_hitchcock__snell__114__f1",
+    "userEmail": "student390@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-04T02:46:06.742Z",
+    "tags": [
+      "Tiny",
+      "Quiet",
+      "Loud outside",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "18d5cf13a237c061",
+    "roomId": "snell_hitchcock__snell__113__f1",
+    "userEmail": "student322@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-07T04:49:13.260Z",
+    "tags": [
+      "Sunny",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "f5273d174be05e87",
+    "roomId": "snell_hitchcock__snell__126__f1",
+    "userEmail": "student227@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-27T16:27:59.733Z",
+    "tags": [
+      "Big windows",
+      "Spacious",
+      "Social",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "78f54b7e0be617de",
+    "roomId": "snell_hitchcock__snell__421__f4",
+    "userEmail": "student663@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-27T08:38:51.426Z",
+    "tags": [
+      "Good culture",
+      "Social",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "265365db7f4f4ae0",
+    "roomId": "snell_hitchcock__snell__323__f3",
+    "userEmail": "student223@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-23T13:40:16.867Z",
+    "tags": [
+      "Social",
+      "Good culture",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "937c9da4512355a3",
+    "roomId": "woodlawn__eka__1608__f16",
+    "userEmail": "student330@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-12T00:09:19.212Z",
+    "tags": [
+      "Quiet",
+      "Drafty",
+      "Great view",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "d8705577806e5f86",
+    "roomId": "woodlawn__eka__1616__f16",
+    "userEmail": "student69@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-14T04:29:06.804Z",
+    "tags": [
+      "Sunny",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "12b458517d4f8e0f",
+    "roomId": "woodlawn__eka__1610__f16",
+    "userEmail": "student655@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-05T04:33:57.612Z",
+    "tags": [
+      "Drafty",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "d15de6c6591d6ce4",
+    "roomId": "woodlawn__eka__1530__f15",
+    "userEmail": "student461@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-17T13:37:05.221Z",
+    "tags": [
+      "Tiny",
+      "Quiet",
+      "AC works well",
+      "Big windows",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "a3274f0f61976fb6",
+    "roomId": "woodlawn__eka__1517__f15",
+    "userEmail": "student357@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-04T21:20:33.510Z",
+    "tags": [
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "895008c1a9c4bfc1",
+    "roomId": "woodlawn__eka__1514__f15",
+    "userEmail": "student517@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-18T19:58:53.757Z",
+    "tags": [
+      "Sunny",
+      "Drafty",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "f3779354a1c609b6",
+    "roomId": "woodlawn__eka__1412__f14",
+    "userEmail": "student288@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-18T02:59:00.300Z",
+    "tags": [
+      "AC works well",
+      "Close to stairs",
+      "Big windows",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "b147666e43d18070",
+    "roomId": "woodlawn__eka__1404__f14",
+    "userEmail": "student249@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-29T11:40:12.039Z",
+    "tags": [
+      "Loud outside",
+      "Spacious",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "8a350898d4bb0dbb",
+    "roomId": "woodlawn__eka__1421__f14",
+    "userEmail": "student316@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-14T05:07:01.438Z",
+    "tags": [
+      "Social",
+      "Quiet",
+      "Great view",
+      "Drafty",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "ec042d4aec68ae0c",
+    "roomId": "woodlawn__eka__1432__f14",
+    "userEmail": "student667@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-06T03:30:12.701Z",
+    "tags": [
+      "Tiny",
+      "AC works well",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "d0615b899b5c518c",
+    "roomId": "woodlawn__markovitz__1318__f13",
+    "userEmail": "student634@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-02T11:45:09.132Z",
+    "tags": [
+      "Drafty",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "3fbb45dfdb1a572e",
+    "roomId": "woodlawn__markovitz__1321__f13",
+    "userEmail": "student852@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-08T00:15:31.008Z",
+    "tags": [
+      "Good culture",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "50752150d9479800",
+    "roomId": "woodlawn__markovitz__1315__f13",
+    "userEmail": "student961@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-08T21:43:10.763Z",
+    "tags": [
+      "Sunny",
+      "Drafty",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "1b511b08b66b972e",
+    "roomId": "woodlawn__markovitz__1302__f13",
+    "userEmail": "student860@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-20T03:19:58.391Z",
+    "tags": [
+      "Spacious",
+      "Big windows",
+      "Quiet",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "009101e5c0f0628b",
+    "roomId": "woodlawn__liew__804__f8",
+    "userEmail": "student436@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-07T05:04:50.715Z",
+    "tags": [
+      "Tiny",
+      "Close to stairs",
+      "Social",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "6d1324d0eebd5aaf",
+    "roomId": "woodlawn__liew__802__f8",
+    "userEmail": "student948@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-27T07:11:15.843Z",
+    "tags": [
+      "Quiet",
+      "Spacious",
+      "Social",
+      "Loud outside",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "a11652fd46af0dd0",
+    "roomId": "woodlawn__liew__829__f8",
+    "userEmail": "student354@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-09T07:15:04.822Z",
+    "tags": [
+      "Great view",
+      "Spacious",
+      "Tiny",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "465fca4d3a705f1a",
+    "roomId": "woodlawn__markovitz__1104__f11",
+    "userEmail": "student116@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-06T08:10:47.780Z",
+    "tags": [
+      "AC works well",
+      "Spacious",
+      "Sunny",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "0e8f6989756a499d",
+    "roomId": "woodlawn__markovitz__1130__f11",
+    "userEmail": "student942@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-20T08:04:04.318Z",
+    "tags": [
+      "Good culture",
+      "Sunny",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "3850e67d75eb67b4",
+    "roomId": "woodlawn__markovitz__1136__f11",
+    "userEmail": "student94@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-04T17:34:54.042Z",
+    "tags": [
+      "Drafty",
+      "Big windows",
+      "Good culture",
+      "Great view",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "dae7d5ccaef29a32",
+    "roomId": "woodlawn__markovitz__1116__f11",
+    "userEmail": "student230@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-03T18:54:33.851Z",
+    "tags": [
+      "Spacious",
+      "Great view",
+      "Tiny",
+      "Quiet",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "f1f9aeb65282232a",
+    "roomId": "woodlawn__markovitz__1129__f11",
+    "userEmail": "student960@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-18T05:44:37.686Z",
+    "tags": [
+      "Loud outside",
+      "Tiny",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "14c8397acb341170",
+    "roomId": "woodlawn__liew__1008__f10",
+    "userEmail": "student61@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-03T17:07:51.085Z",
+    "tags": [
+      "Loud outside",
+      "Tiny",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "2983799c316e3390",
+    "roomId": "woodlawn__liew__1004__f10",
+    "userEmail": "student24@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-10T12:41:58.693Z",
+    "tags": [
+      "Drafty",
+      "AC works well",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "590c06ed3b5de780",
+    "roomId": "woodlawn__markovitz__1234__f12",
+    "userEmail": "student841@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-05T20:13:11.467Z",
+    "tags": [
+      "Sunny",
+      "Social",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "30f62347e1beff9d",
+    "roomId": "woodlawn__liew__912__f9",
+    "userEmail": "student683@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-17T04:09:05.403Z",
+    "tags": [
+      "Loud outside",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "6b956a1e2740b352",
+    "roomId": "woodlawn__liew__915__f9",
+    "userEmail": "student626@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-16T21:06:11.446Z",
+    "tags": [
+      "Sunny",
+      "Quiet",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "60de3b9afaaafff9",
+    "roomId": "woodlawn__liew__910__f9",
+    "userEmail": "student178@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-19T15:20:01.409Z",
+    "tags": [
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "5a4b8159f2184c06",
+    "roomId": "woodlawn__baker__640__f6",
+    "userEmail": "student776@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-04T23:40:44.360Z",
+    "tags": [
+      "Great view",
+      "Spacious",
+      "Close to stairs",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "00d37aef1ab652c5",
+    "roomId": "woodlawn__baker__634__f6",
+    "userEmail": "student104@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-23T20:25:47.535Z",
+    "tags": [
+      "Spacious",
+      "Tiny",
+      "Good culture",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "8b5eac4194d3e55d",
+    "roomId": "woodlawn__baker__628__f6",
+    "userEmail": "student559@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-04T10:15:41.913Z",
+    "tags": [
+      "AC works well",
+      "Tiny",
+      "Quiet",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "e1ce0b5327376b4d",
+    "roomId": "woodlawn__baker__624__f6",
+    "userEmail": "student722@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-12T06:40:02.573Z",
+    "tags": [
+      "Great view",
+      "Big windows",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "658c9b8e746df244",
+    "roomId": "woodlawn__baker__610__f6",
+    "userEmail": "student625@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-23T03:24:12.605Z",
+    "tags": [
+      "Great view",
+      "Quiet",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "f27c886c19fb8c08",
+    "roomId": "woodlawn__baker__618__f6",
+    "userEmail": "student273@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-02T03:54:36.715Z",
+    "tags": [
+      "Sunny",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "920c1346be793db1",
+    "roomId": "woodlawn__baker__606__f6",
+    "userEmail": "student720@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-29T11:50:37.336Z",
+    "tags": [
+      "Sunny",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "c95d6ef8582a5210",
+    "roomId": "woodlawn__chenn__604__f6",
+    "userEmail": "student518@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-19T17:22:26.512Z",
+    "tags": [
+      "Tiny",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "461fc6e7f4342de9",
+    "roomId": "woodlawn__chenn__615__f6",
+    "userEmail": "student56@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-03T18:03:04.796Z",
+    "tags": [
+      "Drafty",
+      "Spacious",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "5551ebd3b73f88e6",
+    "roomId": "woodlawn__chenn__613__f6",
+    "userEmail": "student897@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-04T09:30:49.214Z",
+    "tags": [
+      "Big windows",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "77616a4edcd4ba08",
+    "roomId": "woodlawn__baker__735__f7",
+    "userEmail": "student415@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-05T16:06:50.819Z",
+    "tags": [
+      "Big windows",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "ac29123a06ac7be2",
+    "roomId": "woodlawn__baker__710__f7",
+    "userEmail": "student833@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-12T22:05:07.547Z",
+    "tags": [
+      "Sunny",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "c6cd26c4223d7cb5",
+    "roomId": "woodlawn__baker__732__f7",
+    "userEmail": "student872@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-06T14:59:09.475Z",
+    "tags": [
+      "Good culture",
+      "AC works well",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "eb451f72afe03597",
+    "roomId": "woodlawn__yovovich__703__f7",
+    "userEmail": "student207@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-08T23:34:11.655Z",
+    "tags": [
+      "Drafty",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "071376f4e6e69418",
+    "roomId": "woodlawn__yovovich__717__f7",
+    "userEmail": "student429@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-13T17:10:10.119Z",
+    "tags": [
+      "Close to stairs",
+      "Big windows",
+      "Sunny",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "4737a1c8e9a9cf02",
+    "roomId": "woodlawn__yovovich__723__f7",
+    "userEmail": "student770@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-01T18:02:22.151Z",
+    "tags": [
+      "Good culture",
+      "Drafty",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "e1de12fed1bbfbef",
+    "roomId": "woodlawn__yovovich__722__f7",
+    "userEmail": "student241@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-17T03:58:37.611Z",
+    "tags": [
+      "Loud outside",
+      "AC works well",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "86c531cdf3d374c3",
+    "roomId": "woodlawn__chenn__738__f7",
+    "userEmail": "student705@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-01T07:44:22.597Z",
+    "tags": [
+      "Big windows",
+      "Social",
+      "Loud outside",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "394b5ed48ce4d6bf",
+    "roomId": "woodlawn__chenn__719__f7",
+    "userEmail": "student252@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-15T19:51:14.632Z",
+    "tags": [
+      "Tiny",
+      "Quiet",
+      "Close to stairs",
+      "Great view",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "5abe7715d4c7295a",
+    "roomId": "woodlawn__chenn__716__f7",
+    "userEmail": "student621@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-11T14:41:26.388Z",
+    "tags": [
+      "Big windows",
+      "Tiny",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "ec832d9b802518cb",
+    "roomId": "woodlawn__chenn__710__f7",
+    "userEmail": "student734@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-07T23:46:40.144Z",
+    "tags": [
+      "Social",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "142dfd35683983aa",
+    "roomId": "woodlawn__fama__729__f7",
+    "userEmail": "student458@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-20T15:39:21.810Z",
+    "tags": [
+      "Spacious",
+      "Social",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "85f2e06c89fb99bc",
+    "roomId": "woodlawn__fama__738__f7",
+    "userEmail": "student531@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-20T19:28:34.018Z",
+    "tags": [
+      "AC works well",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "c5b4a8872a9cd01b",
+    "roomId": "woodlawn__yovovich__615__f6",
+    "userEmail": "student576@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-05T21:22:44.989Z",
+    "tags": [
+      "Quiet",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "9b68eaeef390039c",
+    "roomId": "woodlawn__yovovich__603__f6",
+    "userEmail": "student958@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-01T16:09:34.339Z",
+    "tags": [
+      "Tiny",
+      "Sunny",
+      "Social",
+      "Drafty",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "481946edde2d6414",
+    "roomId": "woodlawn__yovovich__625__f6",
+    "userEmail": "student999@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-07T05:20:47.638Z",
+    "tags": [
+      "Close to stairs",
+      "Good culture",
+      "Social",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "6db58971cdf2d721",
+    "roomId": "woodlawn__yovovich__612__f6",
+    "userEmail": "student998@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-28T01:34:10.294Z",
+    "tags": [
+      "Drafty",
+      "Close to stairs",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "521a59cf7ba53c77",
+    "roomId": "woodlawn__fama__603__f6",
+    "userEmail": "student900@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-22T21:00:13.195Z",
+    "tags": [
+      "Drafty",
+      "Loud outside",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "a2860d7ae2557d2d",
+    "roomId": "woodlawn__fama__628__f6",
+    "userEmail": "student844@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-28T02:29:46.834Z",
+    "tags": [
+      "Tiny",
+      "Close to stairs",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "26e2e8ecd1e4123f",
+    "roomId": "woodlawn__fama__634__f6",
+    "userEmail": "student577@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-28T02:56:45.262Z",
+    "tags": [
+      "Close to stairs",
+      "Great view",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "f2296daa0c0d9d3a",
+    "roomId": "woodlawn__baker__540__f5",
+    "userEmail": "student253@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-09T18:23:14.163Z",
+    "tags": [
+      "Big windows",
+      "Spacious",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "fd5e3818363e5adf",
+    "roomId": "woodlawn__baker__531__f5",
+    "userEmail": "student349@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-21T12:44:07.834Z",
+    "tags": [
+      "Sunny",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "c2a0ad6e833e0e0b",
+    "roomId": "woodlawn__baker__514__f5",
+    "userEmail": "student369@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-14T14:52:08.661Z",
+    "tags": [
+      "Quiet",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "59dceba1a40413a2",
+    "roomId": "woodlawn__chenn__512__f5",
+    "userEmail": "student514@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-30T21:10:38.238Z",
+    "tags": [
+      "Drafty",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "fb12b9dfcc58289e",
+    "roomId": "woodlawn__chenn__538__f5",
+    "userEmail": "student124@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-23T15:38:08.011Z",
+    "tags": [
+      "Loud outside",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "03570101cc8cf665",
+    "roomId": "woodlawn__chenn__540__f5",
+    "userEmail": "student201@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-22T08:24:04.112Z",
+    "tags": [
+      "Loud outside",
+      "Spacious",
+      "Drafty",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "fbba63022a1f19e6",
+    "roomId": "woodlawn__chenn__519__f5",
+    "userEmail": "student415@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-25T14:49:06.510Z",
+    "tags": [
+      "Good culture",
+      "Great view",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "b5d980556ab9dfbf",
+    "roomId": "woodlawn__chenn__515__f5",
+    "userEmail": "student316@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-29T04:47:55.217Z",
+    "tags": [
+      "Close to stairs",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "666d2c7803a50d9b",
+    "roomId": "woodlawn__fama__509__f5",
+    "userEmail": "student984@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-28T10:54:45.168Z",
+    "tags": [
+      "AC works well",
+      "Close to stairs",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "260253c28496de6d",
+    "roomId": "woodlawn__fama__533__f5",
+    "userEmail": "student315@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-16T05:37:09.624Z",
+    "tags": [
+      "Great view",
+      "Spacious",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "c4bea8409cd0363d",
+    "roomId": "woodlawn__fama__510__f5",
+    "userEmail": "student259@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-14T07:57:27.869Z",
+    "tags": [
+      "Social",
+      "Close to stairs",
+      "Tiny",
+      "Great view",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "74fd5ebca508a855",
+    "roomId": "woodlawn__yovovich__518__f5",
+    "userEmail": "student232@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-25T23:45:41.741Z",
+    "tags": [
+      "Good culture",
+      "Close to stairs",
+      "Spacious",
+      "Loud outside",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "d9f21e9874a22b38",
+    "roomId": "woodlawn__yovovich__517__f5",
+    "userEmail": "student675@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-10T22:16:34.113Z",
+    "tags": [
+      "Great view",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "70979bd86a0952f5",
+    "roomId": "woodlawn__casner__238__f2",
+    "userEmail": "student107@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-18T23:10:20.021Z",
+    "tags": [
+      "Close to stairs",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "88da2dcd95cf4d03",
+    "roomId": "woodlawn__casner__212__f2",
+    "userEmail": "student714@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-04T09:23:09.099Z",
+    "tags": [
+      "Tiny",
+      "Close to stairs",
+      "Sunny",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "cb1416dce8befff9",
+    "roomId": "woodlawn__casner__208__f2",
+    "userEmail": "student274@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-12T04:19:46.652Z",
+    "tags": [
+      "Quiet",
+      "Drafty",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "d0921aa69fdecb1b",
+    "roomId": "woodlawn__casner__204__f2",
+    "userEmail": "student29@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-02T05:34:50.270Z",
+    "tags": [
+      "Social",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "ca795eff2c9bb402",
+    "roomId": "woodlawn__casner__314__f3",
+    "userEmail": "student315@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-24T02:23:07.240Z",
+    "tags": [
+      "Big windows",
+      "Sunny",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "0c1021bbca67579a",
+    "roomId": "woodlawn__casner__310__f3",
+    "userEmail": "student197@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-23T04:48:41.951Z",
+    "tags": [
+      "Spacious",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "c269032a2cc3faf8",
+    "roomId": "woodlawn__casner__326__f3",
+    "userEmail": "student799@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-07T09:36:22.088Z",
+    "tags": [
+      "AC works well",
+      "Spacious",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "b1f0038861936860",
+    "roomId": "woodlawn__casner__322__f3",
+    "userEmail": "student86@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-05T11:56:23.792Z",
+    "tags": [
+      "Spacious",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "c2ec1363072eb39a",
+    "roomId": "woodlawn__casner__429__f4",
+    "userEmail": "student848@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-15T18:09:01.456Z",
+    "tags": [
+      "Good culture",
+      "Social",
+      "Spacious",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "8f6a81f2dcbd2475",
+    "roomId": "woodlawn__casner__414__f4",
+    "userEmail": "student837@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-15T00:20:45.641Z",
+    "tags": [
+      "Spacious",
+      "Drafty",
+      "Sunny",
+      "Social",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "4686fdf24111789e",
+    "roomId": "woodlawn__casner__412__f4",
+    "userEmail": "student290@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-12T06:21:49.842Z",
+    "tags": [
+      "Big windows",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "8ba2b3d2dca850b4",
+    "roomId": "woodlawn__casner__405__f4",
+    "userEmail": "student686@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-15T18:35:06.377Z",
+    "tags": [
+      "Quiet",
+      "AC works well",
+      "Big windows",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "8273eafaf3be93be",
+    "roomId": "woodlawn__gallo__212__f2",
+    "userEmail": "student971@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-02T02:01:31.149Z",
+    "tags": [
+      "Great view",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "2b0256ab54360227",
+    "roomId": "woodlawn__gallo__225__f2",
+    "userEmail": "student664@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-29T12:56:18.352Z",
+    "tags": [
+      "Good culture",
+      "Tiny",
+      "Great view",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "f8a1fe1752f5b8f5",
+    "roomId": "woodlawn__gallo__211__f2",
+    "userEmail": "student0@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-16T10:24:25.144Z",
+    "tags": [
+      "Spacious",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "0bf90d81d58936e2",
+    "roomId": "woodlawn__gallo__311__f3",
+    "userEmail": "student841@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-11T10:45:49.803Z",
+    "tags": [
+      "Tiny",
+      "Great view",
+      "Good culture",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "915663c78a3ecd21",
+    "roomId": "woodlawn__gallo__331__f3",
+    "userEmail": "student431@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-12T13:06:37.446Z",
+    "tags": [
+      "Tiny",
+      "Big windows",
+      "AC works well",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "22c1d7c4787c1b5d",
+    "roomId": "woodlawn__gallo__314__f3",
+    "userEmail": "student482@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-19T00:16:14.616Z",
+    "tags": [
+      "Great view",
+      "Sunny",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "893f3e2eae70c988",
+    "roomId": "woodlawn__gallo__422__f4",
+    "userEmail": "student893@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-03T19:57:27.151Z",
+    "tags": [
+      "Tiny",
+      "Close to stairs",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "011cdc58af179002",
+    "roomId": "woodlawn__gallo__433__f4",
+    "userEmail": "student314@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-15T06:29:52.962Z",
+    "tags": [
+      "AC works well",
+      "Close to stairs",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "025f8f9b446b81a4",
+    "roomId": "woodlawn__gallo__425__f4",
+    "userEmail": "student57@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-02T12:45:02.891Z",
+    "tags": [
+      "Good culture",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "f231c5191f862b34",
+    "roomId": "woodlawn__gallo__438__f4",
+    "userEmail": "student571@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-26T02:30:45.420Z",
+    "tags": [
+      "AC works well",
+      "Tiny",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "a8b3cbff0dd784f5",
+    "roomId": "woodlawn__gallo__418__f4",
+    "userEmail": "student735@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-02T10:17:15.423Z",
+    "tags": [
+      "Tiny",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "4d77a6e2b5860768",
+    "roomId": "woodlawn__gallo__434__f4",
+    "userEmail": "student84@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-23T14:23:18.460Z",
+    "tags": [
+      "AC works well",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "a3924376ff52dd97",
+    "roomId": "woodlawn__han__218__f2",
+    "userEmail": "student157@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-21T04:19:31.257Z",
+    "tags": [
+      "Big windows",
+      "Quiet",
+      "Loud outside",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Panoramic Suite"
+  },
+  {
+    "entryId": "59b0f37e9ca21251",
+    "roomId": "woodlawn__han__204__f2",
+    "userEmail": "student693@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-31T13:20:52.905Z",
+    "tags": [
+      "AC works well",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "6096ba0eb1da48d8",
+    "roomId": "woodlawn__han__238__f2",
+    "userEmail": "student232@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-27T16:32:23.178Z",
+    "tags": [
+      "Sunny",
+      "Good culture",
+      "Tiny",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "f36886c40da5e42e",
+    "roomId": "woodlawn__han__211__f2",
+    "userEmail": "student605@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-12T13:00:32.375Z",
+    "tags": [
+      "Drafty",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 1
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "61c81e05e040c218",
+    "roomId": "woodlawn__han__312__f3",
+    "userEmail": "student281@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-17T20:22:39.368Z",
+    "tags": [
+      "Sunny",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Suite Life"
+  },
+  {
+    "entryId": "49cd0866a03aba68",
+    "roomId": "woodlawn__han__317__f3",
+    "userEmail": "student363@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-07T14:09:05.266Z",
+    "tags": [
+      "Drafty",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "263061e7fe5f2866",
+    "roomId": "woodlawn__han__412__f4",
+    "userEmail": "student521@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-20T16:06:05.755Z",
+    "tags": [
+      "Loud outside",
+      "Sunny"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "a57aa66e6b853233",
+    "roomId": "woodlawn__han__428__f4",
+    "userEmail": "student271@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-08T16:04:43.200Z",
+    "tags": [
+      "Social",
+      "Tiny",
+      "Big windows"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "The Batcave"
+  },
+  {
+    "entryId": "7d4645464ca67deb",
+    "roomId": "woodlawn__han__432__f4",
+    "userEmail": "student283@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-26T07:05:53.700Z",
+    "tags": [
+      "Sunny",
+      "Big windows",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "16c1443529ae13fd",
+    "roomId": "woodlawn__rustandy__220__f2",
+    "userEmail": "student688@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-14T09:29:46.525Z",
+    "tags": [
+      "Close to stairs",
+      "Good culture",
+      "Spacious",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Cozy Corner"
+  },
+  {
+    "entryId": "9a0a40d63ea8bf9c",
+    "roomId": "woodlawn__rustandy__219__f2",
+    "userEmail": "student847@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-09T19:49:54.687Z",
+    "tags": [
+      "Quiet",
+      "AC works well"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "939fb831b1ca2c1f",
+    "roomId": "woodlawn__rustandy__212__f2",
+    "userEmail": "student216@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-10T02:02:53.784Z",
+    "tags": [
+      "Social",
+      "Spacious",
+      "Loud outside",
+      "Drafty",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "9ad7864ad954f483",
+    "roomId": "woodlawn__rustandy__237__f2",
+    "userEmail": "student867@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-06T10:37:42.157Z",
+    "tags": [
+      "Social",
+      "Drafty"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "6ca44ca3b27a0ffb",
+    "roomId": "woodlawn__rustandy__229__f2",
+    "userEmail": "student402@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-06T13:21:40.685Z",
+    "tags": [
+      "Big windows",
+      "Close to stairs"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Corner Pocket"
+  },
+  {
+    "entryId": "f95502482f00cc76",
+    "roomId": "woodlawn__rustandy__335__f3",
+    "userEmail": "student695@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-22T06:31:49.126Z",
+    "tags": [
+      "Tiny",
+      "Loud outside"
+    ],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "f691f001a600aa17",
+    "roomId": "woodlawn__rustandy__331__f3",
+    "userEmail": "student212@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-07T03:08:02.074Z",
+    "tags": [
+      "Close to stairs",
+      "Tiny",
+      "Social"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "567f2dd4b48bf790",
+    "roomId": "woodlawn__rustandy__317__f3",
+    "userEmail": "student580@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-11-29T09:41:35.237Z",
+    "tags": [
+      "Spacious",
+      "Social",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "a34a019bb02c29ac",
+    "roomId": "woodlawn__rustandy__319__f3",
+    "userEmail": "student798@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-08T01:42:21.075Z",
+    "tags": [
+      "Drafty",
+      "Quiet",
+      "Tiny"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 3
+    },
+    "customName": "Sunshine Room"
+  },
+  {
+    "entryId": "d250676e256ddf3e",
+    "roomId": "woodlawn__rustandy__327__f3",
+    "userEmail": "student975@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-25T11:16:12.054Z",
+    "tags": [
+      "Tiny",
+      "Good culture"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 4
+    },
+    "customName": "The Oasis"
+  },
+  {
+    "entryId": "f42b8eb1ca03f1e9",
+    "roomId": "woodlawn__rustandy__325__f3",
+    "userEmail": "student371@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2025-12-30T01:18:19.314Z",
+    "tags": [
+      "Loud outside",
+      "Social",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "1332c3b65c2590af",
+    "roomId": "woodlawn__rustandy__411__f4",
+    "userEmail": "student904@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-01-08T06:10:56.810Z",
+    "tags": [
+      "Big windows",
+      "Quiet",
+      "Great view"
+    ],
+    "scalars": {
+      "my house has a good culture": 5,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Party Central"
+  },
+  {
+    "entryId": "6e45973ccd1196d2",
+    "roomId": "woodlawn__rustandy__409__f4",
+    "userEmail": "student527@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-28T22:01:42.121Z",
+    "tags": [
+      "Loud outside",
+      "Spacious"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Chill Zone"
+  },
+  {
+    "entryId": "fc457b280cf78a00",
+    "roomId": "woodlawn__rustandy__437__f4",
+    "userEmail": "student915@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-02-13T23:05:42.502Z",
+    "tags": [
+      "Drafty",
+      "Quiet"
+    ],
+    "scalars": {
+      "my house has a good culture": 3,
+      "my room gets a lot of outside noise": 2
+    },
+    "customName": "Study Haven"
+  },
+  {
+    "entryId": "11a9a3973e7f2fd6",
+    "roomId": "burton-judson__salisbury__839b__f3",
+    "userEmail": "test@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-25T22:17:20.565Z",
+    "tags": [
+      "Dark",
+      "Small",
+      "Cramped"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "The Cum Dungeon"
+  },
+  {
+    "entryId": "e59059465130abfa",
+    "roomId": "burton-judson__salisbury__810__f1",
+    "userEmail": "test@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-25T22:17:20.569Z",
+    "tags": [
+      "Tiny",
+      "Cramped",
+      "Dark"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "Shitbox Suite"
+  },
+  {
+    "entryId": "9e1530065fa037bc",
+    "roomId": "burton-judson__salisbury__839a__f3",
+    "userEmail": "test@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-25T22:17:20.569Z",
+    "tags": [
+      "Dark",
+      "Small",
+      "Cramped"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "Piss Corner"
+  },
+  {
+    "entryId": "a7c25caf91a25adf",
+    "roomId": "burton-judson__salisbury__832__f3",
+    "userEmail": "test@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-25T22:17:20.569Z",
+    "tags": [
+      "Dark",
+      "Small",
+      "Cramped"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": "Fuck Palace"
+  },
+  {
+    "entryId": "05000e09e22ac40e",
+    "roomId": "burton-judson__salisbury__833__f3",
+    "userEmail": "test@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-03-25T22:17:20.569Z",
+    "tags": [
+      "Dark",
+      "Small",
+      "Cramped"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 5
+    },
+    "customName": null
+  }
+]
