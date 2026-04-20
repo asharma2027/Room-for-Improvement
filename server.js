@@ -824,13 +824,25 @@ app.get('/rooms/:id', ensureAuthenticated, (req, res) => {
 // Submit curated tags + scalars
 app.post('/rooms/:id/submit', ensureAuthenticated, (req, res) => {
   const roomId = req.params.id;
-  const { academicYear, tags, scalar_house_culture, scalar_outside_noise, customName } = req.body;
+  const {
+    academicYear, tags, customName, form_version,
+    scalar_house_culture, scalar_outside_noise,
+    scalar_room_size, scalar_natural_light, scalar_temp_control,
+    culture_note, freetext_note, culture_tags
+  } = req.body;
 
   let tagsArray = [];
   if (Array.isArray(tags)) {
     tagsArray = tags;
   } else if (typeof tags === 'string') {
     tagsArray = [tags];
+  }
+
+  let cultureTagsArray = [];
+  if (Array.isArray(culture_tags)) {
+    cultureTagsArray = culture_tags;
+  } else if (typeof culture_tags === 'string') {
+    cultureTagsArray = [culture_tags];
   }
 
   const houseCultureVal = parseInt(scalar_house_culture, 10);
@@ -849,6 +861,25 @@ app.post('/rooms/:id/submit', ensureAuthenticated, (req, res) => {
     return res.send('You already submitted data for this room in that academic year.');
   }
 
+  // Build scalars — always preserve the two keys used by computeDormRankings()
+  const scalars = {
+    "my house has a good culture": houseCultureVal,
+    "my room gets a lot of outside noise": outsideNoiseVal
+  };
+
+  if (form_version === 'v2') {
+    scalars["room size"]            = parseInt(scalar_room_size, 10);
+    scalars["natural light"]        = parseInt(scalar_natural_light, 10);
+    scalars["temperature control"]  = parseInt(scalar_temp_control, 10);
+    if (culture_note && culture_note.trim()) {
+      scalars["culture note"] = culture_note.trim().slice(0, 100);
+    }
+    if (freetext_note && freetext_note.trim()) {
+      scalars["freetext note"] = freetext_note.trim().slice(0, 280);
+    }
+    scalars["form version"] = "v2";
+  }
+
   const newEntry = {
     entryId: crypto.randomBytes(8).toString('hex'),
     roomId,
@@ -856,12 +887,15 @@ app.post('/rooms/:id/submit', ensureAuthenticated, (req, res) => {
     academicYear,
     timestamp: new Date().toISOString(),
     tags: tagsArray,
-    scalars: {
-      "my house has a good culture": houseCultureVal,
-      "my room gets a lot of outside noise": outsideNoiseVal
-    },
+    scalars,
     customName: customName && customName.trim() ? customName.trim() : null
   };
+
+  // Store culture descriptor chips separately (not mixed into physical tags)
+  if (form_version === 'v2' && cultureTagsArray.length > 0) {
+    newEntry.cultureTags = cultureTagsArray.slice(0, 3);
+  }
+
   allEntries.push(newEntry);
   writeRoomEntries(allEntries);
 

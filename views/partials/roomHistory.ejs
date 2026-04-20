@@ -1,5 +1,6 @@
 <!-- This partial is included in roomDetails.ejs for displaying historical data. -->
 
+<div style="overflow-x: auto;">
 <table>
   <thead>
     <tr>
@@ -10,13 +11,18 @@
       <th>Tags</th>
       <th>House Culture (1-5)</th>
       <th>Outside Noise (1-5)</th>
+      <th>Room Size</th>
+      <th>Natural Light</th>
+      <th>Temp Control</th>
     </tr>
   </thead>
   <tbody>
-    <% allEntries.forEach(entry=> { %>
+    <% allEntries.forEach(entry => { %>
+      <% const entryIsV2 = entry.scalars && entry.scalars["form version"] === "v2"; %>
       <tr>
         <td>
           <%= entry.academicYear %>
+          <% if (entryIsV2) { %><span class="badge-v2">v2</span><% } %>
         </td>
         <td>
           <%= entry.userEmail %>
@@ -26,24 +32,43 @@
         </td>
         <td>
           <% if (entry.customName) { %>
-            <strong>
-              <%= entry.customName %>
-            </strong>
-            <% } else { %>
-              <em style="color: var(--text-secondary);">Not set</em>
-              <% } %>
+            <strong><%= entry.customName %></strong>
+          <% } else { %>
+            <em style="color: var(--text-secondary);">Not set</em>
+          <% } %>
         </td>
         <td>
-          <% if (entry.tags && entry.tags.length> 0) { %>
+          <% if (entry.tags && entry.tags.length > 0) { %>
             <%= entry.tags.join(', ') %>
-            <% } else { %>
-              <em>None</em>
-            <% } %>
-          </td>
-          <td><%= entry.scalars["my house has a good culture"] %></td>
-          <td><%= entry.scalars["my room gets a lot of outside noise"] %></td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
-  
+          <% } else { %>
+            <em>None</em>
+          <% } %>
+        </td>
+        <td><%= entry.scalars["my house has a good culture"] %></td>
+        <td><%= entry.scalars["my room gets a lot of outside noise"] %></td>
+        <td>
+          <% if (entryIsV2 && entry.scalars["room size"]) { %>
+            <%= entry.scalars["room size"] %>
+          <% } else { %>
+            <em style="color:var(--text-secondary);">—</em>
+          <% } %>
+        </td>
+        <td>
+          <% if (entryIsV2 && entry.scalars["natural light"]) { %>
+            <%= entry.scalars["natural light"] %>
+          <% } else { %>
+            <em style="color:var(--text-secondary);">—</em>
+          <% } %>
+        </td>
+        <td>
+          <% if (entryIsV2 && entry.scalars["temperature control"]) { %>
+            <%= entry.scalars["temperature control"] %>
+          <% } else { %>
+            <em style="color:var(--text-secondary);">—</em>
+          <% } %>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+</div>
