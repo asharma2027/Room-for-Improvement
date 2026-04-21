@@ -1,71 +1,28 @@
 [
   {
-    "entryId": "entry7",
-    "roomId": "4",
-    "userEmail": "placeholder@uchicago.edu",
-    "academicYear": "2023-2024",
-    "timestamp": "2025-03-01T14:12:00.000Z",
-    "tags": [],
-    "scalars": {
-      "my house has a good culture": 1,
-      "my room gets a lot of outside noise": 4
-    }
-  },
-  {
-    "entryId": "entry8",
-    "roomId": "4",
-    "userEmail": "placeholder@uchicago.edu",
-    "academicYear": "2023-2024",
-    "timestamp": "2025-03-01T14:12:00.000Z",
-    "tags": [
-      "particularly small windows"
-    ],
-    "scalars": {
-      "my house has a good culture": 4,
-      "my room gets a lot of outside noise": 2
-    }
-  },
-  {
-    "entryId": "entry9",
-    "roomId": "4",
-    "userEmail": "placeholder@uchicago.edu",
-    "academicYear": "2023-2024",
-    "timestamp": "2025-03-01T14:12:00.000Z",
-    "tags": [
-      "particularly small windows",
-      "particularly big windows",
-      "issues with ac/heating temperature control"
-    ],
-    "scalars": {
-      "my house has a good culture": 4,
-      "my room gets a lot of outside noise": 4
-    }
-  },
-  {
-    "entryId": "b974b102c16f961e",
-    "roomId": "4",
+    "entryId": "622d5b260d8a42a3",
+    "roomId": "burton-judson__salisbury__810__f1",
     "userEmail": "test@uchicago.edu",
     "academicYear": "2024-2025",
-    "timestamp": "2026-02-05T00:44:00.968Z",
-    "tags": [],
+    "timestamp": "2026-03-25T22:17:20.577Z",
+    "tags": [
+      "particularly small windows",
+      "limited storage / closet space",
+      "notable hallway noise"
+    ],
     "scalars": {
-      "my house has a good culture": 3,
-      "my room gets a lot of outside noise": 3
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 5,
+      "room size": 1,
+      "natural light": 1,
+      "temperature control": 2,
+      "culture note": "chaotic, impersonal",
+      "freetext note": "Extremely cramped, very loud hallway, basically no natural light. Truly a shitbox.",
+      "house descriptor": "loud and cramped",
+      "form version": "v2"
     },
-    "customName": "The Fortress of Solitude"
-  },
-  {
-    "entryId": "52d35ef2ca469a22",
-    "roomId": "4",
-    "userEmail": "test@uchicago.edu",
-    "academicYear": "2026-2027",
-    "timestamp": "2026-02-05T01:46:53.203Z",
-    "tags": [],
-    "scalars": {
-      "my house has a good culture": 5,
-      "my room gets a lot of outside noise": 1
-    },
-    "customName": "The New Fortress"
+    "cultureTags": ["Disconnected / isolated", "Lively / social"],
+    "customName": "Shitbox Suite"
   },
   {
     "entryId": "0ff2ab679278d110",
@@ -74,32 +31,23 @@
     "academicYear": "2024-2025",
     "timestamp": "2026-03-25T22:17:20.576Z",
     "tags": [
-      "Dark",
-      "Small",
-      "Cramped"
+      "particularly small windows",
+      "doesnt tend to receive good sunlight when sunny",
+      "notable hallway noise"
     ],
     "scalars": {
       "my house has a good culture": 1,
-      "my room gets a lot of outside noise": 5
+      "my room gets a lot of outside noise": 5,
+      "room size": 1,
+      "natural light": 1,
+      "temperature control": 1,
+      "culture note": "toxic, cliquey",
+      "freetext note": "Dark, tiny, and unbearably loud. You've been warned.",
+      "house descriptor": "grim and isolating",
+      "form version": "v2"
     },
+    "cultureTags": ["Cliquey / exclusive", "Competitive / high-pressure"],
     "customName": "The Cum Dungeon"
-  },
-  {
-    "entryId": "622d5b260d8a42a3",
-    "roomId": "burton-judson__salisbury__810__f1",
-    "userEmail": "test@uchicago.edu",
-    "academicYear": "2024-2025",
-    "timestamp": "2026-03-25T22:17:20.577Z",
-    "tags": [
-      "Tiny",
-      "Cramped",
-      "Dark"
-    ],
-    "scalars": {
-      "my house has a good culture": 1,
-      "my room gets a lot of outside noise": 5
-    },
-    "customName": "Shitbox Suite"
   },
   {
     "entryId": "40f9cdc97c0d635b",
@@ -108,14 +56,22 @@
     "academicYear": "2024-2025",
     "timestamp": "2026-03-25T22:17:20.577Z",
     "tags": [
-      "Dark",
-      "Small",
-      "Cramped"
+      "particularly small windows",
+      "notable noise from adjacent rooms",
+      "room tends to get very cold"
     ],
     "scalars": {
       "my house has a good culture": 1,
-      "my room gets a lot of outside noise": 5
+      "my room gets a lot of outside noise": 5,
+      "room size": 2,
+      "natural light": 1,
+      "temperature control": 1,
+      "culture note": "unfriendly, cold",
+      "freetext note": "Cold in winter, noisy neighbors, poor light. The corner location makes it worse.",
+      "house descriptor": "cold and unfriendly",
+      "form version": "v2"
     },
+    "cultureTags": ["Disconnected / isolated"],
     "customName": "Piss Corner"
   },
   {
@@ -125,14 +81,22 @@
     "academicYear": "2024-2025",
     "timestamp": "2026-03-25T22:17:20.577Z",
     "tags": [
-      "Dark",
-      "Small",
-      "Cramped"
+      "particularly small windows",
+      "issues with ac/heating temperature control",
+      "notable noise from above or below"
     ],
     "scalars": {
       "my house has a good culture": 1,
-      "my room gets a lot of outside noise": 5
+      "my room gets a lot of outside noise": 5,
+      "room size": 1,
+      "natural light": 2,
+      "temperature control": 1,
+      "culture note": "hostile vibes",
+      "freetext note": "AC doesn't work properly. Noisy from above at all hours. Bring earplugs.",
+      "house descriptor": "hostile and noisy",
+      "form version": "v2"
     },
+    "cultureTags": ["Competitive / high-pressure", "Cliquey / exclusive"],
     "customName": "Fuck Palace"
   },
   {
@@ -142,14 +106,20 @@
     "academicYear": "2024-2025",
     "timestamp": "2026-03-25T22:17:20.577Z",
     "tags": [
-      "Dark",
-      "Small",
-      "Cramped"
+      "particularly small windows",
+      "notable hallway noise",
+      "room tends to get very cold"
     ],
     "scalars": {
-      "my house has a good culture": 1,
-      "my room gets a lot of outside noise": 5
+      "my house has a good culture": 2,
+      "my room gets a lot of outside noise": 4,
+      "room size": 2,
+      "natural light": 2,
+      "temperature control": 2,
+      "freetext note": "Below average room. Gets cold in winter and hallway is noisy on weekends.",
+      "form version": "v2"
     },
+    "cultureTags": ["Floor rarely interacts"],
     "customName": null
   }
 ]

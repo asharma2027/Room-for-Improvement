@@ -866,6 +866,36 @@ app.get('/rooms/:id', ensureAuthenticated, (req, res) => {
   });
 });
 
+// Room review form (separate page)
+app.get('/rooms/:id/review', ensureAuthenticated, (req, res) => {
+  const roomId = req.params.id;
+  readRooms((err, rooms) => {
+    if (err) return res.status(500).send('Error reading rooms CSV');
+    const room = rooms.find(r => r.id === roomId);
+    if (!room) return res.status(404).send('Room not found');
+
+    if (!room.tags) room.tags = '';
+
+    const allEntries = readRoomEntries().filter(e => e.roomId === roomId);
+    const userEmail = req.user.email;
+    let alreadySubmittedThisYear = null;
+
+    if (userEmail !== 'test@uchicago.edu') {
+      allEntries.forEach(en => {
+        if (en.userEmail === userEmail && !alreadySubmittedThisYear) {
+          alreadySubmittedThisYear = en.academicYear;
+        }
+      });
+    }
+
+    res.render('roomReview', {
+      user: req.user,
+      room,
+      alreadySubmittedThisYear
+    });
+  });
+});
+
 // Submit curated tags + scalars
 app.post('/rooms/:id/submit', ensureAuthenticated, (req, res) => {
   const roomId = req.params.id;
@@ -948,7 +978,7 @@ app.post('/rooms/:id/submit', ensureAuthenticated, (req, res) => {
   allEntries.push(newEntry);
   writeRoomEntries(allEntries);
 
-  res.redirect(`/rooms/${roomId}`);
+  res.redirect(`/rooms/${roomId}?submitted=1`);
 });
 
 // Start server

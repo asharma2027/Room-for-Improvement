@@ -240,6 +240,95 @@
             }
             .active-tag-chip .chip-remove:hover { opacity: 1; }
 
+            /* ── Room filters bar extra elements ── */
+            .filter-tags-dropdown-wrapper {
+                position: relative;
+                display: inline-flex;
+                align-items: center;
+            }
+            .filter-tags-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.35rem;
+                padding: 0.3rem 0.75rem;
+                border: 1.5px solid #800000;
+                border-radius: 0.35rem;
+                background: #fff;
+                color: #800000;
+                font-size: 0.82rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background 0.15s, color 0.15s;
+                user-select: none;
+            }
+            .filter-tags-btn:hover { background: rgba(128,0,0,0.07); }
+            .filter-tags-btn.open { background: #800000; color: #fff; }
+            .filter-tags-dropdown {
+                display: none;
+                position: absolute;
+                top: calc(100% + 6px);
+                left: 0;
+                min-width: 280px;
+                max-width: 360px;
+                max-height: 320px;
+                overflow-y: auto;
+                background: #fff;
+                border: 1px solid var(--border-color);
+                border-radius: 0.5rem;
+                box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+                z-index: 200;
+                padding: 0.5rem 0;
+            }
+            .filter-tags-dropdown.open { display: block; }
+            .filter-tags-dropdown-group { padding: 0.25rem 0.75rem 0.15rem; font-size: 0.73rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.3rem; }
+            .filter-tags-dropdown-item {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.35rem 0.9rem;
+                font-size: 0.83rem;
+                cursor: pointer;
+                transition: background 0.12s;
+            }
+            .filter-tags-dropdown-item:hover { background: #f3f4f6; }
+            .filter-tags-dropdown-item.selected { font-weight: 600; color: #800000; }
+            .filter-tags-dropdown-item .ftd-check { width: 14px; height: 14px; opacity: 0; flex-shrink: 0; }
+            .filter-tags-dropdown-item.selected .ftd-check { opacity: 1; }
+
+            /* Room type tag color coding */
+            .roomtype-tag-btn[data-roomtype*="single" i], .roomtype-tag-btn[data-roomtype="Single" i] {
+                border-color: #059669; color: #059669;
+            }
+            .roomtype-tag-btn[data-roomtype*="single" i].active, .roomtype-tag-btn[data-roomtype="Single" i].active {
+                background: #059669; color: #fff;
+            }
+            .roomtype-tag-btn[data-roomtype*="double" i] {
+                border-color: #2563eb; color: #2563eb;
+            }
+            .roomtype-tag-btn[data-roomtype*="double" i].active {
+                background: #2563eb; color: #fff;
+            }
+            .roomtype-tag-btn[data-roomtype*="suite" i] {
+                border-color: #7c3aed; color: #7c3aed;
+            }
+            .roomtype-tag-btn[data-roomtype*="suite" i].active {
+                background: #7c3aed; color: #fff;
+            }
+            .roomtype-tag-btn[data-roomtype*="apartment" i] {
+                border-color: #d97706; color: #d97706;
+            }
+            .roomtype-tag-btn[data-roomtype*="apartment" i].active {
+                background: #d97706; color: #fff;
+            }
+
+            /* Profanity toggle (matches rooms.ejs) */
+            .hp-profanity-toggle {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-left: auto;
+            }
+
             /* ── Tags in table rows are now clickable ── */
             #room-table .tag {
                 cursor: pointer;
@@ -498,7 +587,7 @@
                         </select>
                     </label>
 
-                    <!-- Room Type: clickable tag buttons instead of a dropdown -->
+                    <!-- Room Type: clickable tag buttons with X when active -->
                     <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
                         <span style="font-size:0.85rem; font-weight:600; color:var(--text-secondary);">Room Type:</span>
                         <div class="roomtype-tag-filters" id="roomtype-tag-filters">
@@ -513,8 +602,51 @@
                         Has Review
                     </label>
 
+                    <!-- Filter by Tags dropdown -->
+                    <div class="filter-tags-dropdown-wrapper" id="filter-tags-wrapper">
+                        <button type="button" class="filter-tags-btn" id="filter-tags-toggle-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M10 18h4v-2h-4v2zm-7-10v2h18V8H3zm3 7h12v-2H6v2z"/></svg>
+                            Filter by Tags
+                        </button>
+                        <div class="filter-tags-dropdown" id="filter-tags-dropdown">
+                            <div class="filter-tags-dropdown-group">Space &amp; Layout</div>
+                            <div class="filter-tags-dropdown-item" data-tag="particularly high ceiling"><span class="ftd-check">✓</span> Particularly high ceiling</div>
+                            <div class="filter-tags-dropdown-item" data-tag="particularly low ceiling"><span class="ftd-check">✓</span> Particularly low ceiling</div>
+                            <div class="filter-tags-dropdown-item" data-tag="extra storage / closet space"><span class="ftd-check">✓</span> Extra storage / closet space</div>
+                            <div class="filter-tags-dropdown-item" data-tag="limited storage / closet space"><span class="ftd-check">✓</span> Limited storage / closet space</div>
+                            <div class="filter-tags-dropdown-item" data-tag="unusually shaped room"><span class="ftd-check">✓</span> Unusually shaped room</div>
+                            <div class="filter-tags-dropdown-group">Light &amp; Windows</div>
+                            <div class="filter-tags-dropdown-item" data-tag="particularly big windows"><span class="ftd-check">✓</span> Particularly big windows</div>
+                            <div class="filter-tags-dropdown-item" data-tag="particularly small windows"><span class="ftd-check">✓</span> Particularly small windows</div>
+                            <div class="filter-tags-dropdown-item" data-tag="tends to receive good sunlight when sunny"><span class="ftd-check">✓</span> Gets good sunlight</div>
+                            <div class="filter-tags-dropdown-item" data-tag="doesnt tend to receive good sunlight when sunny"><span class="ftd-check">✓</span> Gets poor sunlight</div>
+                            <div class="filter-tags-dropdown-item" data-tag="drafty windows"><span class="ftd-check">✓</span> Drafty windows</div>
+                            <div class="filter-tags-dropdown-group">Noise</div>
+                            <div class="filter-tags-dropdown-item" data-tag="notable hallway noise"><span class="ftd-check">✓</span> Notable hallway noise</div>
+                            <div class="filter-tags-dropdown-item" data-tag="notable noise from adjacent rooms"><span class="ftd-check">✓</span> Noise from adjacent rooms</div>
+                            <div class="filter-tags-dropdown-item" data-tag="notable noise from above or below"><span class="ftd-check">✓</span> Noise from above or below</div>
+                            <div class="filter-tags-dropdown-item" data-tag="notably quiet despite building activity"><span class="ftd-check">✓</span> Notably quiet</div>
+                            <div class="filter-tags-dropdown-group">Temperature &amp; Air</div>
+                            <div class="filter-tags-dropdown-item" data-tag="issues with ac/heating temperature control"><span class="ftd-check">✓</span> AC/heating issues</div>
+                            <div class="filter-tags-dropdown-item" data-tag="room tends to get very hot"><span class="ftd-check">✓</span> Gets very hot</div>
+                            <div class="filter-tags-dropdown-item" data-tag="room tends to get very cold"><span class="ftd-check">✓</span> Gets very cold</div>
+                            <div class="filter-tags-dropdown-item" data-tag="good natural ventilation"><span class="ftd-check">✓</span> Good ventilation</div>
+                            <div class="filter-tags-dropdown-item" data-tag="poor natural ventilation"><span class="ftd-check">✓</span> Poor ventilation</div>
+                            <div class="filter-tags-dropdown-item" data-tag="significant radiator noise"><span class="ftd-check">✓</span> Significant radiator noise</div>
+                        </div>
+                    </div>
+
                     <!-- Active tag filter chips (populated by JS when user clicks a tag) -->
                     <div class="active-tag-chips" id="active-tag-chips" style="display:none;"></div>
+
+                    <!-- Profanity toggle -->
+                    <div class="hp-profanity-toggle">
+                        <span style="font-size: 1.2rem; cursor: help;" title="Toggle content filter">🔞</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="censor-toggle" onchange="toggleCensorship()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
 
                     <button type="button" class="filter-clear-btn" id="filter-clear-btn">Clear filters</button>
                 </div>
@@ -1057,12 +1189,24 @@
       }
       chipsContainer.style.display = 'flex';
       chipsContainer.innerHTML = activeTagFilters.map(function(tag) {
+        var safeTag = tag.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
         return '<span class="active-tag-chip">'
           + tag
-          + '<span class="chip-remove" title="Remove filter" onclick="removeTagFilter(\'' + tag.replace(/'/g,"\\'")
-          + '\')">&times;</span></span>';
+          + '<span class="chip-remove" title="Remove filter" onclick="window.hpRemoveTagFilter(\'' + safeTag + '\')">&times;</span></span>';
       }).join('');
     }
+
+    // Expose removeTagFilter globally so onclick handlers in chips work
+    window.hpRemoveTagFilter = function(tag) {
+      var idx = activeTagFilters.indexOf(tag);
+      if (idx !== -1) activeTagFilters.splice(idx, 1);
+      renderTagChips();
+      // Sync dropdown item selected state
+      document.querySelectorAll('.filter-tags-dropdown-item').forEach(function(item) {
+        if (item.dataset.tag === tag) item.classList.remove('selected');
+      });
+      applyFilters();
+    };
 
     // ── Filters ─────────────────────────────────────────────
     var floorSel = document.getElementById('filter-floor');
@@ -1100,7 +1244,47 @@
         if (reviewChk) reviewChk.checked = false;
         activeTagFilters = [];
         renderTagChips();
+        // Reset dropdown items
+        document.querySelectorAll('.filter-tags-dropdown-item').forEach(function(item) {
+          item.classList.remove('selected');
+        });
         applyFilters();
+      });
+    }
+
+    // ── Filter-by-Tags Dropdown ──────────────────────────────
+    var tagsToggleBtn = document.getElementById('filter-tags-toggle-btn');
+    var tagsDropdown = document.getElementById('filter-tags-dropdown');
+    if (tagsToggleBtn && tagsDropdown) {
+      tagsToggleBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var isOpen = tagsDropdown.classList.contains('open');
+        tagsDropdown.classList.toggle('open', !isOpen);
+        tagsToggleBtn.classList.toggle('open', !isOpen);
+      });
+      document.addEventListener('click', function(e) {
+        if (!tagsToggleBtn.contains(e.target) && !tagsDropdown.contains(e.target)) {
+          tagsDropdown.classList.remove('open');
+          tagsToggleBtn.classList.remove('open');
+        }
+      });
+      tagsDropdown.querySelectorAll('.filter-tags-dropdown-item').forEach(function(item) {
+        item.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var tag = item.dataset.tag;
+          if (!tag) return;
+          if (activeTagFilters.indexOf(tag) !== -1) {
+            // Remove
+            window.hpRemoveTagFilter(tag);
+            item.classList.remove('selected');
+          } else {
+            // Add
+            activeTagFilters.push(tag);
+            item.classList.add('selected');
+            renderTagChips();
+            applyFilters();
+          }
+        });
       });
     }
 

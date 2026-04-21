@@ -1,0 +1,365 @@
+<%- include('partials/head', { title: 'Submit Review | Room for Improvement' }) %>
+
+  <body>
+    <%- include('partials/nav') %>
+    <style>
+      /* Red asterisk for required fields */
+      .req-star { color: #dc2626; font-weight: 700; margin-left: 0.15rem; }
+      .opt-note { font-weight: normal; color: var(--text-secondary); font-size: 0.82rem; margin-left: 0.25rem; }
+    </style>
+
+      <main>
+        <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h1 style="margin-bottom: 0.25rem;">Submit Your Review</h1>
+            <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">
+              <%= room.dorm %> — <%= room.house %> <%= room.roomNumber %>
+            </p>
+          </div>
+          <a href="/rooms/<%= room.id %>" style="font-weight: 500;">&larr; Back to Room</a>
+        </div>
+
+        <% if (alreadySubmittedThisYear) { %>
+          <div
+            style="background: #fee2e2; color: #b91c1c; padding: 1.25rem; border-radius: 0.5rem; border: 1px solid #fecaca; margin-bottom: 2rem;">
+            You have already submitted data for this room for <strong>
+              <%= alreadySubmittedThisYear %>
+            </strong>.<br />
+            You can only submit once per academic year.
+            <br /><br />
+            <a href="/rooms/<%= room.id %>" style="color: #b91c1c; font-weight: 600;">&larr; Return to room details</a>
+          </div>
+        <% } else { %>
+
+          <!-- V2 FORM -->
+          <div class="form-container" style="max-width: 100%; margin-bottom: 2rem;">
+            <form method="POST" action="/rooms/<%= room.id %>/submit" style="box-shadow: none; padding: 0;">
+              <input type="hidden" name="form_version" value="v2">
+
+              <!-- Shared fields -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.75rem;">
+                <div>
+                  <label for="academicYear-v2">Academic Year<span class="req-star">*</span></label>
+                  <input type="text" id="academicYear-v2" name="academicYear" placeholder="e.g. 2024-2025" required
+                    style="max-width: 200px;" />
+                </div>
+                <div>
+                  <label for="customName-v2">Custom Room Name <span class="opt-note">(optional)</span></label>
+                  <input type="text" id="customName-v2" name="customName"
+                    placeholder="e.g. The Fortress of Solitude" style="max-width: 360px;" />
+                </div>
+              </div>
+
+              <!-- ── SD Strip: Room Size ── -->
+              <div class="form-section">
+                <span class="form-sec-title">Room Size<span class="req-star">*</span></span>
+                <div class="sd-strip">
+                  <div class="sd-track"></div>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_room_size" value="1" required>
+                    <span class="sd-label">Cramped</span>
+                    <span class="sd-sublabel">(barely fits furniture)</span>
+                  </label>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_room_size" value="2">
+                    <span class="sd-label">Tight</span>
+                    <span class="sd-sublabel">(close quarters)</span>
+                  </label>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_room_size" value="3">
+                    <span class="sd-label">Average</span>
+                    <span class="sd-sublabel">(typical UChicago)</span>
+                  </label>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_room_size" value="4">
+                    <span class="sd-label">Spacious</span>
+                    <span class="sd-sublabel">(noticeably open)</span>
+                  </label>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_room_size" value="5">
+                    <span class="sd-label">Expansive</span>
+                    <span class="sd-sublabel">(unusually large)</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- ── SD Strip: Natural Light ── -->
+              <div class="form-section">
+                <span class="form-sec-title">Natural Light<span class="req-star">*</span></span>
+                <div class="sd-strip">
+                  <div class="sd-track"></div>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_natural_light" value="1" required>
+                    <span class="sd-label">Very Dark</span>
+                    <span class="sd-sublabel">(need lights midday)</span>
+                  </label>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_natural_light" value="2">
+                    <span class="sd-label">Dim</span>
+                    <span class="sd-sublabel">(often gloomy)</span>
+                  </label>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_natural_light" value="3">
+                    <span class="sd-label">Moderate</span>
+                    <span class="sd-sublabel">(adequate)</span>
+                  </label>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_natural_light" value="4">
+                    <span class="sd-label">Bright</span>
+                    <span class="sd-sublabel">(well-lit naturally)</span>
+                  </label>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_natural_light" value="5">
+                    <span class="sd-label">Very Bright</span>
+                    <span class="sd-sublabel">(exceptional)</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- ── SD Strip: Outside Noise ── -->
+              <div class="form-section">
+                <span class="form-sec-title">Outside Noise<span class="req-star">*</span></span>
+                <div class="sd-strip">
+                  <div class="sd-track"></div>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_outside_noise" value="1" required>
+                    <span class="sd-label">Silent</span>
+                    <span class="sd-sublabel">(essentially no sound)</span>
+                  </label>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_outside_noise" value="2">
+                    <span class="sd-label">Quiet</span>
+                    <span class="sd-sublabel">(faint sounds)</span>
+                  </label>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_outside_noise" value="3">
+                    <span class="sd-label">Moderate</span>
+                    <span class="sd-sublabel">(audible, manageable)</span>
+                  </label>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_outside_noise" value="4">
+                    <span class="sd-label">Noisy</span>
+                    <span class="sd-sublabel">(often disruptive)</span>
+                  </label>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_outside_noise" value="5">
+                    <span class="sd-label">Very Noisy</span>
+                    <span class="sd-sublabel">(constantly loud)</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- ── SD Strip: Temperature Control ── -->
+              <div class="form-section">
+                <span class="form-sec-title">Temperature Control<span class="req-star">*</span></span>
+                <div class="sd-strip">
+                  <div class="sd-track"></div>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_temp_control" value="1" required>
+                    <span class="sd-label">Very Difficult</span>
+                    <span class="sd-sublabel">(always uncomfortable)</span>
+                  </label>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_temp_control" value="2">
+                    <span class="sd-label">Difficult</span>
+                    <span class="sd-sublabel">(often hot/cold)</span>
+                  </label>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_temp_control" value="3">
+                    <span class="sd-label">Manageable</span>
+                    <span class="sd-sublabel">(usually okay)</span>
+                  </label>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_temp_control" value="4">
+                    <span class="sd-label">Easy</span>
+                    <span class="sd-sublabel">(good control)</span>
+                  </label>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_temp_control" value="5">
+                    <span class="sd-label">Very Easy</span>
+                    <span class="sd-sublabel">(excellent)</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- ── SD Strip: House Culture ── -->
+              <div class="form-section">
+                <span class="form-sec-title">House Culture<span class="req-star">*</span></span>
+                <div class="sd-strip">
+                  <div class="sd-track"></div>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_house_culture" value="1" required>
+                    <span class="sd-label">Very Negative</span>
+                  </label>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_house_culture" value="2">
+                    <span class="sd-label">Negative</span>
+                  </label>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_house_culture" value="3">
+                    <span class="sd-label">Neutral</span>
+                  </label>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_house_culture" value="4">
+                    <span class="sd-label">Positive</span>
+                  </label>
+                  <label class="sd-opt">
+                    <input type="radio" name="scalar_house_culture" value="5">
+                    <span class="sd-label">Very Positive</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- ── Culture Note ── -->
+              <div class="form-section">
+                <label class="form-sec-title" for="culture_note">
+                  In 1–5 words, what most shapes that rating?
+                  <span class="opt-note">(optional — feeds the house word map)</span>
+                </label>
+                <input type="text" name="culture_note" id="culture_note" maxlength="60"
+                  placeholder="e.g. super welcoming, lots of events"
+                  style="max-width: 420px;" />
+              </div>
+
+              <!-- ── Culture Descriptor Chips ── -->
+              <div class="form-section">
+                <span class="form-sec-title">
+                  House Culture Descriptors
+                  <span class="opt-note">(optional — pick up to 3)</span>
+                </span>
+                <div class="culture-chips" id="culture-chips-container">
+                  <input type="checkbox" class="chip-opt" id="chip-0" name="culture_tags" value="Welcoming / inclusive">
+                  <label class="chip-label" for="chip-0">Welcoming / inclusive</label>
+
+                  <input type="checkbox" class="chip-opt" id="chip-1" name="culture_tags" value="Tight-knit community">
+                  <label class="chip-label" for="chip-1">Tight-knit community</label>
+
+                  <input type="checkbox" class="chip-opt" id="chip-2" name="culture_tags" value="Quiet / studious">
+                  <label class="chip-label" for="chip-2">Quiet / studious</label>
+
+                  <input type="checkbox" class="chip-opt" id="chip-3" name="culture_tags" value="Lively / social">
+                  <label class="chip-label" for="chip-3">Lively / social</label>
+
+                  <input type="checkbox" class="chip-opt" id="chip-4" name="culture_tags" value="Party-oriented">
+                  <label class="chip-label" for="chip-4">Party-oriented</label>
+
+                  <input type="checkbox" class="chip-opt" id="chip-5" name="culture_tags" value="Friendly but independent">
+                  <label class="chip-label" for="chip-5">Friendly but independent</label>
+
+                  <input type="checkbox" class="chip-opt" id="chip-6" name="culture_tags" value="Cliquey / exclusive">
+                  <label class="chip-label" for="chip-6">Cliquey / exclusive</label>
+
+                  <input type="checkbox" class="chip-opt" id="chip-7" name="culture_tags" value="Competitive / high-pressure">
+                  <label class="chip-label" for="chip-7">Competitive / high-pressure</label>
+
+                  <input type="checkbox" class="chip-opt" id="chip-8" name="culture_tags" value="Disconnected / isolated">
+                  <label class="chip-label" for="chip-8">Disconnected / isolated</label>
+
+                  <input type="checkbox" class="chip-opt" id="chip-9" name="culture_tags" value="Diverse mix of people">
+                  <label class="chip-label" for="chip-9">Diverse mix of people</label>
+
+                  <input type="checkbox" class="chip-opt" id="chip-10" name="culture_tags" value="Active house programming">
+                  <label class="chip-label" for="chip-10">Active house programming</label>
+
+                  <input type="checkbox" class="chip-opt" id="chip-11" name="culture_tags" value="Floor rarely interacts">
+                  <label class="chip-label" for="chip-11">Floor rarely interacts</label>
+                </div>
+              </div>
+
+              <!-- ── House Descriptor (free-text, optional) ── -->
+              <div class="form-section">
+                <label class="form-sec-title" for="house_descriptor">
+                  House Descriptor
+                  <span class="opt-note">(optional — a few words that describe this house; feeds the house descriptor word cloud)</span>
+                </label>
+                <input type="text" name="house_descriptor" id="house_descriptor" maxlength="120"
+                  placeholder="e.g. cozy brick, tight-knit, foodie hall"
+                  style="max-width: 520px;" />
+              </div>
+
+              <!-- ── Optional Physical Tags ── -->
+              <div class="form-section">
+                <span class="form-sec-title">Optional Tags <span class="opt-note">(optional)</span></span>
+
+                <div class="tag-cat-title">Space &amp; Layout</div>
+                <div class="v2-tag-grid">
+                  <label><input type="checkbox" name="tags" value="particularly high ceiling"> Particularly high ceiling</label>
+                  <label><input type="checkbox" name="tags" value="particularly low ceiling"> Particularly low ceiling</label>
+                  <label><input type="checkbox" name="tags" value="extra storage / closet space"> Extra storage / closet space</label>
+                  <label><input type="checkbox" name="tags" value="limited storage / closet space"> Limited storage / closet space</label>
+                  <label><input type="checkbox" name="tags" value="unusually shaped room"> Unusually shaped room</label>
+                  <label><input type="checkbox" name="tags" value="good furniture layout flexibility"> Good furniture layout flexibility</label>
+                </div>
+
+                <div class="tag-cat-title">Light &amp; Windows</div>
+                <div class="v2-tag-grid">
+                  <label><input type="checkbox" name="tags" value="particularly big windows"> Particularly big windows</label>
+                  <label><input type="checkbox" name="tags" value="particularly small windows"> Particularly small windows</label>
+                  <label><input type="checkbox" name="tags" value="tends to receive good sunlight when sunny"> Tends to get good sunlight</label>
+                  <label><input type="checkbox" name="tags" value="doesnt tend to receive good sunlight when sunny"> Tends to get poor sunlight</label>
+                  <label><input type="checkbox" name="tags" value="drafty windows"> Drafty windows</label>
+                </div>
+
+                <div class="tag-cat-title">Noise — Internal</div>
+                <div class="v2-tag-grid">
+                  <label><input type="checkbox" name="tags" value="notable hallway noise"> Notable hallway noise</label>
+                  <label><input type="checkbox" name="tags" value="notable noise from adjacent rooms"> Notable noise from adjacent rooms</label>
+                  <label><input type="checkbox" name="tags" value="notable noise from above or below"> Notable noise from above or below</label>
+                  <label><input type="checkbox" name="tags" value="notably quiet despite building activity"> Notably quiet despite building activity</label>
+                </div>
+
+                <div class="tag-cat-title">Temperature &amp; Air</div>
+                <div class="v2-tag-grid">
+                  <label><input type="checkbox" name="tags" value="issues with ac/heating temperature control"> AC/heating issues</label>
+                  <label><input type="checkbox" name="tags" value="room tends to get very hot"> Room tends to get very hot</label>
+                  <label><input type="checkbox" name="tags" value="room tends to get very cold"> Room tends to get very cold</label>
+                  <label><input type="checkbox" name="tags" value="good natural ventilation"> Good natural ventilation</label>
+                  <label><input type="checkbox" name="tags" value="poor natural ventilation"> Poor natural ventilation</label>
+                  <label><input type="checkbox" name="tags" value="significant radiator noise"> Significant radiator noise</label>
+                </div>
+              </div>
+
+              <!-- ── Freetext Note ── -->
+              <div class="form-section">
+                <label class="form-sec-title" for="freetext_note">
+                  Anything future residents should know about this room?
+                  <span class="opt-note">(optional — max 280 chars)</span>
+                </label>
+                <textarea name="freetext_note" id="freetext_note" maxlength="280" rows="3"
+                  style="max-width: 620px; resize: vertical;"
+                  placeholder="e.g. radiator is loud in winter, great view of the quad..."></textarea>
+              </div>
+
+              <button type="submit">Submit Review</button>
+            </form>
+          </div>
+
+          <script>
+            // Culture chips: max 3
+            (function() {
+              var container = document.getElementById('culture-chips-container');
+              if (!container) return;
+              container.addEventListener('change', function(e) {
+                var boxes = container.querySelectorAll('input[type="checkbox"]');
+                var checked = Array.from(boxes).filter(function(b) { return b.checked; });
+                if (checked.length >= 3) {
+                  boxes.forEach(function(b) {
+                    if (!b.checked) b.disabled = true;
+                  });
+                } else {
+                  boxes.forEach(function(b) { b.disabled = false; });
+                }
+              });
+            })();
+          </script>
+
+        <% } %>
+
+      </main>
+
+      <footer>
+        <p>&copy; 2025 Room for Improvement</p>
+      </footer>
+  </body>
+
+  </html>

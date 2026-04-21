@@ -5624,5 +5624,22 @@
       "my room gets a lot of outside noise": 5
     },
     "customName": null
+  },
+  {
+    "entryId": "a32eed8529ac5fd6",
+    "roomId": "burton-judson__salisbury__810__f1",
+    "userEmail": "test@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-04-21T22:36:17.270Z",
+    "tags": [],
+    "scalars": {
+      "my house has a good culture": 4,
+      "my room gets a lot of outside noise": 2,
+      "room size": 3,
+      "natural light": 4,
+      "temperature control": 4,
+      "form version": "v2"
+    },
+    "customName": "Subagent Test Suite"
   }
 ]
