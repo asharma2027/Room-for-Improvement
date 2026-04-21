@@ -70,6 +70,159 @@
                 flex-shrink: 0;
                 opacity: 0.8;
             }
+
+            /* ── Expanded top-right preview pill (now occupies space vacated by house board button) ── */
+            .preview-pill-large {
+                padding: 1rem 1.25rem;
+                max-width: 330px;
+                min-width: 260px;
+                border-radius: 1.1rem;
+                background: rgba(255,255,255,0.14);
+                border: 1px solid rgba(255,255,255,0.24);
+            }
+            .preview-pill-large .preview-pill-icon {
+                width: 22px;
+                height: 22px;
+            }
+            .preview-pill-large .preview-pill-text {
+                font-size: 0.95rem;
+                line-height: 1.45;
+                -webkit-line-clamp: 3;
+                font-weight: 500;
+            }
+            .preview-pill-large .preview-pill-arrow {
+                width: 16px;
+                height: 16px;
+            }
+
+            /* Maroon "house board" button under the house name header */
+            .house-board-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                background-color: #800000;
+                color: #fff;
+                padding: 0.65rem 1.2rem;
+                border-radius: 0.5rem;
+                font-weight: 700;
+                text-decoration: none;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.28);
+                transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+            }
+            .house-board-btn:hover {
+                background-color: #660000;
+                transform: translateY(-1px);
+                box-shadow: 0 6px 18px rgba(0,0,0,0.36);
+            }
+
+            /* ── Room table filters ── */
+            .room-filters {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+                align-items: center;
+                margin: 1rem 0 0.75rem;
+                padding: 0.75rem 1rem;
+                background: #f9fafb;
+                border: 1px solid var(--border-color);
+                border-radius: 0.5rem;
+            }
+            .room-filters label {
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: var(--text-secondary);
+                margin: 0;
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+            }
+            .room-filters select, .room-filters input[type="checkbox"] {
+                font-size: 0.85rem;
+            }
+            .room-filters select {
+                padding: 0.3rem 0.5rem;
+                border: 1px solid var(--border-color);
+                border-radius: 0.35rem;
+                background: #fff;
+            }
+            .room-filters .filter-clear-btn {
+                margin-left: auto;
+                background: none;
+                border: 1px solid var(--border-color);
+                padding: 0.3rem 0.7rem;
+                border-radius: 0.35rem;
+                cursor: pointer;
+                font-size: 0.8rem;
+                color: var(--text-secondary);
+            }
+            .room-filters .filter-clear-btn:hover { background: #fff; }
+
+            /* ── Sortable table headers ── */
+            th.sortable {
+                cursor: pointer;
+                user-select: none;
+                position: relative;
+            }
+            th.sortable:hover { background: rgba(0,0,0,0.03); }
+            th.sortable .sort-indicator {
+                display: inline-block;
+                margin-left: 0.3rem;
+                font-size: 0.75rem;
+                opacity: 0.45;
+            }
+            th.sortable.sort-asc .sort-indicator,
+            th.sortable.sort-desc .sort-indicator {
+                opacity: 1;
+                color: var(--primary-color, #800000);
+            }
+
+            /* ── Word cloud sections ── */
+            .word-cloud-section {
+                margin-top: 2.5rem;
+                padding: 1.25rem 1.5rem;
+                background: #fdfdfd;
+                border: 1px solid var(--border-color);
+                border-radius: 0.6rem;
+            }
+            .word-cloud-section h3 {
+                margin-top: 0;
+                margin-bottom: 0.5rem;
+                font-size: 1.15rem;
+            }
+            .word-cloud-section .word-cloud-sub {
+                color: var(--text-secondary);
+                font-size: 0.85rem;
+                margin-bottom: 0.9rem;
+            }
+            .word-cloud-canvas {
+                width: 100%;
+                height: 260px;
+                background: #fff;
+                border: 1px dashed var(--border-color);
+                border-radius: 0.4rem;
+            }
+            /* CSS fallback word cloud (used if wordcloud2 fails) */
+            .word-cloud-fallback {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.4rem 0.8rem;
+                align-items: baseline;
+                padding: 1rem;
+                background: #fff;
+                border-radius: 0.4rem;
+                min-height: 120px;
+            }
+            .word-cloud-fallback .wc-word {
+                display: inline-block;
+                padding: 0.15em 0.45em;
+                line-height: 1.1;
+                color: var(--primary-dark, #800000);
+            }
+            .word-cloud-empty {
+                color: var(--text-secondary);
+                font-style: italic;
+                padding: 1rem;
+            }
         </style>
 
             <main style="max-width:1200px; margin:0 auto; padding:2rem 1.5rem;">
@@ -96,6 +249,16 @@
                                 (<a href="/dorm/<%= encodeURIComponent(dormName) %>" style="color:rgba(255,255,255,0.85); text-decoration:none;"><%= dormName.replace(/_/g,'-') %></a>)
                             </div>
                         </h1>
+
+                        <!-- House board button — now positioned directly below the house name header -->
+                        <a class="house-board-btn"
+                           href="/house/<%= encodeURIComponent(dormName) %>/<%= encodeURIComponent(houseName) %>/board"
+                           style="margin-top: 1.1rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-7-2h2v-2h-2v2zm0-4h2V7h-2v6z"/>
+                            </svg>
+                            Click here to access house board
+                        </a>
                     </div>
 
                     <!-- ── PREVIEW PILL: TRIVIA (top-left) ── -->
@@ -114,36 +277,22 @@
                         </svg>
                     </a>
 
-                    <!-- ── PREVIEW PILL: STATIC BOARD LINK (top-right) ── -->
-                    <a class="preview-pill" id="pill-board"
-                       href="/house/<%= encodeURIComponent(dormName) %>/<%= encodeURIComponent(houseName) %>/board"
-                       style="top: 1rem; right: 1.25rem; background: rgba(128, 0, 0, 0.85); border-color: rgba(255,100,100,0.3);"
-                       title="House Board">
-                        <svg class="preview-pill-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgba(255,255,255,0.95)">
-                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-7-2h2v-2h-2v2zm0-4h2V7h-2v6z"/>
-                        </svg>
-                        <span class="preview-pill-text visible" style="color:white; font-weight:600;">Click to access house board</span>
-                        <svg class="preview-pill-arrow" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.95)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 12h14M13 6l6 6-6 6"/>
-                        </svg>
-                    </a>
-
-                    <!-- ── PREVIEW PILL: QUOTES (bottom-right, raised ~half height) ── -->
-                    <a class="preview-pill" id="pill-quotes"
+                    <!-- ── EXPANDED PREVIEW PILL: QUOTES (now occupies top-right area previously used by board button) ── -->
+                    <a class="preview-pill preview-pill-large" id="pill-quotes"
                        href="/house/<%= encodeURIComponent(dormName) %>/<%= encodeURIComponent(houseName) %>/board#quotes"
-                       style="bottom: 2.6rem; right: 1.25rem;"
+                       style="top: 1rem; right: 1.25rem;"
                        title="Anonymous Quotes">
                         <!-- Double-quote / speech icon -->
-                        <svg class="preview-pill-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgba(255,255,255,0.85)">
+                        <svg class="preview-pill-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgba(255,255,255,0.9)">
                             <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
                         </svg>
                         <span class="preview-pill-text visible" id="pill-quotes-text">Loading…</span>
-                        <svg class="preview-pill-arrow" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg class="preview-pill-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M5 12h14M13 6l6 6-6 6"/>
                         </svg>
                     </a>
 
-                    <!-- ── PREVIEW PILL: INSIDER TIPS (bottom-left, level with quotes) ── -->
+                    <!-- ── PREVIEW PILL: INSIDER TIPS (bottom-left) ── -->
                     <a class="preview-pill" id="pill-tips"
                        href="/house/<%= encodeURIComponent(dormName) %>/<%= encodeURIComponent(houseName) %>/board#tips"
                        style="bottom: 2.6rem; left: 1.25rem;"
@@ -203,9 +352,9 @@
                                         </div>
                                         <% } %>
                         </div>
-                        
+
                         <!-- House Rankings Display -->
-                        <% if (typeof houseRanks !== 'undefined' && houseRanks) { 
+                        <% if (typeof houseRanks !== 'undefined' && houseRanks) {
                             const categoryIcons = {
                                 culture: { icon: '🏆', label: 'Culture' },
                                 quietness: { icon: '🔇', label: 'Quietness' },
@@ -217,7 +366,7 @@
                             if (activeRanks.length > 0) {
                         %>
                             <div style="display:flex; gap:0.75rem; flex-wrap:nowrap; align-items:center; padding-left:1rem; border-left:1px solid var(--border-color); margin-left:auto;">
-                                <% activeRanks.sort((a,b) => a[1] - b[1]).forEach(([cat, rank]) => { 
+                                <% activeRanks.sort((a,b) => a[1] - b[1]).forEach(([cat, rank]) => {
                                     const isTop3 = rank <= 3;
                                 %>
                                     <div class="house-stat-mini" style="align-items:center;">
@@ -228,7 +377,7 @@
                                     </div>
                                 <% }); %>
                             </div>
-                        <% 
+                        <%
                             }
                         } %>
                     </div>
@@ -254,29 +403,59 @@
                     </div>
                 </div>
 
+                <!-- ── Filters ── -->
+                <div class="room-filters" id="room-filters">
+                    <label>
+                        Floor:
+                        <select id="filter-floor">
+                            <option value="">All</option>
+                            <% (typeof floors !== 'undefined' ? floors : []).forEach(f => { %>
+                                <option value="<%= f %>"><%= f %></option>
+                            <% }) %>
+                        </select>
+                    </label>
+                    <label>
+                        Room Type:
+                        <select id="filter-roomtype">
+                            <option value="">All</option>
+                            <% (typeof roomTypes !== 'undefined' ? roomTypes : []).forEach(t => { %>
+                                <option value="<%= t %>"><%= t %></option>
+                            <% }) %>
+                        </select>
+                    </label>
+                    <label>
+                        <input type="checkbox" id="filter-hasreview">
+                        Has Review
+                    </label>
+                    <button type="button" class="filter-clear-btn" id="filter-clear-btn">Clear filters</button>
+                </div>
+
                 <!-- Room Table -->
                 <div class="table-container">
-                    <table>
+                    <table id="room-table">
                         <thead>
                             <tr>
-                                <th style="width:200px;">Room</th>
-                                <th>Floor</th>
-                                <th>Type</th>
-                                <th>Tags</th>
-                                <th>Culture</th>
-                                <th>Noise</th>
+                                <th class="sortable" data-sort-key="name" style="width:200px;">Room <span class="sort-indicator"></span></th>
+                                <th class="sortable" data-sort-key="floor">Floor <span class="sort-indicator"></span></th>
+                                <th class="sortable" data-sort-key="roomType">Type <span class="sort-indicator"></span></th>
+                                <th class="sortable" data-sort-key="tags">Tags <span class="sort-indicator"></span></th>
+                                <th class="sortable" data-sort-key="culture">Culture <span class="sort-indicator"></span></th>
+                                <th class="sortable" data-sort-key="noise">Noise <span class="sort-indicator"></span></th>
+                                <th class="sortable" data-sort-key="roomSize">Room Size <span class="sort-indicator"></span></th>
+                                <th class="sortable" data-sort-key="naturalLight">Natural Light <span class="sort-indicator"></span></th>
+                                <th class="sortable" data-sort-key="tempControl">Temp Control <span class="sort-indicator"></span></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <% rooms.sort((a,b)=> { 
+                            <% rooms.sort((a,b)=> {
                                 const hasReviewA = (a.houseCultureVal || a.customName || a.tags) ? 1 : 0;
                                 const hasReviewB = (b.houseCultureVal || b.customName || b.tags) ? 1 : 0;
                                 if (hasReviewA !== hasReviewB) return hasReviewB - hasReviewA;
-                                
+
                                 if (hasReviewA && hasReviewB) {
                                     const nameA = a.customName ? a.customName.toLowerCase() : "";
                                     const nameB = b.customName ? b.customName.toLowerCase() : "";
-                                    
+
                                     if (nameA === 'shitbox suite' && nameB !== 'shitbox suite') return -1;
                                     if (nameB === 'shitbox suite' && nameA !== 'shitbox suite') return 1;
 
@@ -286,11 +465,26 @@
                                     if (nameA && !nameB) return -1;
                                     if (!nameA && nameB) return 1;
                                 }
-                                
-                                const n = (x) => parseInt(x.roomNumber) || 0; 
+
+                                const n = (x) => parseInt(x.roomNumber) || 0;
                                 return n(a)-n(b);
-                            }).forEach(room => { %>
-                                <tr style="cursor:pointer;" onclick="window.location='/rooms/<%= room.id %>'">
+                            }).forEach(room => {
+                                const hasReview = !!(room.houseCultureVal || room.customName || room.tags);
+                                const displayName = room.customName ? room.customName : (room.roomType + ' ' + room.roomNumber);
+                            %>
+                                <tr style="cursor:pointer;"
+                                    onclick="window.location='/rooms/<%= room.id %>'"
+                                    data-floor="<%= room.floor || '' %>"
+                                    data-roomtype="<%= room.roomType || '' %>"
+                                    data-hasreview="<%= hasReview ? '1' : '0' %>"
+                                    data-name="<%= displayName %>"
+                                    data-tags="<%= room.tags || '' %>"
+                                    data-culture="<%= room.houseCultureVal || '' %>"
+                                    data-noise="<%= room.outsideNoiseVal || '' %>"
+                                    data-roomsize="<%= room.roomSizeVal || '' %>"
+                                    data-naturallight="<%= room.naturalLightVal || '' %>"
+                                    data-tempcontrol="<%= room.tempControlVal || '' %>"
+                                    data-roomnumber="<%= parseInt(room.roomNumber) || 0 %>">
                                     <td style="font-weight:600; font-size:1.05em;">
                                         <% if (room.customName) { %>
                                             <div>
@@ -349,14 +543,170 @@
                   <span style="color:#ccc;">—</span>
                 <% } %>
               </td>
+              <td>
+                <% if (room.roomSizeVal) { %>
+                  <div style="display:flex; align-items:center; gap:0.4rem;">
+                    <div style="width:<%= (parseFloat(room.roomSizeVal)/5*48) %>px; height:6px; background:#6366f1; border-radius:3px; min-width:4px;"></div>
+                    <span style="font-size:0.85rem; font-weight:600;"><%= room.roomSizeVal %></span>
+                  </div>
+                <% } else { %>
+                  <span style="color:#ccc; font-size:0.8rem;">N/A</span>
+                <% } %>
+              </td>
+              <td>
+                <% if (room.naturalLightVal) { %>
+                  <div style="display:flex; align-items:center; gap:0.4rem;">
+                    <div style="width:<%= (parseFloat(room.naturalLightVal)/5*48) %>px; height:6px; background:#f59e0b; border-radius:3px; min-width:4px;"></div>
+                    <span style="font-size:0.85rem; font-weight:600;"><%= room.naturalLightVal %></span>
+                  </div>
+                <% } else { %>
+                  <span style="color:#ccc; font-size:0.8rem;">N/A</span>
+                <% } %>
+              </td>
+              <td>
+                <% if (room.tempControlVal) { %>
+                  <div style="display:flex; align-items:center; gap:0.4rem;">
+                    <div style="width:<%= (parseFloat(room.tempControlVal)/5*48) %>px; height:6px; background:#06b6d4; border-radius:3px; min-width:4px;"></div>
+                    <span style="font-size:0.85rem; font-weight:600;"><%= room.tempControlVal %></span>
+                  </div>
+                <% } else { %>
+                  <span style="color:#ccc; font-size:0.8rem;">N/A</span>
+                <% } %>
+              </td>
             </tr>
           <% }) %>
         </tbody>
       </table>
     </div>
+
+    <!-- ── Culture Vibes Word Cloud ── -->
+    <div class="word-cloud-section">
+        <h3>Culture Vibes</h3>
+        <div class="word-cloud-sub">
+            Aggregated culture descriptors &amp; short culture notes from all submissions for this house.
+        </div>
+        <% const cw = (typeof cultureWords !== 'undefined' ? cultureWords : []); %>
+        <% if (cw.length > 0) { %>
+            <div id="culture-wordcloud" class="word-cloud-canvas"></div>
+            <div id="culture-wordcloud-fallback" class="word-cloud-fallback" style="display:none;"></div>
+        <% } else { %>
+            <div class="word-cloud-empty">No culture notes yet — be the first to submit.</div>
+        <% } %>
+    </div>
+
+    <!-- ── House Descriptors Word Cloud (only shown when data exists) ── -->
+    <% const hdw = (typeof houseDescriptorWords !== 'undefined' ? houseDescriptorWords : []); %>
+    <% if (hdw.length > 0) { %>
+    <div class="word-cloud-section">
+        <h3>House Descriptors</h3>
+        <div class="word-cloud-sub">
+            Free-text descriptors residents have used for this house.
+        </div>
+        <div id="descriptor-wordcloud" class="word-cloud-canvas"></div>
+        <div id="descriptor-wordcloud-fallback" class="word-cloud-fallback" style="display:none;"></div>
+    </div>
+    <% } %>
+
   </main>
 
   <footer><p>&copy; 2025 Room for Improvement</p></footer>
+
+  <!-- wordcloud2.js from CDN for both word clouds -->
+  <script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud2.min.js"></script>
+
+  <script>
+    // Data injected from the server — for word clouds
+    var CULTURE_WORDS    = <%- JSON.stringify(typeof cultureWords !== 'undefined' ? cultureWords : []) %>;
+    var DESCRIPTOR_WORDS = <%- JSON.stringify(typeof houseDescriptorWords !== 'undefined' ? houseDescriptorWords : []) %>;
+
+    // Basic stopword list for splitting free-text descriptors into useful tokens.
+    var STOP = new Set(['the','a','an','and','or','but','of','in','on','to','for','with','is','it','its','this','that','these','those','be','are','was','were','at','by','my','your','our','their','very','really','just','not','no','yes','so','too','also']);
+
+    // Turn raw phrase strings into [word, weight] pairs.
+    // Keeps multi-word descriptor chips ("Tight-knit community") intact by treating whole phrases
+    // as one token, then also contributes individual words from free-form notes.
+    function tokenizePhrases(rawList) {
+      var counts = {};
+      rawList.forEach(function(raw) {
+        if (!raw) return;
+        var phrase = String(raw).trim();
+        if (!phrase) return;
+        // If it looks like a short tag/chip (<= 4 words), keep the whole phrase.
+        var wordCount = phrase.split(/\s+/).length;
+        if (wordCount <= 4 && phrase.length <= 40) {
+          var key = phrase.replace(/\s+/g,' ');
+          counts[key] = (counts[key] || 0) + 2;
+        }
+        // Also break into individual meaningful words.
+        phrase.toLowerCase().split(/[^a-z0-9'-]+/).forEach(function(w) {
+          if (!w || w.length < 3) return;
+          if (STOP.has(w)) return;
+          counts[w] = (counts[w] || 0) + 1;
+        });
+      });
+      return Object.keys(counts).map(function(k) { return [k, counts[k]]; })
+                                .sort(function(a,b) { return b[1] - a[1]; })
+                                .slice(0, 80);
+    }
+
+    function renderWordCloud(containerId, fallbackId, list) {
+      var container = document.getElementById(containerId);
+      var fallback = document.getElementById(fallbackId);
+      if (!container || !list || list.length === 0) return;
+
+      var pairs = tokenizePhrases(list);
+      if (pairs.length === 0) return;
+
+      var maxW = pairs[0][1];
+      var useCanvas = (typeof WordCloud === 'function');
+      if (useCanvas) {
+        try {
+          WordCloud(container, {
+            list: pairs,
+            gridSize: 10,
+            weightFactor: function(size) {
+              // scale so top word ~48px, smallest ~12px
+              return Math.max(12, (size / maxW) * 48);
+            },
+            fontFamily: 'Georgia, serif',
+            color: function() {
+              var palette = ['#800000','#b45309','#065f46','#0f766e','#4338ca','#7c3aed','#be185d','#1f2937'];
+              return palette[Math.floor(Math.random() * palette.length)];
+            },
+            backgroundColor: '#fff',
+            rotateRatio: 0.2,
+            minRotation: -Math.PI / 12,
+            maxRotation: Math.PI / 12,
+            shrinkToFit: true
+          });
+          return;
+        } catch(err) {
+          // Fall through to CSS fallback
+          console.warn('wordcloud2 failed, using CSS fallback', err);
+        }
+      }
+
+      // CSS fallback: render weighted chips
+      container.style.display = 'none';
+      fallback.style.display = 'flex';
+      fallback.innerHTML = '';
+      pairs.forEach(function(p) {
+        var span = document.createElement('span');
+        span.className = 'wc-word';
+        var sizePx = Math.max(12, (p[1] / maxW) * 40);
+        span.style.fontSize = sizePx + 'px';
+        span.style.opacity = String(0.55 + 0.45 * (p[1] / maxW));
+        span.textContent = p[0];
+        fallback.appendChild(span);
+      });
+    }
+
+    // Render both clouds once DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      renderWordCloud('culture-wordcloud', 'culture-wordcloud-fallback', CULTURE_WORDS);
+      renderWordCloud('descriptor-wordcloud', 'descriptor-wordcloud-fallback', DESCRIPTOR_WORDS);
+    });
+  </script>
 
   <script>
   // ── Rotating preview pill content ──────────────────────────────────────────
@@ -513,20 +863,20 @@
       if (items.length <= 1) return; // no need to rotate
 
       var DISPLAY_MS = 5000; // 5 seconds per item
-      
+
       setTimeout(function() {
         setInterval(function() {
           // Swipe out up
           el.classList.remove('visible');
           el.classList.add('swiping-up');
-          
+
           setTimeout(function() {
             // Instantly move to bottom
             idx = (idx + 1) % items.length;
             el.textContent = items[idx];
             el.classList.remove('swiping-up');
             el.classList.add('preparing');
-            
+
             // Allow browser to render the instant move, then swipe in
             requestAnimationFrame(function() {
               requestAnimationFrame(function() {
@@ -543,6 +893,111 @@
     rotator('pill-trivia-text', triviaList, 0);
     rotator('pill-quotes-text', quotesList, 1500);
     rotator('pill-tips-text',   tipsList, 3000);
+  })();
+  </script>
+
+  <!-- ── Client-side filters + column sorting ── -->
+  <script>
+  (function() {
+    var table = document.getElementById('room-table');
+    if (!table) return;
+    var tbody = table.tBodies[0];
+    var allRows = Array.prototype.slice.call(tbody.rows);
+
+    // Helpers
+    function getKey(row, key) {
+      var v = row.dataset[key.toLowerCase()] || '';
+      // numeric fields
+      if (['culture','noise','roomsize','naturallight','tempcontrol','roomnumber'].indexOf(key.toLowerCase()) !== -1) {
+        var n = parseFloat(v);
+        return isNaN(n) ? null : n;
+      }
+      if (key === 'floor') {
+        var fn = parseFloat(v);
+        return isNaN(fn) ? v.toLowerCase() : fn;
+      }
+      return v.toLowerCase();
+    }
+
+    // ── Filters ─────────────────────────────────────────────
+    var floorSel = document.getElementById('filter-floor');
+    var typeSel = document.getElementById('filter-roomtype');
+    var reviewChk = document.getElementById('filter-hasreview');
+    var clearBtn = document.getElementById('filter-clear-btn');
+
+    function applyFilters() {
+      var f = floorSel ? floorSel.value : '';
+      var t = typeSel ? typeSel.value : '';
+      var r = reviewChk ? reviewChk.checked : false;
+      allRows.forEach(function(row) {
+        var show = true;
+        if (f && row.dataset.floor !== f) show = false;
+        if (t && row.dataset.roomtype !== t) show = false;
+        if (r && row.dataset.hasreview !== '1') show = false;
+        row.style.display = show ? '' : 'none';
+      });
+    }
+    if (floorSel)  floorSel.addEventListener('change', applyFilters);
+    if (typeSel)   typeSel.addEventListener('change', applyFilters);
+    if (reviewChk) reviewChk.addEventListener('change', applyFilters);
+    if (clearBtn) {
+      clearBtn.addEventListener('click', function() {
+        if (floorSel) floorSel.value = '';
+        if (typeSel) typeSel.value = '';
+        if (reviewChk) reviewChk.checked = false;
+        applyFilters();
+      });
+    }
+
+    // ── Sorting ─────────────────────────────────────────────
+    var currentSort = { key: null, dir: 1 };
+    var headers = table.querySelectorAll('th.sortable');
+
+    function clearIndicators() {
+      headers.forEach(function(h) {
+        h.classList.remove('sort-asc','sort-desc');
+        var ind = h.querySelector('.sort-indicator');
+        if (ind) ind.textContent = '';
+      });
+    }
+
+    function sortBy(key) {
+      var dir = (currentSort.key === key) ? -currentSort.dir : 1;
+      currentSort = { key: key, dir: dir };
+
+      var sorted = allRows.slice().sort(function(a, b) {
+        var va = getKey(a, key);
+        var vb = getKey(b, key);
+        // Nulls/empty strings always sort to the bottom regardless of direction
+        var aEmpty = (va === null || va === undefined || va === '');
+        var bEmpty = (vb === null || vb === undefined || vb === '');
+        if (aEmpty && !bEmpty) return 1;
+        if (!aEmpty && bEmpty) return -1;
+        if (aEmpty && bEmpty) return 0;
+
+        if (typeof va === 'number' && typeof vb === 'number') {
+          return (va - vb) * dir;
+        }
+        return String(va).localeCompare(String(vb)) * dir;
+      });
+
+      // Re-append in new order
+      sorted.forEach(function(row) { tbody.appendChild(row); });
+
+      clearIndicators();
+      var th = table.querySelector('th.sortable[data-sort-key="' + key + '"]');
+      if (th) {
+        th.classList.add(dir === 1 ? 'sort-asc' : 'sort-desc');
+        var ind = th.querySelector('.sort-indicator');
+        if (ind) ind.textContent = dir === 1 ? '▲' : '▼';
+      }
+    }
+
+    headers.forEach(function(h) {
+      h.addEventListener('click', function() {
+        sortBy(h.dataset.sortKey);
+      });
+    });
   })();
   </script>
 

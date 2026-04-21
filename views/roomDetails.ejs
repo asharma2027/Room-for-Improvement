@@ -2,6 +2,11 @@
 
   <body>
     <%- include('partials/nav') %>
+    <style>
+      /* Red asterisk for required fields */
+      .req-star { color: #dc2626; font-weight: 700; margin-left: 0.15rem; }
+      .opt-note { font-weight: normal; color: var(--text-secondary); font-size: 0.82rem; margin-left: 0.25rem; }
+    </style>
 
       <main>
         <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
@@ -69,6 +74,12 @@
               <% if (latestEntry.scalars["culture note"]) { %>
               <p style="margin-bottom: 0.75rem; font-size: 0.9rem;">
                 <strong>Culture note:</strong> <em>"<%= latestEntry.scalars["culture note"] %>"</em>
+              </p>
+              <% } %>
+
+              <% if (latestEntry.scalars["house descriptor"]) { %>
+              <p style="margin-bottom: 0.75rem; font-size: 0.9rem;">
+                <strong>House Descriptor:</strong> <em><%= latestEntry.scalars["house descriptor"] %></em>
               </p>
               <% } %>
 
@@ -153,13 +164,13 @@
                 <input type="hidden" name="form_version" value="v1">
 
                 <div style="margin-bottom: 1.5rem;">
-                  <label for="academicYear-v1">Academic Year:</label>
+                  <label for="academicYear-v1">Academic Year<span class="req-star">*</span>:</label>
                   <input type="text" id="academicYear-v1" name="academicYear" placeholder="e.g. 2023-2024" required
                     style="max-width: 200px;" />
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
-                  <label for="customName-v1">Custom Room Name (Optional):</label>
+                  <label for="customName-v1">Custom Room Name <span class="opt-note">(optional)</span>:</label>
                   <input type="text" id="customName-v1" name="customName" placeholder="e.g. The Fortress of Solitude"
                     style="max-width: 400px;" />
                   <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">
@@ -168,7 +179,7 @@
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
-                  <label style="margin-bottom: 1rem;">Optional Tags:</label>
+                  <label style="margin-bottom: 1rem;">Tags <span class="opt-note">(optional)</span>:</label>
                   <div
                     style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 0.5rem;">
                     <label style="font-weight: normal;"><input type="checkbox" name="tags"
@@ -191,10 +202,10 @@
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
-                  <label style="margin-bottom: 1rem;">Ratings (1-5, 3=Neutral):</label>
+                  <label style="margin-bottom: 1rem;">Ratings (1-5, 3=Neutral)<span class="req-star">*</span>:</label>
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div>
-                      <label style="font-size: 0.9rem;">Good House Culture</label>
+                      <label style="font-size: 0.9rem;">Good House Culture<span class="req-star">*</span></label>
                       <select name="scalar_house_culture" required>
                         <option value="1">1 (Strongly Disagree)</option>
                         <option value="2">2 (Somewhat Disagree)</option>
@@ -204,7 +215,7 @@
                       </select>
                     </div>
                     <div>
-                      <label style="font-size: 0.9rem;">Lot of Outside Noise</label>
+                      <label style="font-size: 0.9rem;">Lot of Outside Noise<span class="req-star">*</span></label>
                       <select name="scalar_outside_noise" required>
                         <option value="1">1 (Strongly Disagree)</option>
                         <option value="2">2 (Somewhat Disagree)</option>
@@ -230,12 +241,12 @@
                 <!-- Shared fields -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.75rem;">
                   <div>
-                    <label for="academicYear-v2">Academic Year</label>
+                    <label for="academicYear-v2">Academic Year<span class="req-star">*</span></label>
                     <input type="text" id="academicYear-v2" name="academicYear" placeholder="e.g. 2024-2025" required
                       style="max-width: 200px;" />
                   </div>
                   <div>
-                    <label for="customName-v2">Custom Room Name <span style="font-weight:normal; color:var(--text-secondary);">(optional)</span></label>
+                    <label for="customName-v2">Custom Room Name <span class="opt-note">(optional)</span></label>
                     <input type="text" id="customName-v2" name="customName"
                       placeholder="e.g. The Fortress of Solitude" style="max-width: 360px;" />
                   </div>
@@ -243,7 +254,7 @@
 
                 <!-- ── SD Strip: Room Size ── -->
                 <div class="form-section">
-                  <span class="form-sec-title">Room Size</span>
+                  <span class="form-sec-title">Room Size<span class="req-star">*</span></span>
                   <div class="sd-strip">
                     <div class="sd-track"></div>
                     <label class="sd-opt">
@@ -276,7 +287,7 @@
 
                 <!-- ── SD Strip: Natural Light ── -->
                 <div class="form-section">
-                  <span class="form-sec-title">Natural Light</span>
+                  <span class="form-sec-title">Natural Light<span class="req-star">*</span></span>
                   <div class="sd-strip">
                     <div class="sd-track"></div>
                     <label class="sd-opt">
@@ -309,7 +320,7 @@
 
                 <!-- ── SD Strip: Outside Noise ── -->
                 <div class="form-section">
-                  <span class="form-sec-title">Outside Noise</span>
+                  <span class="form-sec-title">Outside Noise<span class="req-star">*</span></span>
                   <div class="sd-strip">
                     <div class="sd-track"></div>
                     <label class="sd-opt">
@@ -342,7 +353,7 @@
 
                 <!-- ── SD Strip: Temperature Control ── -->
                 <div class="form-section">
-                  <span class="form-sec-title">Temperature Control</span>
+                  <span class="form-sec-title">Temperature Control<span class="req-star">*</span></span>
                   <div class="sd-strip">
                     <div class="sd-track"></div>
                     <label class="sd-opt">
@@ -375,7 +386,7 @@
 
                 <!-- ── SD Strip: House Culture ── -->
                 <div class="form-section">
-                  <span class="form-sec-title">House Culture</span>
+                  <span class="form-sec-title">House Culture<span class="req-star">*</span></span>
                   <div class="sd-strip">
                     <div class="sd-track"></div>
                     <label class="sd-opt">
@@ -405,7 +416,7 @@
                 <div class="form-section">
                   <span class="form-sec-title">
                     House Culture Descriptors
-                    <span style="font-weight:normal; color:var(--text-secondary); font-size:0.82rem;">(pick up to 3)</span>
+                    <span class="opt-note">(optional — pick up to 3)</span>
                   </span>
                   <div class="culture-chips" id="culture-chips-container">
                     <input type="checkbox" class="chip-opt" id="chip-0" name="culture_tags" value="Welcoming / inclusive">
@@ -446,11 +457,22 @@
                   </div>
                 </div>
 
+                <!-- ── House Descriptor (free-text, optional) ── -->
+                <div class="form-section">
+                  <label class="form-sec-title" for="house_descriptor">
+                    House Descriptor
+                    <span class="opt-note">(optional — a few words that describe this house; feeds the house descriptor word cloud)</span>
+                  </label>
+                  <input type="text" name="house_descriptor" id="house_descriptor" maxlength="120"
+                    placeholder="e.g. cozy brick, tight-knit, foodie hall"
+                    style="max-width: 520px;" />
+                </div>
+
                 <!-- ── Culture Note ── -->
                 <div class="form-section">
                   <label class="form-sec-title" for="culture_note">
                     In 1–5 words, what most shapes that rating?
-                    <span style="font-weight:normal; color:var(--text-secondary); font-size:0.82rem;">(optional — feeds the house word map)</span>
+                    <span class="opt-note">(optional — feeds the house word map)</span>
                   </label>
                   <input type="text" name="culture_note" id="culture_note" maxlength="60"
                     placeholder="e.g. super welcoming, lots of events"
@@ -459,7 +481,7 @@
 
                 <!-- ── Optional Physical Tags ── -->
                 <div class="form-section">
-                  <span class="form-sec-title">Optional Tags</span>
+                  <span class="form-sec-title">Optional Tags <span class="opt-note">(optional)</span></span>
 
                   <div class="tag-cat-title">Space &amp; Layout</div>
                   <div class="v2-tag-grid">
@@ -503,7 +525,7 @@
                 <div class="form-section">
                   <label class="form-sec-title" for="freetext_note">
                     Anything future residents should know about this room?
-                    <span style="font-weight:normal; color:var(--text-secondary); font-size:0.82rem;">(optional — max 280 chars)</span>
+                    <span class="opt-note">(optional — max 280 chars)</span>
                   </label>
                   <textarea name="freetext_note" id="freetext_note" maxlength="280" rows="3"
                     style="max-width: 620px; resize: vertical;"

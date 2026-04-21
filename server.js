@@ -579,8 +579,28 @@ app.get('/house/:dorm/:house', ensureAuthenticated, (req, res) => {
       });
     }
 
+    // Aggregated culture chips/notes and house descriptors across all submissions for this house.
+    const cultureWords = [];        // For "Culture Vibes" word cloud
+    const houseDescriptorWords = []; // For "House Descriptors" word cloud
+    const allHouseEntries = allEntries.filter(e => {
+      const room = rooms.find(r => r.id === e.roomId);
+      return room && room.dorm === dormName && room.house === houseName;
+    });
+    allHouseEntries.forEach(e => {
+      if (Array.isArray(e.cultureTags)) {
+        e.cultureTags.forEach(c => { if (c) cultureWords.push(String(c)); });
+      }
+      if (e.scalars && e.scalars["culture note"]) {
+        cultureWords.push(String(e.scalars["culture note"]));
+      }
+      if (e.scalars && e.scalars["house descriptor"]) {
+        houseDescriptorWords.push(String(e.scalars["house descriptor"]));
+      }
+    });
+
     houseRooms.forEach(r => {
       r.tags = ''; r.houseCultureVal = ''; r.outsideNoiseVal = ''; r.customName = null;
+      r.roomSizeVal = ''; r.naturalLightVal = ''; r.tempControlVal = '';
       const matching = allEntries.filter(e => e.roomId === r.id);
       if (matching.length > 0) {
         matching.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
@@ -591,8 +611,29 @@ app.get('/house/:dorm/:house', ensureAuthenticated, (req, res) => {
           r.outsideNoiseVal = latest.scalars['my room gets a lot of outside noise'] || '';
         }
         if (latest.customName) r.customName = latest.customName;
+
+        // Most recent v2 scalars (walk from newest backward to find first v2 entry for each).
+        for (let i = matching.length - 1; i >= 0; i--) {
+          const s = matching[i].scalars || {};
+          if (s["form version"] === "v2") {
+            if (!r.roomSizeVal && s["room size"])          r.roomSizeVal = s["room size"];
+            if (!r.naturalLightVal && s["natural light"])  r.naturalLightVal = s["natural light"];
+            if (!r.tempControlVal && s["temperature control"]) r.tempControlVal = s["temperature control"];
+            if (r.roomSizeVal && r.naturalLightVal && r.tempControlVal) break;
+          }
+        }
       }
     });
+
+    // Build distinct filter lists (floors + room types present in this house).
+    const floorsSet = new Set();
+    const roomTypesSet = new Set();
+    houseRooms.forEach(r => {
+      if (r.floor)    floorsSet.add(r.floor);
+      if (r.roomType) roomTypesSet.add(r.roomType);
+    });
+    const floors    = Array.from(floorsSet).sort();
+    const roomTypes = Array.from(roomTypesSet).sort();
 
     res.render('housePage', {
       user: req.user, dormName, houseName,
@@ -601,7 +642,11 @@ app.get('/house/:dorm/:house', ensureAuthenticated, (req, res) => {
       houseEmblem: getHouseEmblem(houseName),
       dormBackground: getDormBackground(dormName),
       rooms: houseRooms,
-      houseRanks
+      houseRanks,
+      cultureWords,
+      houseDescriptorWords,
+      floors,
+      roomTypes
     });
   });
 });
@@ -828,7 +873,8 @@ app.post('/rooms/:id/submit', ensureAuthenticated, (req, res) => {
     academicYear, tags, customName, form_version,
     scalar_house_culture, scalar_outside_noise,
     scalar_room_size, scalar_natural_light, scalar_temp_control,
-    culture_note, freetext_note, culture_tags
+    culture_note, freetext_note, culture_tags,
+    house_descriptor
   } = req.body;
 
   let tagsArray = [];
@@ -876,6 +922,9 @@ app.post('/rooms/:id/submit', ensureAuthenticated, (req, res) => {
     }
     if (freetext_note && freetext_note.trim()) {
       scalars["freetext note"] = freetext_note.trim().slice(0, 280);
+    }
+    if (house_descriptor && house_descriptor.trim()) {
+      scalars["house descriptor"] = house_descriptor.trim().slice(0, 120);
     }
     scalars["form version"] = "v2";
   }
