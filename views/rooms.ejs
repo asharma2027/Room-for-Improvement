@@ -92,8 +92,114 @@
         </div>
 
         <!-- Filters -->
+        <style>
+            /* ── Room type tag buttons (rooms page) ── */
+            .roomtype-tag-filters {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.4rem;
+                align-items: center;
+            }
+            .roomtype-tag-btn {
+                display: inline-flex;
+                align-items: center;
+                padding: 0.25rem 0.7rem;
+                border: 1.5px solid #800000;
+                border-radius: 2rem;
+                background: #fff;
+                color: #800000;
+                font-size: 0.8rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background 0.15s, color 0.15s;
+                user-select: none;
+            }
+            .roomtype-tag-btn:hover { background: rgba(128,0,0,0.08); }
+            .roomtype-tag-btn.active { background: #800000; color: #fff; }
+
+            /* ── Active tag filter chips ── */
+            .active-tag-chips {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.35rem;
+                align-items: center;
+            }
+            .active-tag-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.25rem;
+                padding: 0.2rem 0.55rem;
+                background: #800000;
+                color: #fff;
+                border-radius: 2rem;
+                font-size: 0.78rem;
+                font-weight: 600;
+                cursor: default;
+            }
+            .active-tag-chip .chip-remove {
+                cursor: pointer;
+                font-size: 0.9rem;
+                line-height: 1;
+                opacity: 0.8;
+                margin-left: 0.15rem;
+            }
+            .active-tag-chip .chip-remove:hover { opacity: 1; }
+
+            /* ── Room-filter bar ── */
+            .room-filters {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+                align-items: center;
+                margin: 1rem 0 0.75rem;
+                padding: 0.75rem 1rem;
+                background: #f9fafb;
+                border: 1px solid var(--border-color);
+                border-radius: 0.5rem;
+            }
+            .room-filters label {
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: var(--text-secondary);
+                margin: 0;
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+            }
+            .room-filters select {
+                font-size: 0.85rem;
+                padding: 0.3rem 0.5rem;
+                border: 1px solid var(--border-color);
+                border-radius: 0.35rem;
+                background: #fff;
+            }
+            .room-filters .filter-clear-btn {
+                margin-left: auto;
+                background: none;
+                border: 1px solid var(--border-color);
+                padding: 0.3rem 0.7rem;
+                border-radius: 0.35rem;
+                cursor: pointer;
+                font-size: 0.8rem;
+                color: var(--text-secondary);
+            }
+            .room-filters .filter-clear-btn:hover { background: #fff; }
+
+            /* ── Sortable headers ── */
+            th.sortable { cursor: pointer; user-select: none; }
+            th.sortable:hover { background: rgba(0,0,0,0.03); }
+            th.sortable .sort-indicator { display: inline-block; margin-left: 0.3rem; font-size: 0.75rem; opacity: 0.45; }
+            th.sortable.sort-asc .sort-indicator,
+            th.sortable.sort-desc .sort-indicator { opacity: 1; color: var(--primary-color, #800000); }
+
+            /* ── Clickable tags ── */
+            #rooms-table .tag { cursor: pointer; transition: opacity 0.15s; }
+            #rooms-table .tag:hover { opacity: 0.75; }
+        </style>
+
+        <!-- Dorm / House legacy filters (preserved) -->
         <div class="filters"
-          style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+          style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 0.5rem;">
           <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
             <div>
               <label for="dorm-filter" style="margin-bottom: 0.25rem; font-size: 0.85rem;">Filter by Dorm</label>
@@ -126,25 +232,77 @@
             </label>
           </div>
         </div>
-        
+
+        <!-- Extended filter bar (floor, room type tags, has review, active tag chips) -->
+        <div class="room-filters" id="room-filters">
+            <label>
+                Floor:
+                <select id="filter-floor">
+                    <option value="">All</option>
+                    <% const allFloors = [...new Set(rooms.map(r => r.floor).filter(Boolean))].sort((a,b)=>{ const na=parseFloat(a),nb=parseFloat(b); return isNaN(na)||isNaN(nb)?String(a).localeCompare(String(b)):na-nb; }); %>
+                    <% allFloors.forEach(f => { %>
+                        <option value="<%= f %>"><%= f %></option>
+                    <% }) %>
+                </select>
+            </label>
+
+            <!-- Room Type: clickable tag buttons -->
+            <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                <span style="font-size:0.85rem; font-weight:600; color:var(--text-secondary);">Room Type:</span>
+                <div class="roomtype-tag-filters" id="roomtype-tag-filters">
+                    <% const allRoomTypes = [...new Set(rooms.map(r => r.roomType).filter(Boolean))].sort(); %>
+                    <% allRoomTypes.forEach(t => { %>
+                        <button type="button" class="roomtype-tag-btn" data-roomtype="<%= t %>"><%= t %></button>
+                    <% }) %>
+                </div>
+            </div>
+
+            <label>
+                <input type="checkbox" id="filter-hasreview">
+                Has Review
+            </label>
+
+            <!-- Active tag filter chips -->
+            <div class="active-tag-chips" id="active-tag-chips" style="display:none;"></div>
+
+            <button type="button" class="filter-clear-btn" id="filter-clear-btn">Clear filters</button>
+        </div>
+
         <!-- Stats Section -->
         <div class="top-stats-grid" style="margin-bottom: 2rem;">
 
         <div class="table-container">
-          <table>
+          <table id="rooms-table">
             <thead>
               <tr>
-                <th style="width: 200px;">ROOM</th>
-                <th>Dorm</th>
+                <th class="sortable" data-sort-key="name" style="width: 200px;">ROOM <span class="sort-indicator"></span></th>
+                <th class="sortable" data-sort-key="dorm">Dorm <span class="sort-indicator"></span></th>
+                <th class="sortable" data-sort-key="house">House <span class="sort-indicator"></span></th>
+                <th class="sortable" data-sort-key="floor">Floor <span class="sort-indicator"></span></th>
+                <th class="sortable" data-sort-key="roomtype">Type <span class="sort-indicator"></span></th>
                 <th>Tags</th>
-                <th>Culture</th>
-                <th>Noise</th>
+                <th class="sortable" data-sort-key="culture">Culture <span class="sort-indicator"></span></th>
+                <th class="sortable" data-sort-key="noise">Noise <span class="sort-indicator"></span></th>
               </tr>
             </thead>
             <tbody id="rooms-body">
               <% rooms.forEach(room=> { %>
-                <tr style="cursor:pointer;" data-dorm="<%= room.dorm %>" data-house="<%= room.house %>"
-                  data-room-number="<%= room.roomNumber %>" onclick="window.location='/rooms/<%= room.id %>'">
+                <%
+                  const hasReviewR = !!(room.houseCultureVal || room.customName || room.tags);
+                  const displayNameR = room.customName ? room.customName : (room.house + ' ' + room.roomNumber);
+                %>
+                <tr style="cursor:pointer;"
+                  data-dorm="<%= room.dorm %>"
+                  data-house="<%= room.house %>"
+                  data-floor="<%= room.floor || '' %>"
+                  data-roomtype="<%= room.roomType || '' %>"
+                  data-hasreview="<%= hasReviewR ? '1' : '0' %>"
+                  data-name="<%= displayNameR %>"
+                  data-tags="<%= room.tags || '' %>"
+                  data-culture="<%= room.houseCultureVal || '' %>"
+                  data-noise="<%= room.outsideNoiseVal || '' %>"
+                  data-roomnumber="<%= parseInt(room.roomNumber) || 0 %>"
+                  onclick="window.location='/rooms/<%= room.id %>'">
 
                   <td style="font-weight: 600; font-size: 1.05em;">
                     <% if (room.customName) { %>
@@ -152,65 +310,90 @@
                         <span class="room-name" data-original="<%= room.customName %>" style="color:#800000;">
                           <%= room.customName %>
                         </span>
-                        <div
-                          style="font-size:0.75em; font-style:italic; font-weight: 400; color: var(--text-secondary); margin-top: 0.15rem;">
+                        <div style="font-size:0.75em; font-style:italic; font-weight: 400; color: var(--text-secondary); margin-top: 0.15rem;">
                           (<%= room.house %> <%= room.roomNumber %>)
                         </div>
                       </div>
-                      <% } else { %>
-                        <span class="room-name" data-original="<%= room.house %> <%= room.roomNumber %>">
-                          <%= room.house %>
-                            <%= room.roomNumber %>
-                        </span>
-                        <% } %>
+                    <% } else { %>
+                      <span class="room-name" data-original="<%= room.house %> <%= room.roomNumber %>">
+                        <%= room.house %> <%= room.roomNumber %>
+                      </span>
+                    <% } %>
+                  </td>
+
+                  <td><%= room.dorm %></td>
+
+                  <td><%= room.house || '\u2014' %></td>
+
+                  <td><%= room.floor || '\u2014' %></td>
+
+                  <td>
+                    <% if (room.roomType) { %>
+                      <span style="display:inline-block; padding:0.2em 0.6em; border-radius:0.4rem; font-size:0.78rem; font-weight:600;
+                        background: <%= room.roomType && room.roomType.toLowerCase().includes('double') ? '#dbeafe' : room.roomType && room.roomType.toLowerCase().includes('suite') ? '#f3e8ff' : '#f3f4f6' %>;
+                        color: <%= room.roomType && room.roomType.toLowerCase().includes('double') ? '#1d4ed8' : room.roomType && room.roomType.toLowerCase().includes('suite') ? '#7c3aed' : '#374151' %>;"
+                      ><%= room.roomType %></span>
+                    <% } else { %>
+                      <span style="color:#ccc; font-size:0.85rem;">&mdash;</span>
+                    <% } %>
+                  </td>
+
+                  <% const getTagEmojiR=(tag)=>{
+                    const tl = tag.toLowerCase();
+                    if (tl.includes('sunny') || tl.includes('light') || tl.includes('bright')) return '\u2600\ufe0f';
+                    if (tl.includes('dark') || tl.includes('dim')) return '\ud83c\udf11';
+                    if (tl.includes('loud') || tl.includes('noise') || tl.includes('busy')) return '\ud83d\udd0a';
+                    if (tl.includes('quiet') || tl.includes('silent')) return '\ud83d\udd07';
+                    if (tl.includes('large') || tl.includes('spacious') || tl.includes('big')) return '\ud83c\udff0';
+                    if (tl.includes('small') || tl.includes('tiny') || tl.includes('cramped')) return '\ud83d\udce6';
+                    if (tl.includes('high ceiling')) return '\ud83c\udfdb\ufe0f';
+                    if (tl.includes('low ceiling')) return '\ud83c\udfe0';
+                    if (tl.includes('cold') || tl.includes('draft') || tl.includes('freeze')) return '\u2744\ufe0f';
+                    if (tl.includes('warm') || tl.includes('hot') || tl.includes('heat')) return '\ud83d\udd25';
+                    if (tl.includes('window')) return '\ud83e\ude9f';
+                    if (tl.includes('view')) return '\ud83d\udc40';
+                    if (tl.includes('bathroom') || tl.includes('toilet')) return '\ud83d\udebd';
+                    if (tl.includes('kitchen')) return '\ud83c\udf73';
+                    if (tl.includes('ac') || tl.includes('a/c')) return '\ud83d\udca8';
+                    return '\ud83c\udff7\ufe0f';
+                  }; %>
+
+                  <td>
+                    <% if (room.tags) { %>
+                      <div class="tags-container">
+                        <% room.tags.split(', ').forEach(t => { %>
+                          <span class="tag" title="<%= t %>" onclick="event.stopPropagation(); addRoomsTagFilter('<%= t.replace(/'/g, "&#39;") %>')">
+                            <%= getTagEmojiR(t) %> <%= t %>
+                          </span>
+                        <% }) %>
+                      </div>
+                    <% } else { %>
+                      <span style="color:#ccc; font-size:0.85rem;">&mdash;</span>
+                    <% } %>
                   </td>
 
                   <td>
-                    <%= room.dorm %>
+                    <% if (room.houseCultureVal) { %>
+                      <div style="display:flex; align-items:center; gap:0.4rem;">
+                        <div style="width:<%= (parseFloat(room.houseCultureVal)/5*48) %>px; height:6px; background:#10b981; border-radius:3px; min-width:4px;"></div>
+                        <span style="font-size:0.85rem; font-weight:600;"><%= room.houseCultureVal %></span>
+                      </div>
+                    <% } else { %><span style="color:#ccc;">&mdash;</span><% } %>
                   </td>
 
-                  <% const getTagEmoji=(tag)=> {
-                    const t = tag.toLowerCase();
-                    if (t.includes('sunny') || t.includes('light') || t.includes('bright')) return '☀️';
-                    if (t.includes('dark') || t.includes('dim')) return '🌑';
-                    if (t.includes('loud') || t.includes('noise') || t.includes('busy')) return '🔊';
-                    if (t.includes('quiet') || t.includes('silent')) return '🔇';
-                    if (t.includes('large') || t.includes('spacious') || t.includes('big')) return '🏰';
-                    if (t.includes('small') || t.includes('tiny') || t.includes('cramped')) return '📦';
-                    if (t.includes('high ceiling')) return '🏛️';
-                    if (t.includes('low ceiling')) return '🏠';
-                    if (t.includes('cold') || t.includes('draft') || t.includes('freeze')) return '❄️';
-                    if (t.includes('warm') || t.includes('hot') || t.includes('heat')) return '🔥';
-                    if (t.includes('window')) return '🪟';
-                    if (t.includes('view')) return '👀';
-                    if (t.includes('bathroom') || t.includes('toilet')) return '🚽';
-                    if (t.includes('kitchen')) return '🍳';
-                    if (t.includes('ac') || t.includes('a/c')) return '💨';
-                    return '🏷️';
-                    };
-                    %>
-
-                    <td>
-                      <% if (room.tags) { %>
-                        <div class="tags-container">
-                          <% room.tags.split(', ').forEach(t => { %>
-                              <span class="tag" title="<%= t %>"><%= getTagEmoji(t) %> <%= t %></span>
-                          <% }) %>
+                  <td>
+                    <% if (room.outsideNoiseVal) { %>
+                      <div style="display:flex; align-items:center; gap:0.4rem;">
+                        <div style="width:<%= (parseFloat(room.outsideNoiseVal)/5*48) %>px; height:6px; background:#ef4444; border-radius:3px; min-width:4px;"></div>
+                        <span style="font-size:0.85rem; font-weight:600;"><%= room.outsideNoiseVal %></span>
                       </div>
-                    <% } %>
-                </td>
-                
-                <td><%= room.houseCultureVal ? room.houseCultureVal : ' -' %>
-                    </td>
-                    <td>
-                      <%= room.outsideNoiseVal ? room.outsideNoiseVal : '-' %>
-                    </td>
+                    <% } else { %><span style="color:#ccc;">&mdash;</span><% } %>
+                  </td>
                 </tr>
-                <% }) %>
+              <% }) %>
             </tbody>
           </table>
-          <p id="no-results" style="display: none; padding: 2rem; text-align: center; color: var(--text-secondary);">No
-            rooms match your filters.</p>
+          <p id="no-results" style="display: none; padding: 2rem; text-align: center; color: var(--text-secondary);">No rooms match your filters.</p>
         </div>
       </main>
 
@@ -239,10 +422,9 @@
           console.error("Failed to parse server data", e);
         }
 
+        // ── Dorm / House legacy filter ─────────────────────────────
         function onDormChange(selectedDorm) {
           const houseFilter = document.getElementById("house-filter");
-
-          // Populate houses
           if (!selectedDorm) {
             houseFilter.innerHTML = '<option value="">All Houses</option>';
             houseFilter.disabled = true;
@@ -255,29 +437,102 @@
             });
             houseFilter.innerHTML = options;
           }
-          // Reset house selection
           houseFilter.value = "";
-
           applyFilters();
         }
 
+        // ── Room Type Tag Buttons ──────────────────────────────────
+        (function() {
+          var activeRoomType = '';
+          var roomTypeBtns = document.querySelectorAll('#roomtype-tag-filters .roomtype-tag-btn');
+          roomTypeBtns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              var val = btn.dataset.roomtype;
+              if (activeRoomType === val) {
+                activeRoomType = '';
+                btn.classList.remove('active');
+              } else {
+                roomTypeBtns.forEach(function(b) { b.classList.remove('active'); });
+                activeRoomType = val;
+                btn.classList.add('active');
+              }
+              window._activeRoomType = activeRoomType;
+              applyFilters();
+            });
+          });
+          window._activeRoomType = '';
+          window._clearRoomTypeBtns = function() {
+            activeRoomType = '';
+            window._activeRoomType = '';
+            roomTypeBtns.forEach(function(b) { b.classList.remove('active'); });
+          };
+        })();
+
+        // ── Active Tag Chips ───────────────────────────────────────
+        var activeTagFilters = [];
+        var chipsContainer = document.getElementById('active-tag-chips');
+
+        window.addRoomsTagFilter = function(tag) {
+          if (activeTagFilters.indexOf(tag) !== -1) return;
+          activeTagFilters.push(tag);
+          renderTagChips();
+          applyFilters();
+        };
+
+        window.removeRoomsTagFilter = function(tag) {
+          var idx = activeTagFilters.indexOf(tag);
+          if (idx !== -1) activeTagFilters.splice(idx, 1);
+          renderTagChips();
+          applyFilters();
+        };
+
+        function renderTagChips() {
+          if (!chipsContainer) return;
+          if (activeTagFilters.length === 0) {
+            chipsContainer.style.display = 'none';
+            chipsContainer.innerHTML = '';
+            return;
+          }
+          chipsContainer.style.display = 'flex';
+          chipsContainer.innerHTML = activeTagFilters.map(function(tag) {
+            return '<span class="active-tag-chip">'
+              + tag
+              + '<span class="chip-remove" title="Remove filter" onclick="removeRoomsTagFilter(\'' + tag.replace(/'/g,"\\'") + '\')">&times;</span></span>';
+          }).join('');
+        }
+
+        // ── Unified applyFilters ───────────────────────────────────
         function applyFilters() {
           const selectedDorm = document.getElementById("dorm-filter").value;
           const selectedHouse = document.getElementById("house-filter").value;
+          const floorSel = document.getElementById("filter-floor");
+          const reviewChk = document.getElementById("filter-hasreview");
+          const selectedFloor = floorSel ? floorSel.value : '';
+          const activeRoomTyp = window._activeRoomType || '';
+          const hasReview = reviewChk ? reviewChk.checked : false;
+
           const rows = document.querySelectorAll("#rooms-body tr");
           let visibleCount = 0;
-
-          // Filter logic
           const visibleIndices = [];
 
           rows.forEach((row, index) => {
             const rowDorm = row.getAttribute("data-dorm") || "";
             const rowHouse = row.getAttribute("data-house") || "";
+            const rowFloor = row.getAttribute("data-floor") || "";
+            const rowType = row.getAttribute("data-roomtype") || "";
+            const rowHasReview = row.getAttribute("data-hasreview") || "0";
+            const rowTags = (row.getAttribute("data-tags") || "").split(', ').map(s => s.trim().toLowerCase());
 
             let show = true;
             if (selectedDorm && rowDorm !== selectedDorm) show = false;
-            // Only check house if show is still true
             if (show && selectedHouse && rowHouse !== selectedHouse) show = false;
+            if (show && selectedFloor && rowFloor !== selectedFloor) show = false;
+            if (show && activeRoomTyp && rowType !== activeRoomTyp) show = false;
+            if (show && hasReview && rowHasReview !== '1') show = false;
+            if (show && activeTagFilters.length > 0) {
+              const allMatch = activeTagFilters.every(tag => rowTags.indexOf(tag.trim().toLowerCase()) !== -1);
+              if (!allMatch) show = false;
+            }
 
             if (show) {
               row.style.display = "";
@@ -288,51 +543,135 @@
             }
           });
 
-          // Show/Hide no results message
           document.getElementById("no-results").style.display = visibleCount === 0 ? "block" : "none";
-
-          // Recalculate Stats based on visible rooms
           updateStats(visibleIndices);
         }
 
+        // ── Clear Filters ─────────────────────────────────────────
+        document.getElementById('filter-clear-btn').addEventListener('click', function() {
+          document.getElementById('dorm-filter').value = '';
+          const hf = document.getElementById('house-filter');
+          hf.innerHTML = '<option value="">All Houses</option>';
+          hf.disabled = true;
+          const ff = document.getElementById('filter-floor');
+          if (ff) ff.value = '';
+          if (window._clearRoomTypeBtns) window._clearRoomTypeBtns();
+          const rc = document.getElementById('filter-hasreview');
+          if (rc) rc.checked = false;
+          activeTagFilters = [];
+          renderTagChips();
+          applyFilters();
+        });
+        if (document.getElementById('filter-floor')) {
+          document.getElementById('filter-floor').addEventListener('change', applyFilters);
+        }
+        if (document.getElementById('filter-hasreview')) {
+          document.getElementById('filter-hasreview').addEventListener('change', applyFilters);
+        }
+
+        // ── Column Sorting ────────────────────────────────────────
+        (function() {
+          var table = document.getElementById('rooms-table');
+          if (!table) return;
+          var tbody = table.tBodies[0];
+          var currentSort = { key: null, dir: 1 };
+          var descFirstKeys = new Set(['culture','noise']);
+          var headers = table.querySelectorAll('th.sortable');
+
+          function getAllRows() {
+            return Array.prototype.slice.call(tbody.rows);
+          }
+
+          function getKey(row, key) {
+            var v = row.dataset[key.toLowerCase()] || '';
+            if (['culture','noise','roomnumber'].indexOf(key.toLowerCase()) !== -1) {
+              var n = parseFloat(v);
+              return isNaN(n) ? null : n;
+            }
+            if (key === 'floor') {
+              var fn = parseFloat(v);
+              return isNaN(fn) ? v.toLowerCase() : fn;
+            }
+            return v.toLowerCase();
+          }
+
+          function clearIndicators() {
+            headers.forEach(function(h) {
+              h.classList.remove('sort-asc','sort-desc');
+              var ind = h.querySelector('.sort-indicator');
+              if (ind) ind.textContent = '';
+            });
+          }
+
+          function sortBy(key) {
+            var dir;
+            if (currentSort.key === key) {
+              dir = -currentSort.dir;
+            } else {
+              dir = descFirstKeys.has(key) ? -1 : 1;
+            }
+            currentSort = { key: key, dir: dir };
+
+            var sorted = getAllRows().sort(function(a, b) {
+              var va = getKey(a, key);
+              var vb = getKey(b, key);
+              var aEmpty = (va === null || va === undefined || va === '');
+              var bEmpty = (vb === null || vb === undefined || vb === '');
+              if (aEmpty && !bEmpty) return 1;
+              if (!aEmpty && bEmpty) return -1;
+              if (aEmpty && bEmpty) return 0;
+              if (typeof va === 'number' && typeof vb === 'number') return (va - vb) * dir;
+              return String(va).localeCompare(String(vb)) * dir;
+            });
+
+            sorted.forEach(function(row) { tbody.appendChild(row); });
+            clearIndicators();
+            var th = table.querySelector('th.sortable[data-sort-key="' + key + '"]');
+            if (th) {
+              th.classList.add(dir === 1 ? 'sort-asc' : 'sort-desc');
+              var ind = th.querySelector('.sort-indicator');
+              if (ind) ind.textContent = dir === 1 ? '▲' : '▼';
+            }
+          }
+
+          headers.forEach(function(h) {
+            h.addEventListener('click', function() { sortBy(h.dataset.sortKey); });
+          });
+        })();
+
+        // ── Stats updater (using JSON data) ───────────────────────
         function updateStats(visibleIndices) {
-          // Filter the data array based on visible indices
           const currentRooms = visibleIndices.map(i => allRoomsData[i]);
 
-          // Helper to compute stats
           function getTop3(rooms, field, sortAscending = false) {
-            const grouped = {}; // { HouseName: [val1, val2] }
-
+            const grouped = {};
             rooms.forEach(r => {
-              if (!r.house) return;
+              if (!r || !r.house) return;
               const val = parseFloat(r[field]);
               if (!isNaN(val)) {
                 if (!grouped[r.house]) grouped[r.house] = [];
                 grouped[r.house].push(val);
               }
             });
-
             const results = [];
             for (const h in grouped) {
               const arr = grouped[h];
               const avg = arr.reduce((a, b) => a + b, 0) / arr.length;
               results.push({ houseName: h, avg });
             }
-
             results.sort((a, b) => sortAscending ? a.avg - b.avg : b.avg - a.avg);
             return results.slice(0, 3);
           }
 
-          const topCulture = getTop3(currentRooms, 'houseCultureVal', false); // Descending (Higher is better)
-          const topNoise = getTop3(currentRooms, 'outsideNoiseVal', true); // Ascending (Lower is better)
-
-          // Render Lists
+          const topCulture = getTop3(currentRooms, 'houseCultureVal', false);
+          const topNoise = getTop3(currentRooms, 'outsideNoiseVal', true);
           renderList('culture-list', topCulture);
           renderList('noise-list', topNoise);
         }
 
         function renderList(elementId, items) {
           const el = document.getElementById(elementId);
+          if (!el) return;
           if (items.length === 0) {
             el.innerHTML = '<p>No data available.</p>';
             return;
@@ -342,42 +681,29 @@
           ).join('');
         }
 
-        // Profanity filter - common inappropriate words
+        // ── Profanity filter ──────────────────────────────────────
         const badWords = ['damn', 'hell', 'fuck', 'shit', 'ass', 'bitch', 'bastard', 'crap', 'piss', 'cock', 'dick', 'pussy', 'slut', 'whore', 'fag', 'nigger', 'nigga', 'cunt', 'twat'];
 
         function censorText(text) {
           let censored = text;
-          const lowerText = text.toLowerCase();
-
           badWords.forEach(word => {
             const regex = new RegExp(word, 'gi');
-            censored = censored.replace(regex, (match) => {
-              return '*'.repeat(match.length);
-            });
+            censored = censored.replace(regex, (match) => '*'.repeat(match.length));
           });
-
           return censored;
         }
 
         function toggleCensorship() {
           const isChecked = document.getElementById('censor-toggle').checked;
           const roomNames = document.querySelectorAll('.room-name');
-
           roomNames.forEach(name => {
             const original = name.getAttribute('data-original');
             if (original) {
-              if (isChecked) {
-                // Show original
-                name.textContent = original;
-              } else {
-                // Apply censorship
-                name.textContent = censorText(original);
-              }
+              name.textContent = isChecked ? original : censorText(original);
             }
           });
         }
 
-        // Apply censorship on page load (default state is censored)
         document.addEventListener('DOMContentLoaded', function () {
           toggleCensorship();
         });
