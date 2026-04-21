@@ -16,5 +16,11 @@
     "hashedPassword": "$2a$10$QlI.oKW9Ycv9Pqpw1MwC5u1M5KhwmoNRhekkumpYMrLXiV8dbzKxe",
     "verified": false,
     "verificationToken": "458b9459149f87258d4251f756f8cffc1838877d"
+  },
+  {
+    "email": "tester@uchicago.edu",
+    "hashedPassword": "$2a$10$mcnjflcBVQgcDR3U/sG8juuwOTg9e/vTbu3x3oK4eiQegcuYM9Tpu",
+    "verified": false,
+    "verificationToken": "32b32a9bc67b041b102777df4242eceb2d0869ef"
   }
 ]

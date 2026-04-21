@@ -172,7 +172,6 @@
                 background: #fff;
             }
             .room-filters .filter-clear-btn {
-                margin-left: auto;
                 background: none;
                 border: 1px solid var(--border-color);
                 padding: 0.3rem 0.7rem;
@@ -182,6 +181,7 @@
                 color: var(--text-secondary);
             }
             .room-filters .filter-clear-btn:hover { background: #fff; }
+
 
             /* ── Room type tag buttons ── */
             .roomtype-tag-filters {
@@ -213,12 +213,44 @@
             }
 
             /* ── Active tag filter chips (shown inside filter bar) ── */
+            .active-tag-chips-wrap {
+                /* Fixed-size scrollable strip — never expands the filter row vertically */
+                display: flex;
+                align-items: center;
+                max-width: 340px;     /* wide enough for 2-3 chips comfortably */
+                min-width: 0;
+                overflow: hidden;     /* clip visual overflow */
+                flex-shrink: 1;
+                position: relative;
+            }
             .active-tag-chips {
                 display: flex;
-                flex-wrap: wrap;
+                flex-wrap: nowrap;    /* NEVER wrap — chips scroll horizontally */
                 gap: 0.35rem;
                 align-items: center;
+                overflow-x: auto;
+                overflow-y: hidden;
+                scroll-behavior: smooth;
+                /* Hide scrollbar visually but keep functional */
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+                padding-bottom: 2px;  /* prevent clipping bottom of chips */
             }
+            .active-tag-chips::-webkit-scrollbar { display: none; }
+            /* Fade edge to hint at scroll */
+            .active-tag-chips-wrap::after {
+                content: '';
+                position: absolute;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                width: 24px;
+                background: linear-gradient(to right, transparent, #f9fafb);
+                pointer-events: none;
+                opacity: 0;           /* shown only when chips overflow */
+                transition: opacity 0.2s;
+            }
+            .active-tag-chips-wrap.has-overflow::after { opacity: 1; }
             .active-tag-chip {
                 display: inline-flex;
                 align-items: center;
@@ -230,6 +262,8 @@
                 font-size: 0.78rem;
                 font-weight: 600;
                 cursor: default;
+                white-space: nowrap;  /* never let chip text wrap */
+                flex-shrink: 0;       /* never let chips shrink/squish */
             }
             .active-tag-chip .chip-remove {
                 cursor: pointer;
@@ -240,6 +274,14 @@
             }
             .active-tag-chip .chip-remove:hover { opacity: 1; }
 
+            /* Profanity toggle + Clear filters — locked together at right end of filter row */
+            .filter-row-right {
+                display: flex;
+                align-items: center;
+                gap: 0.6rem;
+                margin-left: auto;
+                flex-shrink: 0;   /* never shrink — always stays rightmost */
+            }
             /* ── Room filters bar extra elements ── */
             .filter-tags-dropdown-wrapper {
                 position: relative;
@@ -326,7 +368,6 @@
                 display: flex;
                 align-items: center;
                 gap: 0.5rem;
-                margin-left: auto;
             }
 
             /* ── Tags in table rows are now clickable ── */
@@ -637,18 +678,23 @@
                     </div>
 
                     <!-- Active tag filter chips (populated by JS when user clicks a tag) -->
-                    <div class="active-tag-chips" id="active-tag-chips" style="display:none;"></div>
-
-                    <!-- Profanity toggle -->
-                    <div class="hp-profanity-toggle">
-                        <span style="font-size: 1.2rem; cursor: help;" title="Toggle content filter">🔞</span>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="censor-toggle" onchange="toggleCensorship()">
-                            <span class="toggle-slider"></span>
-                        </label>
+                    <div class="active-tag-chips-wrap" id="active-tag-chips-wrap" style="display:none;">
+                        <div class="active-tag-chips" id="active-tag-chips"></div>
                     </div>
 
-                    <button type="button" class="filter-clear-btn" id="filter-clear-btn">Clear filters</button>
+                    <!-- Profanity toggle + Clear filters — always locked to right end of row -->
+                    <div class="filter-row-right">
+                        <!-- Profanity toggle -->
+                        <div class="hp-profanity-toggle">
+                            <span style="font-size: 1.2rem; cursor: help;" title="Toggle content filter">🔞</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="censor-toggle" onchange="toggleCensorship()">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <button type="button" class="filter-clear-btn" id="filter-clear-btn">Clear filters</button>
+                    </div>
                 </div>
 
                 <!-- Room Table -->
@@ -1180,20 +1226,30 @@
       applyFilters();
     }
 
+    var chipsWrap = document.getElementById('active-tag-chips-wrap');
+
+    function updateChipsOverflow() {
+      if (!chipsWrap || !chipsContainer) return;
+      var hasOverflow = chipsContainer.scrollWidth > chipsContainer.clientWidth;
+      chipsWrap.classList.toggle('has-overflow', hasOverflow);
+    }
+
     function renderTagChips() {
       if (!chipsContainer) return;
       if (activeTagFilters.length === 0) {
-        chipsContainer.style.display = 'none';
+        if (chipsWrap) chipsWrap.style.display = 'none';
         chipsContainer.innerHTML = '';
         return;
       }
-      chipsContainer.style.display = 'flex';
+      if (chipsWrap) chipsWrap.style.display = 'flex';
       chipsContainer.innerHTML = activeTagFilters.map(function(tag) {
         var safeTag = tag.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
         return '<span class="active-tag-chip">'
           + tag
           + '<span class="chip-remove" title="Remove filter" onclick="window.hpRemoveTagFilter(\'' + safeTag + '\')">&times;</span></span>';
       }).join('');
+      // Check for horizontal overflow (to show scroll fade hint)
+      requestAnimationFrame(updateChipsOverflow);
     }
 
     // Expose removeTagFilter globally so onclick handlers in chips work
