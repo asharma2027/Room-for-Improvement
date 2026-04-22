@@ -214,12 +214,12 @@
 
             /* ── Active tag filter chips (shown inside filter bar) ── */
             .active-tag-chips-wrap {
-                /* Fixed-size scrollable strip — never expands the filter row vertically */
+                /* Fixed-size scrollable strip — clip early to keep toggle in place */
                 display: flex;
                 align-items: center;
-                max-width: 340px;     /* wide enough for 2-3 chips comfortably */
+                max-width: 210px;
                 min-width: 0;
-                overflow: hidden;     /* clip visual overflow */
+                overflow: hidden;
                 flex-shrink: 1;
                 position: relative;
             }
@@ -237,14 +237,14 @@
                 padding-bottom: 2px;  /* prevent clipping bottom of chips */
             }
             .active-tag-chips::-webkit-scrollbar { display: none; }
-            /* Fade edge to hint at scroll */
+            /* Fade edge to hint at scroll — wider fade = clips sooner */
             .active-tag-chips-wrap::after {
                 content: '';
                 position: absolute;
                 right: 0;
                 top: 0;
                 bottom: 0;
-                width: 24px;
+                width: 40px;
                 background: linear-gradient(to right, transparent, #f9fafb);
                 pointer-events: none;
                 opacity: 0;           /* shown only when chips overflow */
@@ -445,6 +445,44 @@
                 font-style: italic;
                 padding: 1rem;
             }
+
+            /* ── Fix #1: Rating column headers — narrow width + wrappable text ── */
+            #room-table th.sortable {
+                white-space: normal;
+                line-height: 1.3;
+            }
+            #room-table th[data-sort-key="naturalLight"],
+            #room-table th[data-sort-key="roomSize"],
+            #room-table th[data-sort-key="noise"],
+            #room-table th[data-sort-key="culture"],
+            #room-table th[data-sort-key="tempControl"] {
+                width: 74px;
+                min-width: 68px;
+                max-width: 82px;
+            }
+
+            /* ── Fix #2: Word cloud two-column layout ── */
+            .word-cloud-row {
+                display: flex;
+                gap: 0.75rem;
+                margin-bottom: 1rem;
+            }
+            .word-cloud-row .word-cloud-section {
+                flex: 1;
+                margin-top: 0;
+                padding: 0.75rem 1rem;
+            }
+            .word-cloud-row .word-cloud-canvas {
+                height: 180px;
+            }
+            .word-cloud-row .word-cloud-section h3 {
+                font-size: 0.95rem;
+                margin-bottom: 0.25rem;
+            }
+            .word-cloud-row .word-cloud-sub {
+                font-size: 0.72rem;
+                margin-bottom: 0.5rem;
+            }
         </style>
 
             <main style="max-width:1200px; margin:0 auto; padding:2rem 1.5rem;">
@@ -616,6 +654,30 @@
                     </div>
                 </div>
 
+                <!-- ── Fix #2: Word Clouds side-by-side, below stats bar, above filter row ── -->
+                <div class="word-cloud-row">
+                    <% const cw = (typeof cultureWords !== 'undefined' ? cultureWords : []); %>
+                    <div class="word-cloud-section">
+                        <h3>Culture Vibes</h3>
+                        <div class="word-cloud-sub">Aggregated culture descriptors &amp; short culture notes from all submissions for this house.</div>
+                        <% if (cw.length > 0) { %>
+                            <div id="culture-wordcloud" class="word-cloud-canvas"></div>
+                            <div id="culture-wordcloud-fallback" class="word-cloud-fallback" style="display:none;"></div>
+                        <% } else { %>
+                            <div class="word-cloud-empty">No culture notes yet — be the first to submit.</div>
+                        <% } %>
+                    </div>
+                    <% const hdw = (typeof houseDescriptorWords !== 'undefined' ? houseDescriptorWords : []); %>
+                    <% if (hdw.length > 0) { %>
+                    <div class="word-cloud-section">
+                        <h3>House Descriptors</h3>
+                        <div class="word-cloud-sub">Free-text descriptors residents have used for this house.</div>
+                        <div id="descriptor-wordcloud" class="word-cloud-canvas"></div>
+                        <div id="descriptor-wordcloud-fallback" class="word-cloud-fallback" style="display:none;"></div>
+                    </div>
+                    <% } %>
+                </div>
+
                 <!-- ── Filters ── -->
                 <div class="room-filters" id="room-filters">
                     <label>
@@ -651,49 +713,52 @@
                         </button>
                         <div class="filter-tags-dropdown" id="filter-tags-dropdown">
                             <div class="filter-tags-dropdown-group">Space &amp; Layout</div>
-                            <div class="filter-tags-dropdown-item" data-tag="particularly high ceiling"><span class="ftd-check">✓</span> Particularly high ceiling</div>
-                            <div class="filter-tags-dropdown-item" data-tag="particularly low ceiling"><span class="ftd-check">✓</span> Particularly low ceiling</div>
-                            <div class="filter-tags-dropdown-item" data-tag="extra storage / closet space"><span class="ftd-check">✓</span> Extra storage / closet space</div>
-                            <div class="filter-tags-dropdown-item" data-tag="limited storage / closet space"><span class="ftd-check">✓</span> Limited storage / closet space</div>
-                            <div class="filter-tags-dropdown-item" data-tag="unusually shaped room"><span class="ftd-check">✓</span> Unusually shaped room</div>
+                            <div class="filter-tags-dropdown-item" data-tag="Particularly high ceiling"><span class="ftd-check">✓</span> Particularly high ceiling</div>
+                            <div class="filter-tags-dropdown-item" data-tag="Particularly low ceiling"><span class="ftd-check">✓</span> Particularly low ceiling</div>
+                            <div class="filter-tags-dropdown-item" data-tag="Extra storage / closet space"><span class="ftd-check">✓</span> Extra storage / closet space</div>
+                            <div class="filter-tags-dropdown-item" data-tag="Limited storage / closet space"><span class="ftd-check">✓</span> Limited storage / closet space</div>
+                            <div class="filter-tags-dropdown-item" data-tag="Unusually shaped room"><span class="ftd-check">✓</span> Unusually shaped room</div>
                             <div class="filter-tags-dropdown-group">Light &amp; Windows</div>
-                            <div class="filter-tags-dropdown-item" data-tag="particularly big windows"><span class="ftd-check">✓</span> Particularly big windows</div>
-                            <div class="filter-tags-dropdown-item" data-tag="particularly small windows"><span class="ftd-check">✓</span> Particularly small windows</div>
-                            <div class="filter-tags-dropdown-item" data-tag="tends to receive good sunlight when sunny"><span class="ftd-check">✓</span> Gets good sunlight</div>
-                            <div class="filter-tags-dropdown-item" data-tag="doesnt tend to receive good sunlight when sunny"><span class="ftd-check">✓</span> Gets poor sunlight</div>
-                            <div class="filter-tags-dropdown-item" data-tag="drafty windows"><span class="ftd-check">✓</span> Drafty windows</div>
+                            <div class="filter-tags-dropdown-item" data-tag="Particularly big windows"><span class="ftd-check">✓</span> Particularly big windows</div>
+                            <div class="filter-tags-dropdown-item" data-tag="Particularly small windows"><span class="ftd-check">✓</span> Particularly small windows</div>
+                            <div class="filter-tags-dropdown-item" data-tag="Gets good sunlight"><span class="ftd-check">✓</span> Gets good sunlight</div>
+                            <div class="filter-tags-dropdown-item" data-tag="Gets poor sunlight"><span class="ftd-check">✓</span> Gets poor sunlight</div>
+                            <div class="filter-tags-dropdown-item" data-tag="Drafty windows"><span class="ftd-check">✓</span> Drafty windows</div>
                             <div class="filter-tags-dropdown-group">Noise</div>
-                            <div class="filter-tags-dropdown-item" data-tag="notable hallway noise"><span class="ftd-check">✓</span> Notable hallway noise</div>
-                            <div class="filter-tags-dropdown-item" data-tag="notable noise from adjacent rooms"><span class="ftd-check">✓</span> Noise from adjacent rooms</div>
-                            <div class="filter-tags-dropdown-item" data-tag="notable noise from above or below"><span class="ftd-check">✓</span> Noise from above or below</div>
-                            <div class="filter-tags-dropdown-item" data-tag="notably quiet despite building activity"><span class="ftd-check">✓</span> Notably quiet</div>
+                            <div class="filter-tags-dropdown-item" data-tag="Notable hallway noise"><span class="ftd-check">✓</span> Notable hallway noise</div>
+                            <div class="filter-tags-dropdown-item" data-tag="Noise from adjacent rooms"><span class="ftd-check">✓</span> Noise from adjacent rooms</div>
+                            <div class="filter-tags-dropdown-item" data-tag="Noise from above or below"><span class="ftd-check">✓</span> Noise from above or below</div>
+                            <div class="filter-tags-dropdown-item" data-tag="Notably quiet"><span class="ftd-check">✓</span> Notably quiet</div>
                             <div class="filter-tags-dropdown-group">Temperature &amp; Air</div>
-                            <div class="filter-tags-dropdown-item" data-tag="issues with ac/heating temperature control"><span class="ftd-check">✓</span> AC/heating issues</div>
-                            <div class="filter-tags-dropdown-item" data-tag="room tends to get very hot"><span class="ftd-check">✓</span> Gets very hot</div>
-                            <div class="filter-tags-dropdown-item" data-tag="room tends to get very cold"><span class="ftd-check">✓</span> Gets very cold</div>
-                            <div class="filter-tags-dropdown-item" data-tag="good natural ventilation"><span class="ftd-check">✓</span> Good ventilation</div>
-                            <div class="filter-tags-dropdown-item" data-tag="poor natural ventilation"><span class="ftd-check">✓</span> Poor ventilation</div>
-                            <div class="filter-tags-dropdown-item" data-tag="significant radiator noise"><span class="ftd-check">✓</span> Significant radiator noise</div>
+                            <div class="filter-tags-dropdown-item" data-tag="AC/heating issues"><span class="ftd-check">✓</span> AC/heating issues</div>
+                            <div class="filter-tags-dropdown-item" data-tag="Gets very hot"><span class="ftd-check">✓</span> Gets very hot</div>
+                            <div class="filter-tags-dropdown-item" data-tag="Gets very cold"><span class="ftd-check">✓</span> Gets very cold</div>
+                            <div class="filter-tags-dropdown-item" data-tag="Good ventilation"><span class="ftd-check">✓</span> Good ventilation</div>
+                            <div class="filter-tags-dropdown-item" data-tag="Poor ventilation"><span class="ftd-check">✓</span> Poor ventilation</div>
+                            <div class="filter-tags-dropdown-item" data-tag="Significant radiator noise"><span class="ftd-check">✓</span> Significant radiator noise</div>
                         </div>
                     </div>
 
-                    <!-- Active tag filter chips (populated by JS when user clicks a tag) -->
-                    <div class="active-tag-chips-wrap" id="active-tag-chips-wrap" style="display:none;">
-                        <div class="active-tag-chips" id="active-tag-chips"></div>
-                    </div>
-
-                    <!-- Profanity toggle + Clear filters — always locked to right end of row -->
-                    <div class="filter-row-right">
-                        <!-- Profanity toggle -->
-                        <div class="hp-profanity-toggle">
-                            <span style="font-size: 1.2rem; cursor: help;" title="Toggle content filter">🔞</span>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="censor-toggle" onchange="toggleCensorship()">
-                                <span class="toggle-slider"></span>
-                            </label>
+                    <!-- Chips + toggle locked together so toggle never wraps down (Fix #4) -->
+                    <div style="display:flex; align-items:center; flex:1; min-width:0; gap:0.5rem;">
+                        <!-- Active tag filter chips (populated by JS when user clicks a tag) -->
+                        <div class="active-tag-chips-wrap" id="active-tag-chips-wrap" style="display:none;">
+                            <div class="active-tag-chips" id="active-tag-chips"></div>
                         </div>
 
-                        <button type="button" class="filter-clear-btn" id="filter-clear-btn">Clear filters</button>
+                        <!-- Profanity toggle + Clear filters — always locked to right end of row -->
+                        <div class="filter-row-right">
+                            <!-- Profanity toggle -->
+                            <div class="hp-profanity-toggle">
+                                <span style="font-size: 1.2rem; cursor: help;" title="Toggle content filter">🔞</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="censor-toggle" onchange="toggleCensorship()">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+
+                            <button type="button" class="filter-clear-btn" id="filter-clear-btn">Clear filters</button>
+                        </div>
                     </div>
                 </div>
 
@@ -846,33 +911,6 @@
       </table>
     </div>
 
-    <!-- ── Culture Vibes Word Cloud ── -->
-    <div class="word-cloud-section">
-        <h3>Culture Vibes</h3>
-        <div class="word-cloud-sub">
-            Aggregated culture descriptors &amp; short culture notes from all submissions for this house.
-        </div>
-        <% const cw = (typeof cultureWords !== 'undefined' ? cultureWords : []); %>
-        <% if (cw.length > 0) { %>
-            <div id="culture-wordcloud" class="word-cloud-canvas"></div>
-            <div id="culture-wordcloud-fallback" class="word-cloud-fallback" style="display:none;"></div>
-        <% } else { %>
-            <div class="word-cloud-empty">No culture notes yet — be the first to submit.</div>
-        <% } %>
-    </div>
-
-    <!-- ── House Descriptors Word Cloud (only shown when data exists) ── -->
-    <% const hdw = (typeof houseDescriptorWords !== 'undefined' ? houseDescriptorWords : []); %>
-    <% if (hdw.length > 0) { %>
-    <div class="word-cloud-section">
-        <h3>House Descriptors</h3>
-        <div class="word-cloud-sub">
-            Free-text descriptors residents have used for this house.
-        </div>
-        <div id="descriptor-wordcloud" class="word-cloud-canvas"></div>
-        <div id="descriptor-wordcloud-fallback" class="word-cloud-fallback" style="display:none;"></div>
-    </div>
-    <% } %>
 
   </main>
 
