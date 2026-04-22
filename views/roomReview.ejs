@@ -278,8 +278,13 @@
               </div>
 
               <!-- ── Optional Physical Tags ── -->
-              <div class="form-section">
+              <div class="form-section" id="optional-tags-section">
                 <span class="form-sec-title">Optional Tags <span class="opt-note">(optional)</span></span>
+
+                <div id="tag-conflict-banner"
+                  role="alert"
+                  style="display:none; margin:0.5rem 0 0.75rem; padding:0.6rem 0.85rem; background:#fee2e2; color:#b91c1c; border:1px solid #fecaca; border-radius:0.5rem; font-size:0.85rem; font-weight:500;">
+                </div>
 
                 <div class="tag-cat-title">Space &amp; Layout</div>
                 <div class="v2-tag-grid">
@@ -348,6 +353,57 @@
                   });
                 } else {
                   boxes.forEach(function(b) { b.disabled = false; });
+                }
+              });
+            })();
+
+            // Contradictory-tag mutual exclusion for the 4 defined pairs.
+            // Matching is case-insensitive on the tag's value so slight wording
+            // drift doesn't silently break the rule.
+            (function() {
+              var section = document.getElementById('optional-tags-section');
+              var banner = document.getElementById('tag-conflict-banner');
+              if (!section || !banner) return;
+
+              var pairs = [
+                ['particularly low ceiling',   'particularly high ceiling'],
+                ['particularly small windows', 'particularly big windows'],
+                ['poor sunlight',              'good sunlight'],
+                ['poor ventilation',           'good ventilation']
+              ];
+
+              function norm(s) { return (s || '').trim().toLowerCase(); }
+
+              function findBox(needle) {
+                var boxes = section.querySelectorAll('input[type="checkbox"][name="tags"]');
+                for (var i = 0; i < boxes.length; i++) {
+                  if (norm(boxes[i].value).indexOf(norm(needle)) !== -1) return boxes[i];
+                }
+                return null;
+              }
+
+              var bannerTimer = null;
+              function showBanner(msg) {
+                banner.textContent = msg;
+                banner.style.display = 'block';
+                if (bannerTimer) clearTimeout(bannerTimer);
+                bannerTimer = setTimeout(function() { banner.style.display = 'none'; }, 5000);
+              }
+
+              section.addEventListener('change', function(e) {
+                var t = e.target;
+                if (!t || t.type !== 'checkbox' || t.name !== 'tags' || !t.checked) return;
+                var v = norm(t.value);
+                for (var i = 0; i < pairs.length; i++) {
+                  var a = pairs[i][0], b = pairs[i][1];
+                  var other = null;
+                  if (v.indexOf(a) !== -1) other = findBox(b);
+                  else if (v.indexOf(b) !== -1) other = findBox(a);
+                  if (other && other.checked) {
+                    other.checked = false;
+                    showBanner("You can't select both \"" + other.value + "\" and \"" + t.value + "\" — unchecked the opposite.");
+                    return;
+                  }
                 }
               });
             })();

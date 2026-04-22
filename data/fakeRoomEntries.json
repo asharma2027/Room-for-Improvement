@@ -380,7 +380,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "barely see neighbors",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Tight-knit community",
@@ -447,8 +447,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-04-04T12:47:16.465Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Extra storage / closet space"
     ],
     "scalars": {
@@ -622,10 +620,7 @@
     "userEmail": "student483@uchicago.edu",
     "academicYear": "2024-2025",
     "timestamp": "2024-10-19T13:10:17.159Z",
-    "tags": [
-      "Particularly small windows",
-      "Particularly big windows"
-    ],
+    "tags": [],
     "scalars": {
       "my house has a good culture": 1,
       "my room gets a lot of outside noise": 2,
@@ -1010,7 +1005,7 @@
       "natural light": 5,
       "temperature control": 5,
       "form version": "v2",
-      "freetext note": "Good ventilation \u2014 never felt stuffy.",
+      "freetext note": "Good ventilation — never felt stuffy.",
       "house descriptor": "party-friendly"
     },
     "cultureTags": [
@@ -1079,8 +1074,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-02-11T12:53:55.306Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Unusually shaped room"
     ],
     "scalars": {
@@ -1273,7 +1266,7 @@
       "temperature control": 1,
       "form version": "v2",
       "culture note": "RA is really active",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold."
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold."
     },
     "cultureTags": [
       "Cliquey / exclusive"
@@ -1641,7 +1634,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "study culture heavy",
-      "freetext note": "Good ventilation \u2014 never felt stuffy.",
+      "freetext note": "Good ventilation — never felt stuffy.",
       "house descriptor": "diverse and welcoming"
     },
     "cultureTags": [
@@ -1670,7 +1663,7 @@
       "temperature control": 1,
       "form version": "v2",
       "culture note": "barely see neighbors",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs.",
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs.",
       "house descriptor": "cozy and social"
     },
     "cultureTags": [
@@ -1722,7 +1715,7 @@
       "natural light": 4,
       "temperature control": 4,
       "form version": "v2",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Tight-knit community",
@@ -1791,8 +1784,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-12-12T17:15:45.468Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Gets very cold",
       "Gets poor sunlight"
     ],
@@ -1955,7 +1946,7 @@
       "temperature control": 1,
       "form version": "v2",
       "culture note": "very social",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold."
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold."
     },
     "cultureTags": [
       "Quiet / studious"
@@ -1969,10 +1960,8 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-12-24T22:48:16.232Z",
     "tags": [
-      "Good ventilation",
       "Gets good sunlight",
-      "Notably quiet",
-      "Poor ventilation"
+      "Notably quiet"
     ],
     "scalars": {
       "my house has a good culture": 1,
@@ -2024,8 +2013,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-11-27T20:14:59.706Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Good ventilation",
       "Gets good sunlight"
     ],
@@ -2707,7 +2694,7 @@
       "temperature control": 1,
       "form version": "v2",
       "culture note": "very social",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Disconnected / isolated",
@@ -2792,10 +2779,7 @@
     "userEmail": "student932@uchicago.edu",
     "academicYear": "2024-2025",
     "timestamp": "2024-10-06T08:57:01.927Z",
-    "tags": [
-      "Particularly small windows",
-      "Particularly big windows"
-    ],
+    "tags": [],
     "scalars": {
       "my house has a good culture": 2,
       "my room gets a lot of outside noise": 2,
@@ -2803,7 +2787,7 @@
       "natural light": 1,
       "temperature control": 2,
       "form version": "v2",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Diverse mix of people",
@@ -3082,7 +3066,7 @@
       "natural light": 4,
       "temperature control": 4,
       "form version": "v2",
-      "freetext note": "Good ventilation \u2014 never felt stuffy.",
+      "freetext note": "Good ventilation — never felt stuffy.",
       "house descriptor": "academic-focused"
     },
     "cultureTags": [
@@ -3215,7 +3199,7 @@
       "temperature control": 2,
       "form version": "v2",
       "culture note": "pretty isolated",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Cliquey / exclusive",
@@ -3409,8 +3393,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-02-28T19:38:44.299Z",
     "tags": [
-      "Particularly low ceiling",
-      "Particularly high ceiling",
       "Unusually shaped room"
     ],
     "scalars": {
@@ -3594,9 +3576,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-02-08T04:57:59.168Z",
     "tags": [
-      "Particularly low ceiling",
-      "Gets very hot",
-      "Particularly high ceiling"
+      "Gets very hot"
     ],
     "scalars": {
       "my house has a good culture": 2,
@@ -3992,7 +3972,7 @@
       "temperature control": 3,
       "form version": "v2",
       "culture note": "everyone minds their own business",
-      "freetext note": "Good ventilation \u2014 never felt stuffy.",
+      "freetext note": "Good ventilation — never felt stuffy.",
       "house descriptor": "chill, low-key vibes"
     },
     "cultureTags": [
@@ -4362,7 +4342,7 @@
       "temperature control": 3,
       "form version": "v2",
       "culture note": "lots of events",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold."
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold."
     },
     "cultureTags": [
       "Quiet / studious"
@@ -4608,7 +4588,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "study culture heavy",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Competitive / high-pressure",
@@ -4821,7 +4801,7 @@
       "natural light": 5,
       "temperature control": 1,
       "form version": "v2",
-      "freetext note": "Good ventilation \u2014 never felt stuffy.",
+      "freetext note": "Good ventilation — never felt stuffy.",
       "house descriptor": "chill, low-key vibes"
     },
     "cultureTags": [
@@ -4887,9 +4867,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-12-11T15:47:46.268Z",
     "tags": [
-      "Gets poor sunlight",
       "Notably quiet",
-      "Gets good sunlight",
       "Good ventilation"
     ],
     "scalars": {
@@ -4937,8 +4915,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-10-04T18:50:37.352Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Particularly small windows"
     ],
     "scalars": {
@@ -4948,7 +4924,7 @@
       "natural light": 2,
       "temperature control": 2,
       "form version": "v2",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold.",
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold.",
       "house descriptor": "bit cliquey at first"
     },
     "cultureTags": [
@@ -4966,9 +4942,7 @@
     "timestamp": "2025-02-01T17:40:31.761Z",
     "tags": [
       "Drafty windows",
-      "Gets poor sunlight",
-      "Gets very hot",
-      "Gets good sunlight"
+      "Gets very hot"
     ],
     "scalars": {
       "my house has a good culture": 1,
@@ -5189,10 +5163,8 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-04-18T08:39:07.040Z",
     "tags": [
-      "Particularly big windows",
       "Good furniture layout flexibility",
-      "Limited storage / closet space",
-      "Particularly small windows"
+      "Limited storage / closet space"
     ],
     "scalars": {
       "my house has a good culture": 3,
@@ -5352,7 +5324,7 @@
       "temperature control": 4,
       "form version": "v2",
       "culture note": "floor chat is dead",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold.",
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold.",
       "house descriptor": "chill, low-key vibes"
     },
     "cultureTags": [
@@ -5726,9 +5698,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-02-09T02:43:44.216Z",
     "tags": [
-      "Particularly small windows",
       "Gets very cold",
-      "Particularly big windows",
       "Gets good sunlight"
     ],
     "scalars": {
@@ -5854,9 +5824,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-01-07T19:30:24.762Z",
     "tags": [
-      "Particularly low ceiling",
       "Good ventilation",
-      "Particularly high ceiling",
       "Good furniture layout flexibility"
     ],
     "scalars": {
@@ -5921,7 +5889,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "super diverse",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Lively / social",
@@ -5937,9 +5905,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-02-20T00:56:01.801Z",
     "tags": [
-      "Particularly big windows",
-      "AC/heating issues",
-      "Particularly small windows"
+      "AC/heating issues"
     ],
     "scalars": {
       "my house has a good culture": 3,
@@ -5974,7 +5940,7 @@
       "temperature control": 1,
       "form version": "v2",
       "culture note": "pretty chill",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold.",
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold.",
       "house descriptor": "competitive energy"
     },
     "cultureTags": [
@@ -6305,7 +6271,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "tight-knit floor",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Quiet / studious"
@@ -6893,7 +6859,7 @@
       "natural light": 3,
       "temperature control": 1,
       "form version": "v2",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold."
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold."
     },
     "cultureTags": [
       "Competitive / high-pressure"
@@ -6969,7 +6935,7 @@
       "temperature control": 4,
       "form version": "v2",
       "culture note": "super welcoming",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Cliquey / exclusive"
@@ -7368,7 +7334,7 @@
       "natural light": 3,
       "temperature control": 4,
       "form version": "v2",
-      "freetext note": "Good ventilation \u2014 never felt stuffy.",
+      "freetext note": "Good ventilation — never felt stuffy.",
       "house descriptor": "collaborative culture"
     },
     "cultureTags": [
@@ -7844,9 +7810,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-02-21T09:07:20.786Z",
     "tags": [
-      "Particularly low ceiling",
-      "Particularly small windows",
-      "Particularly high ceiling"
+      "Particularly small windows"
     ],
     "scalars": {
       "my house has a good culture": 4,
@@ -7966,8 +7930,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-02-13T12:14:28.090Z",
     "tags": [
-      "Particularly low ceiling",
-      "Particularly high ceiling",
       "Unusually shaped room",
       "Gets very hot"
     ],
@@ -8685,7 +8647,7 @@
       "temperature control": 4,
       "form version": "v2",
       "culture note": "big on house dinners",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold.",
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold.",
       "house descriptor": "tight-knit community"
     },
     "cultureTags": [
@@ -8703,9 +8665,7 @@
     "timestamp": "2025-02-08T06:53:34.167Z",
     "tags": [
       "Gets very hot",
-      "Limited storage / closet space",
-      "Particularly high ceiling",
-      "Particularly low ceiling"
+      "Limited storage / closet space"
     ],
     "scalars": {
       "my house has a good culture": 4,
@@ -8715,7 +8675,7 @@
       "temperature control": 2,
       "form version": "v2",
       "culture note": "floor chat is dead",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold."
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold."
     },
     "cultureTags": [
       "Competitive / high-pressure",
@@ -8779,9 +8739,7 @@
     "timestamp": "2024-10-01T17:25:43.248Z",
     "tags": [
       "AC/heating issues",
-      "Gets poor sunlight",
-      "Good furniture layout flexibility",
-      "Gets good sunlight"
+      "Good furniture layout flexibility"
     ],
     "scalars": {
       "my house has a good culture": 5,
@@ -8840,7 +8798,7 @@
       "temperature control": 2,
       "form version": "v2",
       "culture note": "super welcoming",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs.",
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs.",
       "house descriptor": "chill, low-key vibes"
     },
     "cultureTags": [
@@ -8930,8 +8888,6 @@
     "timestamp": "2025-03-06T05:43:53.280Z",
     "tags": [
       "AC/heating issues",
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Notable hallway noise"
     ],
     "scalars": {
@@ -8957,8 +8913,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-12-29T01:13:23.438Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Poor ventilation",
       "Good furniture layout flexibility"
     ],
@@ -9012,8 +8966,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-04-01T21:59:04.013Z",
     "tags": [
-      "Particularly small windows",
-      "Particularly big windows",
       "Particularly high ceiling"
     ],
     "scalars": {
@@ -9076,7 +9028,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "floor chat is dead",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Lively / social",
@@ -9178,7 +9130,7 @@
       "temperature control": 1,
       "form version": "v2",
       "culture note": "big on house dinners",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Friendly but independent"
@@ -9191,10 +9143,7 @@
     "userEmail": "student339@uchicago.edu",
     "academicYear": "2024-2025",
     "timestamp": "2024-10-19T07:32:08.561Z",
-    "tags": [
-      "Particularly big windows",
-      "Particularly small windows"
-    ],
+    "tags": [],
     "scalars": {
       "my house has a good culture": 2,
       "my room gets a lot of outside noise": 4,
@@ -9215,9 +9164,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-10-09T19:49:56.558Z",
     "tags": [
-      "Particularly high ceiling",
-      "Notable hallway noise",
-      "Particularly low ceiling"
+      "Notable hallway noise"
     ],
     "scalars": {
       "my house has a good culture": 5,
@@ -9466,7 +9413,7 @@
       "natural light": 2,
       "temperature control": 1,
       "form version": "v2",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs.",
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs.",
       "house descriptor": "party-friendly"
     },
     "cultureTags": [
@@ -9729,7 +9676,7 @@
       "natural light": 3,
       "temperature control": 2,
       "form version": "v2",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Tight-knit community",
@@ -9890,8 +9837,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-03-08T19:31:07.982Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Poor ventilation",
       "Significant radiator noise"
     ],
@@ -10356,9 +10301,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-03-11T17:27:31.121Z",
     "tags": [
-      "Poor ventilation",
-      "Particularly high ceiling",
-      "Particularly low ceiling"
+      "Poor ventilation"
     ],
     "scalars": {
       "my house has a good culture": 1,
@@ -10434,10 +10377,7 @@
     "userEmail": "student398@uchicago.edu",
     "academicYear": "2024-2025",
     "timestamp": "2025-01-09T19:47:19.895Z",
-    "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling"
-    ],
+    "tags": [],
     "scalars": {
       "my house has a good culture": 2,
       "my room gets a lot of outside noise": 2,
@@ -10567,7 +10507,7 @@
       "temperature control": 3,
       "form version": "v2",
       "culture note": "super welcoming",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Active house programming"
@@ -10610,9 +10550,7 @@
     "timestamp": "2024-11-28T12:48:19.032Z",
     "tags": [
       "Noise from above or below",
-      "Particularly small windows",
-      "Particularly high ceiling",
-      "Particularly low ceiling"
+      "Particularly small windows"
     ],
     "scalars": {
       "my house has a good culture": 1,
@@ -11115,7 +11053,7 @@
       "temperature control": 2,
       "form version": "v2",
       "culture note": "pretty chill",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Lively / social",
@@ -11529,7 +11467,7 @@
       "temperature control": 2,
       "form version": "v2",
       "culture note": "RA is really active",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs.",
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs.",
       "house descriptor": "independent but friendly"
     },
     "cultureTags": [
@@ -11580,7 +11518,7 @@
       "natural light": 4,
       "temperature control": 4,
       "form version": "v2",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Diverse mix of people"
@@ -12045,7 +11983,7 @@
       "natural light": 4,
       "temperature control": 2,
       "form version": "v2",
-      "freetext note": "Good ventilation \u2014 never felt stuffy.",
+      "freetext note": "Good ventilation — never felt stuffy.",
       "house descriptor": "bit cliquey at first"
     },
     "cultureTags": [
@@ -12113,10 +12051,8 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-11-25T03:20:53.812Z",
     "tags": [
-      "Particularly big windows",
       "Significant radiator noise",
-      "Good furniture layout flexibility",
-      "Particularly small windows"
+      "Good furniture layout flexibility"
     ],
     "scalars": {
       "my house has a good culture": 3,
@@ -12263,8 +12199,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-12-22T07:46:16.096Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Significant radiator noise"
     ],
     "scalars": {
@@ -12391,9 +12325,7 @@
     "timestamp": "2025-01-01T08:48:48.810Z",
     "tags": [
       "Gets poor sunlight",
-      "Significant radiator noise",
-      "Particularly high ceiling",
-      "Particularly low ceiling"
+      "Significant radiator noise"
     ],
     "scalars": {
       "my house has a good culture": 5,
@@ -12445,9 +12377,7 @@
     "timestamp": "2025-04-10T07:52:06.475Z",
     "tags": [
       "Good furniture layout flexibility",
-      "Particularly small windows",
-      "Drafty windows",
-      "Particularly big windows"
+      "Drafty windows"
     ],
     "scalars": {
       "my house has a good culture": 4,
@@ -12931,9 +12861,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-11-28T00:53:23.190Z",
     "tags": [
-      "Particularly low ceiling",
       "Extra storage / closet space",
-      "Particularly high ceiling",
       "Poor ventilation"
     ],
     "scalars": {
@@ -13075,7 +13003,7 @@
       "temperature control": 4,
       "form version": "v2",
       "culture note": "feels like family",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Tight-knit community"
@@ -13099,7 +13027,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "kind of cliquey at first",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Cliquey / exclusive",
@@ -13285,9 +13213,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-03-17T20:56:05.593Z",
     "tags": [
-      "Gets poor sunlight",
       "Poor ventilation",
-      "Gets good sunlight",
       "Particularly small windows"
     ],
     "scalars": {
@@ -13400,7 +13326,7 @@
       "natural light": 4,
       "temperature control": 5,
       "form version": "v2",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Lively / social",
@@ -13479,7 +13405,7 @@
       "temperature control": 3,
       "form version": "v2",
       "culture note": "great study groups",
-      "freetext note": "Good ventilation \u2014 never felt stuffy.",
+      "freetext note": "Good ventilation — never felt stuffy.",
       "house descriptor": "strong house pride"
     },
     "cultureTags": [
@@ -13532,7 +13458,7 @@
       "natural light": 5,
       "temperature control": 3,
       "form version": "v2",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Welcoming / inclusive"
@@ -13721,10 +13647,8 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-02-19T12:16:27.463Z",
     "tags": [
-      "Particularly high ceiling",
       "Particularly small windows",
-      "Good ventilation",
-      "Particularly low ceiling"
+      "Good ventilation"
     ],
     "scalars": {
       "my house has a good culture": 4,
@@ -13879,9 +13803,7 @@
     "timestamp": "2025-04-15T23:25:02.778Z",
     "tags": [
       "Noise from above or below",
-      "Particularly low ceiling",
-      "Significant radiator noise",
-      "Particularly high ceiling"
+      "Significant radiator noise"
     ],
     "scalars": {
       "my house has a good culture": 2,
@@ -13983,10 +13905,8 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-12-31T21:13:11.294Z",
     "tags": [
-      "Particularly high ceiling",
       "Poor ventilation",
-      "Noise from above or below",
-      "Particularly low ceiling"
+      "Noise from above or below"
     ],
     "scalars": {
       "my house has a good culture": 1,
@@ -14104,9 +14024,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-03-08T10:31:03.245Z",
     "tags": [
-      "Particularly small windows",
-      "Gets poor sunlight",
-      "Particularly big windows"
+      "Gets poor sunlight"
     ],
     "scalars": {
       "my house has a good culture": 4,
@@ -14479,7 +14397,7 @@
       "temperature control": 2,
       "form version": "v2",
       "culture note": "great study groups",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Cliquey / exclusive",
@@ -14529,7 +14447,7 @@
       "temperature control": 2,
       "form version": "v2",
       "culture note": "competitive but friendly",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold.",
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold.",
       "house descriptor": "diverse and welcoming"
     },
     "cultureTags": [
@@ -14628,8 +14546,6 @@
     "timestamp": "2025-01-18T05:52:39.777Z",
     "tags": [
       "Poor ventilation",
-      "Particularly low ceiling",
-      "Particularly high ceiling",
       "Notably quiet"
     ],
     "scalars": {
@@ -14808,8 +14724,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-04-18T05:52:17.189Z",
     "tags": [
-      "Particularly big windows",
-      "Particularly small windows",
       "Gets very cold",
       "Gets poor sunlight"
     ],
@@ -15046,8 +14960,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-10-13T12:41:55.903Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Gets very hot",
       "Extra storage / closet space"
     ],
@@ -15265,7 +15177,7 @@
       "temperature control": 1,
       "form version": "v2",
       "culture note": "everyone minds their own business",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Tight-knit community"
@@ -15332,9 +15244,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-01-01T17:56:43.134Z",
     "tags": [
-      "Particularly big windows",
       "Limited storage / closet space",
-      "Particularly small windows",
       "Poor ventilation"
     ],
     "scalars": {
@@ -15471,7 +15381,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "super diverse",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold."
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold."
     },
     "cultureTags": [
       "Welcoming / inclusive"
@@ -15484,10 +15394,7 @@
     "userEmail": "student45@uchicago.edu",
     "academicYear": "2024-2025",
     "timestamp": "2025-01-25T23:45:39.789Z",
-    "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling"
-    ],
+    "tags": [],
     "scalars": {
       "my house has a good culture": 4,
       "my room gets a lot of outside noise": 1,
@@ -15511,9 +15418,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-03-03T05:12:36.797Z",
     "tags": [
-      "Particularly high ceiling",
-      "Poor ventilation",
-      "Particularly low ceiling"
+      "Poor ventilation"
     ],
     "scalars": {
       "my house has a good culture": 3,
@@ -15665,10 +15570,7 @@
     "userEmail": "student80@uchicago.edu",
     "academicYear": "2024-2025",
     "timestamp": "2024-12-20T17:24:40.650Z",
-    "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling"
-    ],
+    "tags": [],
     "scalars": {
       "my house has a good culture": 3,
       "my room gets a lot of outside noise": 3,
@@ -16187,7 +16089,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "competitive but friendly",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Tight-knit community",
@@ -16576,10 +16478,7 @@
     "userEmail": "student149@uchicago.edu",
     "academicYear": "2024-2025",
     "timestamp": "2024-12-05T16:59:23.158Z",
-    "tags": [
-      "Particularly small windows",
-      "Particularly big windows"
-    ],
+    "tags": [],
     "scalars": {
       "my house has a good culture": 3,
       "my room gets a lot of outside noise": 1,
@@ -16964,10 +16863,8 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-03-30T16:14:17.299Z",
     "tags": [
-      "Particularly high ceiling",
       "Good ventilation",
-      "Significant radiator noise",
-      "Particularly low ceiling"
+      "Significant radiator noise"
     ],
     "scalars": {
       "my house has a good culture": 2,
@@ -17041,10 +16938,7 @@
     "userEmail": "student876@uchicago.edu",
     "academicYear": "2024-2025",
     "timestamp": "2025-03-14T08:40:06.999Z",
-    "tags": [
-      "Gets good sunlight",
-      "Gets poor sunlight"
-    ],
+    "tags": [],
     "scalars": {
       "my house has a good culture": 3,
       "my room gets a lot of outside noise": 1,
@@ -17068,9 +16962,7 @@
     "timestamp": "2025-01-25T22:16:43.121Z",
     "tags": [
       "Notably quiet",
-      "Particularly high ceiling",
-      "AC/heating issues",
-      "Particularly low ceiling"
+      "AC/heating issues"
     ],
     "scalars": {
       "my house has a good culture": 1,
@@ -17439,9 +17331,7 @@
     "timestamp": "2024-11-16T17:06:05.369Z",
     "tags": [
       "Noise from adjacent rooms",
-      "Particularly high ceiling",
-      "Gets poor sunlight",
-      "Particularly low ceiling"
+      "Gets poor sunlight"
     ],
     "scalars": {
       "my house has a good culture": 4,
@@ -17561,9 +17451,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-10-19T22:17:36.474Z",
     "tags": [
-      "Particularly high ceiling",
-      "Noise from adjacent rooms",
-      "Particularly low ceiling"
+      "Noise from adjacent rooms"
     ],
     "scalars": {
       "my house has a good culture": 2,
@@ -17587,8 +17475,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-11-01T13:40:22.228Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "AC/heating issues"
     ],
     "scalars": {
@@ -17711,10 +17597,7 @@
     "userEmail": "student994@uchicago.edu",
     "academicYear": "2024-2025",
     "timestamp": "2024-11-01T19:50:46.207Z",
-    "tags": [
-      "Particularly small windows",
-      "Particularly big windows"
-    ],
+    "tags": [],
     "scalars": {
       "my house has a good culture": 5,
       "my room gets a lot of outside noise": 4,
@@ -18180,7 +18063,7 @@
       "natural light": 4,
       "temperature control": 4,
       "form version": "v2",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold."
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold."
     },
     "cultureTags": [
       "Party-oriented"
@@ -18390,9 +18273,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-12-04T18:04:29.946Z",
     "tags": [
-      "Gets poor sunlight",
       "Particularly high ceiling",
-      "Gets good sunlight",
       "Particularly small windows"
     ],
     "scalars": {
@@ -18454,7 +18335,7 @@
       "natural light": 3,
       "temperature control": 2,
       "form version": "v2",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Lively / social",
@@ -18745,7 +18626,7 @@
       "temperature control": 3,
       "form version": "v2",
       "culture note": "big on house dinners",
-      "freetext note": "Good ventilation \u2014 never felt stuffy.",
+      "freetext note": "Good ventilation — never felt stuffy.",
       "house descriptor": "lively, lots of events"
     },
     "cultureTags": [
@@ -19133,10 +19014,7 @@
     "userEmail": "student338@uchicago.edu",
     "academicYear": "2024-2025",
     "timestamp": "2024-11-09T10:52:43.208Z",
-    "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling"
-    ],
+    "tags": [],
     "scalars": {
       "my house has a good culture": 4,
       "my room gets a lot of outside noise": 4,
@@ -19331,8 +19209,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-10-23T22:59:21.996Z",
     "tags": [
-      "Particularly small windows",
-      "Particularly big windows",
       "Good ventilation",
       "Particularly high ceiling"
     ],
@@ -19619,9 +19495,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-03-22T22:41:50.472Z",
     "tags": [
-      "Drafty windows",
-      "Particularly high ceiling",
-      "Particularly low ceiling"
+      "Drafty windows"
     ],
     "scalars": {
       "my house has a good culture": 5,
@@ -19630,7 +19504,7 @@
       "natural light": 2,
       "temperature control": 2,
       "form version": "v2",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs.",
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs.",
       "house descriptor": "quiet and studious"
     },
     "cultureTags": [
@@ -19883,7 +19757,7 @@
       "temperature control": 1,
       "form version": "v2",
       "culture note": "great study groups",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Competitive / high-pressure",
@@ -20031,9 +19905,7 @@
     "timestamp": "2024-10-17T09:34:14.522Z",
     "tags": [
       "Unusually shaped room",
-      "Notable hallway noise",
-      "Poor ventilation",
-      "Good ventilation"
+      "Notable hallway noise"
     ],
     "scalars": {
       "my house has a good culture": 1,
@@ -20119,7 +19991,7 @@
       "temperature control": 3,
       "form version": "v2",
       "culture note": "barely see neighbors",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Cliquey / exclusive",
@@ -20286,7 +20158,7 @@
       "temperature control": 4,
       "form version": "v2",
       "culture note": "pretty isolated",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Floor rarely interacts"
@@ -20408,7 +20280,7 @@
       "temperature control": 4,
       "form version": "v2",
       "culture note": "kind of cliquey at first",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold.",
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold.",
       "house descriptor": "collaborative culture"
     },
     "cultureTags": [
@@ -20508,7 +20380,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "competitive but friendly",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Cliquey / exclusive",
@@ -21316,7 +21188,7 @@
       "temperature control": 3,
       "form version": "v2",
       "culture note": "competitive but friendly",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold.",
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold.",
       "house descriptor": "bit cliquey at first"
     },
     "cultureTags": [
@@ -21332,8 +21204,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-12-06T15:34:10.308Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Significant radiator noise",
       "Particularly small windows"
     ],
@@ -21865,12 +21735,7 @@
     "userEmail": "student832@uchicago.edu",
     "academicYear": "2024-2025",
     "timestamp": "2024-10-01T03:14:28.039Z",
-    "tags": [
-      "Particularly high ceiling",
-      "Particularly small windows",
-      "Particularly low ceiling",
-      "Particularly big windows"
-    ],
+    "tags": [],
     "scalars": {
       "my house has a good culture": 2,
       "my room gets a lot of outside noise": 3,
@@ -22118,9 +21983,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-03-10T17:46:50.196Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly big windows",
-      "Particularly small windows"
+      "Particularly high ceiling"
     ],
     "scalars": {
       "my house has a good culture": 5,
@@ -22130,7 +21993,7 @@
       "temperature control": 1,
       "form version": "v2",
       "culture note": "barely see neighbors",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold.",
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold.",
       "house descriptor": "diverse and welcoming"
     },
     "cultureTags": [
@@ -22205,7 +22068,7 @@
       "temperature control": 3,
       "form version": "v2",
       "culture note": "big on house dinners",
-      "freetext note": "Good ventilation \u2014 never felt stuffy.",
+      "freetext note": "Good ventilation — never felt stuffy.",
       "house descriptor": "lively, lots of events"
     },
     "cultureTags": [
@@ -22582,7 +22445,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "pretty isolated",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold."
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold."
     },
     "cultureTags": [
       "Lively / social"
@@ -22645,8 +22508,6 @@
     "timestamp": "2025-01-07T00:12:38.461Z",
     "tags": [
       "Significant radiator noise",
-      "Particularly small windows",
-      "Particularly big windows",
       "Gets poor sunlight"
     ],
     "scalars": {
@@ -22735,7 +22596,7 @@
       "temperature control": 2,
       "form version": "v2",
       "culture note": "competitive but friendly",
-      "freetext note": "Good ventilation \u2014 never felt stuffy.",
+      "freetext note": "Good ventilation — never felt stuffy.",
       "house descriptor": "strong house pride"
     },
     "cultureTags": [
@@ -22851,7 +22712,7 @@
       "temperature control": 2,
       "form version": "v2",
       "culture note": "study culture heavy",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold.",
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold.",
       "house descriptor": "bit cliquey at first"
     },
     "cultureTags": [
@@ -22895,9 +22756,7 @@
     "timestamp": "2025-02-28T05:38:09.628Z",
     "tags": [
       "Particularly big windows",
-      "Particularly high ceiling",
-      "Drafty windows",
-      "Particularly low ceiling"
+      "Drafty windows"
     ],
     "scalars": {
       "my house has a good culture": 1,
@@ -22919,8 +22778,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-02-09T19:07:01.900Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Good ventilation"
     ],
     "scalars": {
@@ -23387,7 +23244,7 @@
       "temperature control": 1,
       "form version": "v2",
       "culture note": "great study groups",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold.",
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold.",
       "house descriptor": "diverse and welcoming"
     },
     "cultureTags": [
@@ -23652,7 +23509,7 @@
       "temperature control": 3,
       "form version": "v2",
       "culture note": "feels like family",
-      "freetext note": "Good ventilation \u2014 never felt stuffy.",
+      "freetext note": "Good ventilation — never felt stuffy.",
       "house descriptor": "very inclusive"
     },
     "cultureTags": [
@@ -23745,9 +23602,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-12-07T14:28:58.568Z",
     "tags": [
-      "Particularly high ceiling",
-      "Good ventilation",
-      "Particularly low ceiling"
+      "Good ventilation"
     ],
     "scalars": {
       "my house has a good culture": 1,
@@ -23772,8 +23627,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-11-26T22:53:26.908Z",
     "tags": [
-      "Particularly big windows",
-      "Particularly small windows",
       "AC/heating issues"
     ],
     "scalars": {
@@ -24181,7 +24034,7 @@
       "temperature control": 3,
       "form version": "v2",
       "culture note": "loud on weekends",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold.",
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold.",
       "house descriptor": "chill, low-key vibes"
     },
     "cultureTags": [
@@ -24317,9 +24170,7 @@
     "timestamp": "2025-03-20T08:23:38.337Z",
     "tags": [
       "Gets very hot",
-      "Gets good sunlight",
-      "Poor ventilation",
-      "Good ventilation"
+      "Gets good sunlight"
     ],
     "scalars": {
       "my house has a good culture": 1,
@@ -24723,9 +24574,7 @@
     "timestamp": "2025-03-04T06:23:38.780Z",
     "tags": [
       "Drafty windows",
-      "Particularly high ceiling",
-      "Notable hallway noise",
-      "Particularly low ceiling"
+      "Notable hallway noise"
     ],
     "scalars": {
       "my house has a good culture": 1,
@@ -24800,8 +24649,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-02-01T13:11:05.220Z",
     "tags": [
-      "Poor ventilation",
-      "Good ventilation",
       "Extra storage / closet space",
       "Unusually shaped room"
     ],
@@ -24988,7 +24835,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "pretty isolated",
-      "freetext note": "Good ventilation \u2014 never felt stuffy.",
+      "freetext note": "Good ventilation — never felt stuffy.",
       "house descriptor": "strong house pride"
     },
     "cultureTags": [
@@ -25637,7 +25484,7 @@
       "temperature control": 3,
       "form version": "v2",
       "culture note": "tight-knit floor",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs.",
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs.",
       "house descriptor": "strong house pride"
     },
     "cultureTags": [
@@ -26277,7 +26124,7 @@
       "natural light": 2,
       "temperature control": 1,
       "form version": "v2",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs.",
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs.",
       "house descriptor": "independent but friendly"
     },
     "cultureTags": [
@@ -26291,10 +26138,7 @@
     "userEmail": "student874@uchicago.edu",
     "academicYear": "2024-2025",
     "timestamp": "2025-03-31T05:16:59.375Z",
-    "tags": [
-      "Particularly big windows",
-      "Particularly small windows"
-    ],
+    "tags": [],
     "scalars": {
       "my house has a good culture": 2,
       "my room gets a lot of outside noise": 1,
@@ -26507,7 +26351,7 @@
       "temperature control": 3,
       "form version": "v2",
       "culture note": "floor chat is dead",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold."
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold."
     },
     "cultureTags": [
       "Competitive / high-pressure",
@@ -26685,8 +26529,6 @@
     "timestamp": "2025-02-26T23:53:40.023Z",
     "tags": [
       "Extra storage / closet space",
-      "Gets good sunlight",
-      "Gets poor sunlight",
       "Notably quiet"
     ],
     "scalars": {
@@ -27026,8 +26868,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-03-15T18:57:50.060Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Unusually shaped room"
     ],
     "scalars": {
@@ -27087,7 +26927,7 @@
       "temperature control": 1,
       "form version": "v2",
       "culture note": "super diverse",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs.",
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs.",
       "house descriptor": "chill, low-key vibes"
     },
     "cultureTags": [
@@ -27335,8 +27175,6 @@
     "timestamp": "2024-10-18T00:57:04.023Z",
     "tags": [
       "Gets very hot",
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Unusually shaped room"
     ],
     "scalars": {
@@ -27413,8 +27251,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-01-05T13:56:30.698Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Extra storage / closet space",
       "Poor ventilation"
     ],
@@ -27426,7 +27262,7 @@
       "temperature control": 2,
       "form version": "v2",
       "culture note": "tight-knit floor",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold.",
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold.",
       "house descriptor": "chill, low-key vibes"
     },
     "cultureTags": [
@@ -27527,7 +27363,7 @@
       "natural light": 2,
       "temperature control": 3,
       "form version": "v2",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Welcoming / inclusive",
@@ -27723,7 +27559,7 @@
       "temperature control": 3,
       "form version": "v2",
       "culture note": "quiet after 10pm",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Tight-knit community",
@@ -27820,8 +27656,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-04-15T11:49:04.692Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Extra storage / closet space"
     ],
     "scalars": {
@@ -28232,7 +28066,7 @@
       "temperature control": 1,
       "form version": "v2",
       "culture note": "feels like family",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs.",
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs.",
       "house descriptor": "very inclusive"
     },
     "cultureTags": [
@@ -28297,9 +28131,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-02-04T18:25:39.191Z",
     "tags": [
-      "Particularly low ceiling",
       "AC/heating issues",
-      "Particularly high ceiling",
       "Drafty windows"
     ],
     "scalars": {
@@ -28611,7 +28443,7 @@
       "natural light": 1,
       "temperature control": 4,
       "form version": "v2",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold.",
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold.",
       "house descriptor": "lively, lots of events"
     },
     "cultureTags": [
@@ -28662,7 +28494,7 @@
       "natural light": 4,
       "temperature control": 2,
       "form version": "v2",
-      "freetext note": "Good ventilation \u2014 never felt stuffy.",
+      "freetext note": "Good ventilation — never felt stuffy.",
       "house descriptor": "lively, lots of events"
     },
     "cultureTags": [
@@ -28920,8 +28752,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-12-25T11:51:37.858Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Extra storage / closet space",
       "Gets very hot"
     ],
@@ -28974,8 +28804,6 @@
     "timestamp": "2025-03-09T06:00:04.586Z",
     "tags": [
       "Notably quiet",
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "AC/heating issues"
     ],
     "scalars": {
@@ -30231,7 +30059,7 @@
       "temperature control": 4,
       "form version": "v2",
       "culture note": "study culture heavy",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Diverse mix of people",
@@ -30332,7 +30160,7 @@
       "temperature control": 4,
       "form version": "v2",
       "culture note": "feels like family",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs.",
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs.",
       "house descriptor": "quiet and studious"
     },
     "cultureTags": [
@@ -30456,7 +30284,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "great study groups",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold."
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold."
     },
     "cultureTags": [
       "Friendly but independent"
@@ -30695,9 +30523,7 @@
     "timestamp": "2025-03-09T05:37:58.389Z",
     "tags": [
       "AC/heating issues",
-      "Particularly high ceiling",
-      "Gets poor sunlight",
-      "Gets good sunlight"
+      "Particularly high ceiling"
     ],
     "scalars": {
       "my house has a good culture": 3,
@@ -30890,7 +30716,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "quiet after 10pm",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Quiet / studious",
@@ -30980,9 +30806,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-01-16T19:11:30.650Z",
     "tags": [
-      "Good furniture layout flexibility",
-      "Particularly big windows",
-      "Particularly small windows"
+      "Good furniture layout flexibility"
     ],
     "scalars": {
       "my house has a good culture": 4,
@@ -30992,7 +30816,7 @@
       "temperature control": 1,
       "form version": "v2",
       "culture note": "super diverse",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold.",
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold.",
       "house descriptor": "RA-driven programming"
     },
     "cultureTags": [
@@ -31021,7 +30845,7 @@
       "temperature control": 3,
       "form version": "v2",
       "culture note": "kind of cliquey at first",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Disconnected / isolated",
@@ -31106,9 +30930,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-01-01T19:21:55.238Z",
     "tags": [
-      "Particularly big windows",
-      "Good ventilation",
-      "Particularly small windows"
+      "Good ventilation"
     ],
     "scalars": {
       "my house has a good culture": 4,
@@ -31418,8 +31240,6 @@
     "timestamp": "2025-03-02T18:33:37.534Z",
     "tags": [
       "Notably quiet",
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Unusually shaped room"
     ],
     "scalars": {
@@ -31803,8 +31623,6 @@
     "timestamp": "2024-11-27T18:28:44.578Z",
     "tags": [
       "Noise from adjacent rooms",
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Poor ventilation"
     ],
     "scalars": {
@@ -32070,7 +31888,7 @@
       "natural light": 2,
       "temperature control": 4,
       "form version": "v2",
-      "freetext note": "Good ventilation \u2014 never felt stuffy.",
+      "freetext note": "Good ventilation — never felt stuffy.",
       "house descriptor": "collaborative culture"
     },
     "cultureTags": [
@@ -32469,7 +32287,7 @@
       "temperature control": 2,
       "form version": "v2",
       "culture note": "everyone keeps doors open",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Friendly but independent",
@@ -32560,10 +32378,7 @@
     "userEmail": "student223@uchicago.edu",
     "academicYear": "2024-2025",
     "timestamp": "2025-03-15T06:26:11.276Z",
-    "tags": [
-      "Particularly small windows",
-      "Particularly big windows"
-    ],
+    "tags": [],
     "scalars": {
       "my house has a good culture": 5,
       "my room gets a lot of outside noise": 2,
@@ -32597,7 +32412,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "everyone minds their own business",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Friendly but independent",
@@ -33031,9 +32846,7 @@
     "timestamp": "2024-11-29T18:03:24.851Z",
     "tags": [
       "Limited storage / closet space",
-      "Particularly high ceiling",
-      "Poor ventilation",
-      "Good ventilation"
+      "Particularly high ceiling"
     ],
     "scalars": {
       "my house has a good culture": 1,
@@ -33240,7 +33053,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "feels like family",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold."
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold."
     },
     "cultureTags": [
       "Cliquey / exclusive",
@@ -33637,8 +33450,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-02-08T22:58:30.312Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Good furniture layout flexibility"
     ],
     "scalars": {
@@ -34023,7 +33834,7 @@
       "temperature control": 3,
       "form version": "v2",
       "culture note": "lots of events",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold."
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold."
     },
     "cultureTags": [
       "Friendly but independent",
@@ -34361,7 +34172,7 @@
       "temperature control": 3,
       "form version": "v2",
       "culture note": "quiet after 10pm",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold."
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold."
     },
     "cultureTags": [
       "Friendly but independent"
@@ -34519,9 +34330,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-12-18T00:56:53.862Z",
     "tags": [
-      "Particularly big windows",
-      "Particularly high ceiling",
-      "Particularly low ceiling"
+      "Particularly big windows"
     ],
     "scalars": {
       "my house has a good culture": 1,
@@ -34655,8 +34464,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-11-29T03:50:16.395Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Notably quiet",
       "Particularly small windows"
     ],
@@ -34683,9 +34490,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-04-04T15:24:05.246Z",
     "tags": [
-      "Gets poor sunlight",
-      "Good ventilation",
-      "Poor ventilation"
+      "Gets poor sunlight"
     ],
     "scalars": {
       "my house has a good culture": 5,
@@ -34742,7 +34547,7 @@
       "temperature control": 2,
       "form version": "v2",
       "culture note": "everyone keeps doors open",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold.",
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold.",
       "house descriptor": "party-friendly"
     },
     "cultureTags": [
@@ -34913,7 +34718,7 @@
       "temperature control": 2,
       "form version": "v2",
       "culture note": "everyone keeps doors open",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs.",
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs.",
       "house descriptor": "tight-knit community"
     },
     "cultureTags": [
@@ -35239,7 +35044,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "quiet after 10pm",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Competitive / high-pressure"
@@ -35382,9 +35187,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-01-11T10:29:21.074Z",
     "tags": [
-      "Particularly small windows",
-      "Noise from above or below",
-      "Particularly big windows"
+      "Noise from above or below"
     ],
     "scalars": {
       "my house has a good culture": 1,
@@ -35692,9 +35495,7 @@
     "timestamp": "2024-12-08T15:18:36.340Z",
     "tags": [
       "Notably quiet",
-      "Good ventilation",
-      "Particularly low ceiling",
-      "Particularly high ceiling"
+      "Good ventilation"
     ],
     "scalars": {
       "my house has a good culture": 5,
@@ -35720,8 +35521,6 @@
     "timestamp": "2025-02-03T21:40:53.821Z",
     "tags": [
       "Significant radiator noise",
-      "Particularly low ceiling",
-      "Particularly high ceiling",
       "Drafty windows"
     ],
     "scalars": {
@@ -35937,7 +35736,7 @@
       "natural light": 5,
       "temperature control": 3,
       "form version": "v2",
-      "freetext note": "Good ventilation \u2014 never felt stuffy.",
+      "freetext note": "Good ventilation — never felt stuffy.",
       "house descriptor": "independent but friendly"
     },
     "cultureTags": [
@@ -36231,7 +36030,7 @@
       "temperature control": 2,
       "form version": "v2",
       "culture note": "pretty isolated",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Diverse mix of people"
@@ -36765,7 +36564,7 @@
       "temperature control": 3,
       "form version": "v2",
       "culture note": "super welcoming",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs.",
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs.",
       "house descriptor": "tight-knit community"
     },
     "cultureTags": [
@@ -36867,7 +36666,7 @@
       "temperature control": 2,
       "form version": "v2",
       "culture note": "super diverse",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Quiet / studious",
@@ -37118,7 +36917,7 @@
       "natural light": 3,
       "temperature control": 2,
       "form version": "v2",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Quiet / studious"
@@ -37340,8 +37139,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-03-05T16:29:49.122Z",
     "tags": [
-      "Particularly low ceiling",
-      "Particularly high ceiling",
       "Extra storage / closet space",
       "Gets very hot"
     ],
@@ -37375,7 +37172,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "kind of cliquey at first",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs.",
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs.",
       "house descriptor": "party-friendly"
     },
     "cultureTags": [
@@ -37503,7 +37300,7 @@
       "natural light": 1,
       "temperature control": 1,
       "form version": "v2",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Lively / social",
@@ -37519,9 +37316,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-01-08T22:46:33.916Z",
     "tags": [
-      "Particularly low ceiling",
-      "Significant radiator noise",
-      "Particularly high ceiling"
+      "Significant radiator noise"
     ],
     "scalars": {
       "my house has a good culture": 3,
@@ -38141,7 +37936,7 @@
       "temperature control": 2,
       "form version": "v2",
       "culture note": "everyone keeps doors open",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold."
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold."
     },
     "cultureTags": [
       "Disconnected / isolated",
@@ -38185,8 +37980,6 @@
     "timestamp": "2024-11-23T01:58:03.832Z",
     "tags": [
       "Gets poor sunlight",
-      "Particularly low ceiling",
-      "Particularly high ceiling",
       "Gets very cold"
     ],
     "scalars": {
@@ -38239,9 +38032,7 @@
     "timestamp": "2024-11-09T20:43:13.715Z",
     "tags": [
       "Particularly small windows",
-      "Particularly high ceiling",
-      "Significant radiator noise",
-      "Particularly low ceiling"
+      "Significant radiator noise"
     ],
     "scalars": {
       "my house has a good culture": 5,
@@ -38514,8 +38305,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-02-01T11:25:56.519Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Poor ventilation",
       "Gets very hot"
     ],
@@ -38828,8 +38617,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-10-09T05:58:48.707Z",
     "tags": [
-      "Particularly big windows",
-      "Particularly small windows",
       "Significant radiator noise"
     ],
     "scalars": {
@@ -38840,7 +38627,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "study culture heavy",
-      "freetext note": "Good ventilation \u2014 never felt stuffy.",
+      "freetext note": "Good ventilation — never felt stuffy.",
       "house descriptor": "academic-focused"
     },
     "cultureTags": [
@@ -39033,9 +38820,7 @@
     "timestamp": "2024-10-09T21:24:50.560Z",
     "tags": [
       "Particularly big windows",
-      "Noise from adjacent rooms",
-      "Particularly high ceiling",
-      "Particularly low ceiling"
+      "Noise from adjacent rooms"
     ],
     "scalars": {
       "my house has a good culture": 2,
@@ -39612,8 +39397,6 @@
     "timestamp": "2024-10-12T23:37:21.030Z",
     "tags": [
       "Gets very cold",
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Gets poor sunlight"
     ],
     "scalars": {
@@ -39686,9 +39469,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-04-14T20:15:12.787Z",
     "tags": [
-      "Particularly high ceiling",
-      "Notably quiet",
-      "Particularly low ceiling"
+      "Notably quiet"
     ],
     "scalars": {
       "my house has a good culture": 1,
@@ -40244,9 +40025,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-01-30T17:52:10.799Z",
     "tags": [
-      "Particularly high ceiling",
-      "AC/heating issues",
-      "Particularly low ceiling"
+      "AC/heating issues"
     ],
     "scalars": {
       "my house has a good culture": 5,
@@ -40371,9 +40150,7 @@
     "timestamp": "2025-04-09T16:11:37.936Z",
     "tags": [
       "Extra storage / closet space",
-      "Particularly low ceiling",
-      "Unusually shaped room",
-      "Particularly high ceiling"
+      "Unusually shaped room"
     ],
     "scalars": {
       "my house has a good culture": 3,
@@ -40458,7 +40235,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "lots of events",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Party-oriented",
@@ -40574,9 +40351,7 @@
     "timestamp": "2024-10-29T03:57:03.446Z",
     "tags": [
       "AC/heating issues",
-      "Extra storage / closet space",
-      "Particularly big windows",
-      "Particularly small windows"
+      "Extra storage / closet space"
     ],
     "scalars": {
       "my house has a good culture": 1,
@@ -41134,8 +40909,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-10-02T15:41:21.999Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Limited storage / closet space"
     ],
     "scalars": {
@@ -41342,9 +41115,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-02-11T18:41:19.799Z",
     "tags": [
-      "Particularly low ceiling",
       "Particularly small windows",
-      "Particularly high ceiling",
       "Good ventilation"
     ],
     "scalars": {
@@ -41878,7 +41649,7 @@
       "temperature control": 2,
       "form version": "v2",
       "culture note": "super diverse",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold.",
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold.",
       "house descriptor": "lively, lots of events"
     },
     "cultureTags": [
@@ -41904,7 +41675,7 @@
       "temperature control": 1,
       "form version": "v2",
       "culture note": "kind of cliquey at first",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold."
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold."
     },
     "cultureTags": [
       "Diverse mix of people",
@@ -41942,10 +41713,7 @@
     "userEmail": "student721@uchicago.edu",
     "academicYear": "2024-2025",
     "timestamp": "2025-03-03T12:15:31.686Z",
-    "tags": [
-      "Particularly big windows",
-      "Particularly small windows"
-    ],
+    "tags": [],
     "scalars": {
       "my house has a good culture": 3,
       "my room gets a lot of outside noise": 3,
@@ -42041,8 +41809,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-10-09T08:34:34.881Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Noise from adjacent rooms",
       "Drafty windows"
     ],
@@ -42306,7 +42072,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "study culture heavy",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold."
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold."
     },
     "cultureTags": [
       "Lively / social"
@@ -42321,8 +42087,6 @@
     "timestamp": "2024-11-11T07:34:06.389Z",
     "tags": [
       "Noise from above or below",
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Extra storage / closet space"
     ],
     "scalars": {
@@ -42333,7 +42097,7 @@
       "temperature control": 2,
       "form version": "v2",
       "culture note": "quiet after 10pm",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Friendly but independent",
@@ -42361,7 +42125,7 @@
       "temperature control": 3,
       "form version": "v2",
       "culture note": "super welcoming",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Disconnected / isolated"
@@ -42525,10 +42289,8 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-10-15T12:42:14.925Z",
     "tags": [
-      "Gets good sunlight",
       "Particularly small windows",
-      "Good ventilation",
-      "Gets poor sunlight"
+      "Good ventilation"
     ],
     "scalars": {
       "my house has a good culture": 3,
@@ -42587,7 +42349,7 @@
       "natural light": 2,
       "temperature control": 5,
       "form version": "v2",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs.",
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs.",
       "house descriptor": "tight-knit community"
     },
     "cultureTags": [
@@ -43242,8 +43004,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-10-01T10:50:21.371Z",
     "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling",
       "Notably quiet"
     ],
     "scalars": {
@@ -43780,9 +43540,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-04-11T13:35:13.884Z",
     "tags": [
-      "Gets poor sunlight",
-      "Good furniture layout flexibility",
-      "Gets good sunlight"
+      "Good furniture layout flexibility"
     ],
     "scalars": {
       "my house has a good culture": 4,
@@ -44763,8 +44521,6 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-10-05T10:03:57.466Z",
     "tags": [
-      "Particularly big windows",
-      "Particularly small windows",
       "Notable hallway noise",
       "Poor ventilation"
     ],
@@ -44844,9 +44600,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-02-05T12:28:46.781Z",
     "tags": [
-      "Particularly small windows",
-      "Particularly high ceiling",
-      "Particularly low ceiling"
+      "Particularly small windows"
     ],
     "scalars": {
       "my house has a good culture": 4,
@@ -45005,7 +44759,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "super diverse",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Welcoming / inclusive"
@@ -45160,7 +44914,7 @@
       "temperature control": 3,
       "form version": "v2",
       "culture note": "very social",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Cliquey / exclusive"
@@ -45329,9 +45083,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-10-14T14:39:07.143Z",
     "tags": [
-      "Particularly small windows",
-      "Significant radiator noise",
-      "Particularly big windows"
+      "Significant radiator noise"
     ],
     "scalars": {
       "my house has a good culture": 3,
@@ -45419,7 +45171,7 @@
       "temperature control": 2,
       "form version": "v2",
       "culture note": "feels like family",
-      "freetext note": "Good ventilation \u2014 never felt stuffy.",
+      "freetext note": "Good ventilation — never felt stuffy.",
       "house descriptor": "RA-driven programming"
     },
     "cultureTags": [
@@ -45435,10 +45187,8 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-01-08T03:12:40.671Z",
     "tags": [
-      "Gets good sunlight",
       "Limited storage / closet space",
-      "Good furniture layout flexibility",
-      "Gets poor sunlight"
+      "Good furniture layout flexibility"
     ],
     "scalars": {
       "my house has a good culture": 5,
@@ -45626,7 +45376,7 @@
       "natural light": 1,
       "temperature control": 5,
       "form version": "v2",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold."
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold."
     },
     "cultureTags": [
       "Party-oriented",
@@ -45754,7 +45504,7 @@
       "temperature control": 5,
       "form version": "v2",
       "culture note": "floor chat is dead",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold.",
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold.",
       "house descriptor": "chill, low-key vibes"
     },
     "cultureTags": [
@@ -45885,7 +45635,7 @@
       "natural light": 4,
       "temperature control": 2,
       "form version": "v2",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Friendly but independent",
@@ -46200,10 +45950,7 @@
     "userEmail": "student797@uchicago.edu",
     "academicYear": "2024-2025",
     "timestamp": "2024-11-26T09:18:50.449Z",
-    "tags": [
-      "Particularly high ceiling",
-      "Particularly low ceiling"
-    ],
+    "tags": [],
     "scalars": {
       "my house has a good culture": 1,
       "my room gets a lot of outside noise": 4,
@@ -46356,10 +46103,7 @@
     "userEmail": "student897@uchicago.edu",
     "academicYear": "2024-2025",
     "timestamp": "2025-04-01T14:55:25.326Z",
-    "tags": [
-      "Good ventilation",
-      "Poor ventilation"
-    ],
+    "tags": [],
     "scalars": {
       "my house has a good culture": 3,
       "my room gets a lot of outside noise": 1,
@@ -46546,7 +46290,7 @@
       "temperature control": 3,
       "form version": "v2",
       "culture note": "pretty chill",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Cliquey / exclusive",
@@ -46748,7 +46492,7 @@
       "natural light": 5,
       "temperature control": 4,
       "form version": "v2",
-      "freetext note": "Good ventilation \u2014 never felt stuffy.",
+      "freetext note": "Good ventilation — never felt stuffy.",
       "house descriptor": "lively, lots of events"
     },
     "cultureTags": [
@@ -47250,7 +46994,7 @@
       "temperature control": 3,
       "form version": "v2",
       "culture note": "everyone keeps doors open",
-      "freetext note": "Heating is inconsistent \u2014 some days too hot, some too cold."
+      "freetext note": "Heating is inconsistent — some days too hot, some too cold."
     },
     "cultureTags": [
       "Diverse mix of people",
@@ -47648,7 +47392,7 @@
       "temperature control": 4,
       "form version": "v2",
       "culture note": "very social",
-      "freetext note": "The radiator is incredibly loud in winter \u2014 bring earplugs."
+      "freetext note": "The radiator is incredibly loud in winter — bring earplugs."
     },
     "cultureTags": [
       "Active house programming",
@@ -48471,9 +48215,7 @@
     "academicYear": "2024-2025",
     "timestamp": "2024-11-11T09:15:36.106Z",
     "tags": [
-      "Particularly high ceiling",
       "Noise from above or below",
-      "Particularly low ceiling",
       "Gets very cold"
     ],
     "scalars": {
@@ -48601,10 +48343,8 @@
     "academicYear": "2024-2025",
     "timestamp": "2025-02-24T16:03:13.213Z",
     "tags": [
-      "Particularly high ceiling",
       "Good furniture layout flexibility",
-      "Particularly small windows",
-      "Particularly low ceiling"
+      "Particularly small windows"
     ],
     "scalars": {
       "my house has a good culture": 1,
@@ -48613,7 +48353,7 @@
       "natural light": 2,
       "temperature control": 1,
       "form version": "v2",
-      "freetext note": "Good ventilation \u2014 never felt stuffy."
+      "freetext note": "Good ventilation — never felt stuffy."
     },
     "cultureTags": [
       "Lively / social",
