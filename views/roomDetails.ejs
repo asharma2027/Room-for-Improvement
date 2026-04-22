@@ -44,6 +44,31 @@
         border-radius: 0.5rem;
         transition: background 0.4s, box-shadow 0.4s;
       }
+
+      /* Big red moving gradient effect for custom room name */
+      .custom-room-name {
+        font-size: 3.2rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        background: linear-gradient(270deg, #d30000, #ff5555, #660000, #d30000);
+        background-size: 300% 300%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: fireGradient 5s ease infinite;
+        filter: drop-shadow(0px 3px 6px rgba(180, 0, 0, 0.4));
+        margin-bottom: 0.2rem;
+        margin-top: 0;
+        letter-spacing: 1px;
+        line-height: 1.15;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+      }
+      
+      @keyframes fireGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
     </style>
 
       <main>
@@ -54,10 +79,29 @@
           </a>
         </div>
         <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
-          <h1>
-            <%= room.dorm %> - <%= room.house %>
-                <%= room.roomNumber %>
-          </h1>
+          <% 
+            let displayCustomName = null;
+            if (allEntries && allEntries.length > 0) {
+              for (let i = allEntries.length - 1; i >= 0; i--) {
+                if (allEntries[i].customName) {
+                  displayCustomName = allEntries[i].customName;
+                  break;
+                }
+              }
+            }
+          %>
+          <div style="flex: 1; min-width: 0; padding-right: 1rem;">
+            <% if (displayCustomName) { %>
+              <h1 class="custom-room-name"><%= displayCustomName %></h1>
+              <h2 style="font-weight: normal; margin-top: 0; color: var(--text-secondary); font-size: 1.25rem; margin-bottom: 0;">
+                (<em><%= room.dorm %> - <%= room.house %> <%= room.roomNumber %></em>)
+              </h2>
+            <% } else { %>
+              <h1 style="margin: 0;">
+                <%= room.dorm %> - <%= room.house %> <%= room.roomNumber %>
+              </h1>
+            <% } %>
+          </div>
         </div>
 
         <!-- Current (Latest) Data -->
