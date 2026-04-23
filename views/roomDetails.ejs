@@ -50,13 +50,13 @@
         font-size: 3.2rem;
         font-weight: 900;
         text-transform: uppercase;
-        background: linear-gradient(270deg, #d30000, #ff5555, #660000, #d30000);
+        background: linear-gradient(270deg, #8d0000, #aa3838, #440000, #8d0000);
         background-size: 300% 300%;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        animation: fireGradient 5s ease infinite;
-        filter: drop-shadow(0px 3px 6px rgba(180, 0, 0, 0.4));
-        margin-bottom: 0.2rem;
+        animation: fireGradient 7.5s ease infinite;
+        filter: drop-shadow(0px 3px 6px rgba(120, 0, 0, 0.4));
+        margin-bottom: 0.4rem;
         margin-top: 0;
         letter-spacing: 1px;
         line-height: 1.15;
@@ -93,7 +93,7 @@
           <div style="flex: 1; min-width: 0; padding-right: 1rem;">
             <% if (displayCustomName) { %>
               <h1 class="custom-room-name"><%= displayCustomName %></h1>
-              <h2 style="font-weight: normal; margin-top: 0; color: var(--text-secondary); font-size: 1.25rem; margin-bottom: 0;">
+              <h2 style="font-weight: normal; margin-top: 0.4rem; color: var(--text-secondary); font-size: 1.25rem; margin-bottom: 0;">
                 (<em><%= room.dorm %> - <%= room.house %> <%= room.roomNumber %></em>)
               </h2>
             <% } else { %>

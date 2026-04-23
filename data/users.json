@@ -22,5 +22,11 @@
     "hashedPassword": "$2a$10$mcnjflcBVQgcDR3U/sG8juuwOTg9e/vTbu3x3oK4eiQegcuYM9Tpu",
     "verified": false,
     "verificationToken": "32b32a9bc67b041b102777df4242eceb2d0869ef"
+  },
+  {
+    "email": "lesleyg@uchicago.edu",
+    "hashedPassword": "$2a$10$UPzRB2zUAxyAHsKPjIyY9umOZZvqFfU6EdmyMIxMs8wfl4tU/d1z2",
+    "verified": false,
+    "verificationToken": "2c0ee1e2b5c667647b85f5b29653d2fde38e6b1f"
   }
 ]
