@@ -529,6 +529,50 @@ app.get('/api/houses', ensureAuthenticated, (req, res) => {
   });
 });
 
+// GET /api/search?q= - search houses and rooms for nav bar autocomplete
+app.get('/api/search', ensureAuthenticated, (req, res) => {
+  const q = (req.query.q || '').toLowerCase().trim();
+  if (!q) return res.json([]);
+  readRooms((err, rooms) => {
+    if (err) return res.json([]);
+    const results = [];
+    const seenHouses = new Set();
+    rooms.forEach(r => {
+      const houseKey = `${r.dorm}::${r.house}`;
+      // Match houses
+      if (!seenHouses.has(houseKey) && r.house && r.house.toLowerCase().includes(q)) {
+        seenHouses.add(houseKey);
+        results.push({ type: 'house', name: r.house, dorm: r.dorm, url: `/house/${encodeURIComponent(r.dorm)}/${encodeURIComponent(r.house)}` });
+      }
+      // Match rooms
+      if (r.roomNumber && r.roomNumber.toLowerCase().includes(q)) {
+        results.push({ type: 'room', name: `${r.house} ${r.roomNumber}`, dorm: r.dorm, url: `/rooms/${r.id}` });
+      }
+    });
+    res.json(results.slice(0, 20));
+  });
+});
+
+// GET /dorm-rankings - campus-wide dorm rankings page
+app.get('/dorm-rankings', ensureAuthenticated, (req, res) => {
+  readRooms((err, rooms) => {
+    if (err) return res.status(500).send('Error');
+    const entries = readRoomEntries();
+    const dorms = [...new Set(rooms.map(r => r.dorm))];
+    const dormScores = dorms.map(dorm => {
+      const houseRankings = computeDormRankings(dorm, rooms, entries);
+      const categories = ['culture', 'quietness', 'sunlight', 'roomSize', 'tempControl'];
+      const scores = {};
+      categories.forEach(cat => {
+        const vals = houseRankings.map(h => h.scores[cat]).filter(v => v !== null);
+        scores[cat] = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+      });
+      return { name: dorm, scores, houseCount: houseRankings.length };
+    });
+    res.render('dormRankingsAll', { user: req.user, dormScores, dormScoresJson: JSON.stringify(dormScores) });
+  });
+});
+
 // GET /dorm/:dorm - house rankings for a dorm
 app.get('/dorm/:dorm', ensureAuthenticated, (req, res) => {
   const dormName = req.params.dorm;

@@ -1,5 +1,15 @@
 <!-- This partial is included in roomDetails.ejs for displaying historical data. -->
 
+<%
+  function ratingColor(val) {
+    const colors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
+    return colors[Math.round(val)] || 'transparent';
+  }
+  function ratingTextColor(val) {
+    return Math.round(val) === 3 ? '#333' : '#fff';
+  }
+%>
+
 <div style="overflow-x: auto;">
 <table>
   <thead>
@@ -45,25 +55,42 @@
             <em>None</em>
           <% } %>
         </td>
-        <td><%= entry.scalars["my house has a good culture"] %></td>
-        <td><%= entry.scalars["my room gets a lot of outside noise"] %></td>
+        <td>
+          <% const hcHistVal = entry.scalars["my house has a good culture"]; %>
+          <% if (hcHistVal) { %>
+            <span style="display:inline-block; padding:0.15rem 0.5rem; border-radius:0.3rem; background-color:<%= ratingColor(hcHistVal) %>; color:<%= ratingTextColor(hcHistVal) %>; font-weight:600;"><%= hcHistVal %></span>
+          <% } else { %>
+            <em style="color:var(--text-secondary);">—</em>
+          <% } %>
+        </td>
+        <td>
+          <% const onHistVal = entry.scalars["my room gets a lot of outside noise"]; %>
+          <% if (onHistVal) { %>
+            <span style="display:inline-block; padding:0.15rem 0.5rem; border-radius:0.3rem; background-color:<%= ratingColor(onHistVal) %>; color:<%= ratingTextColor(onHistVal) %>; font-weight:600;"><%= onHistVal %></span>
+          <% } else { %>
+            <em style="color:var(--text-secondary);">—</em>
+          <% } %>
+        </td>
         <td>
           <% if (entryIsV2 && entry.scalars["room size"]) { %>
-            <%= entry.scalars["room size"] %>
+            <% const rsHistVal = entry.scalars["room size"]; %>
+            <span style="display:inline-block; padding:0.15rem 0.5rem; border-radius:0.3rem; background-color:<%= ratingColor(rsHistVal) %>; color:<%= ratingTextColor(rsHistVal) %>; font-weight:600;"><%= rsHistVal %></span>
           <% } else { %>
             <em style="color:var(--text-secondary);">—</em>
           <% } %>
         </td>
         <td>
           <% if (entryIsV2 && entry.scalars["natural light"]) { %>
-            <%= entry.scalars["natural light"] %>
+            <% const nlHistVal = entry.scalars["natural light"]; %>
+            <span style="display:inline-block; padding:0.15rem 0.5rem; border-radius:0.3rem; background-color:<%= ratingColor(nlHistVal) %>; color:<%= ratingTextColor(nlHistVal) %>; font-weight:600;"><%= nlHistVal %></span>
           <% } else { %>
             <em style="color:var(--text-secondary);">—</em>
           <% } %>
         </td>
         <td>
           <% if (entryIsV2 && entry.scalars["temperature control"]) { %>
-            <%= entry.scalars["temperature control"] %>
+            <% const tcHistVal = entry.scalars["temperature control"]; %>
+            <span style="display:inline-block; padding:0.15rem 0.5rem; border-radius:0.3rem; background-color:<%= ratingColor(tcHistVal) %>; color:<%= ratingTextColor(tcHistVal) %>; font-weight:600;"><%= tcHistVal %></span>
           <% } else { %>
             <em style="color:var(--text-secondary);">—</em>
           <% } %>

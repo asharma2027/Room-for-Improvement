@@ -396,13 +396,13 @@ table tbody tr:hover {
 
 .landing-hero {
   text-align: center;
-  padding: 6rem 2rem;
+  padding: 3rem 2rem;
   background: linear-gradient(-45deg, var(--primary-color), var(--primary-light), var(--primary-dark), #9a1032);
   background-size: 400% 400%;
   animation: gradientAnimation 15s ease infinite;
   color: white;
   border-radius: var(--radius-lg);
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: var(--spacing-lg);
   box-shadow: var(--shadow-lg), 0 20px 40px rgba(123, 0, 26, 0.2);
   position: relative;
   overflow: hidden;
@@ -436,8 +436,8 @@ table tbody tr:hover {
 
 .landing-hero h1 {
   color: white;
-  margin-bottom: 1.5rem;
-  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  font-size: 2.5rem;
   position: relative;
   z-index: 2;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
@@ -454,7 +454,7 @@ table tbody tr:hover {
   font-size: 1.35rem;
   opacity: 0.95;
   max-width: 650px;
-  margin: 0 auto 2.5rem;
+  margin: 0 auto 1rem;
   position: relative;
   z-index: 2;
   font-weight: 300;
@@ -487,7 +487,7 @@ table tbody tr:hover {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2.5rem;
-  margin-top: 4rem;
+  margin-top: 2rem;
 }
 
 .feature-item {
@@ -776,8 +776,7 @@ table tbody tr:hover {
   text-align: center;
   color: white;
   box-shadow: var(--shadow-md);
-  margin-bottom: -2rem;
-  /* Pull content up slightly */
+  margin-bottom: 0;
   position: relative;
   z-index: 1;
 }
@@ -822,6 +821,11 @@ table tbody tr:hover {
   color: var(--text-secondary);
   font-weight: 600;
   text-transform: uppercase;
+}
+
+/* ── Stats Bar Visual Fix (R4) ─────────────────────────────── */
+.house-stats-row {
+  background: #ffffff;
 }
 /* ============================================================
    v1 / v2 Form Toggle
@@ -979,4 +983,552 @@ table tbody tr:hover {
   padding: 0.1rem 0.45rem;
   vertical-align: middle;
   letter-spacing: 0.04em;
+}
+
+/* ============================================================
+   Rating Color Scale (R9)
+   Maps 1–5 ratings to background + text colors for readability.
+   ============================================================ */
+.rating-bg-1 { background-color: #AE5436; color: #fff; }
+.rating-bg-2 { background-color: #D69772; color: #fff; }
+.rating-bg-3 { background-color: #EFE6D1; color: #333; }
+.rating-bg-4 { background-color: #92B89D; color: #fff; }
+.rating-bg-5 { background-color: #34877A; color: #fff; }
+
+/* ============================================================
+   Ratings Table (R6)
+   Two-column layout: left-aligned labels, right-aligned values,
+   per-row background coloring via Rating_Color_Scale.
+   ============================================================ */
+.ratings-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 0.35rem;
+  margin-top: 0.5rem;
+}
+
+.ratings-table tr {
+  border-radius: var(--radius-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ratings-table tr:hover {
+  transform: translateX(2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.ratings-table td {
+  padding: 0.65rem 1rem;
+  border: none;
+  vertical-align: middle;
+}
+
+.ratings-table td:first-child {
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.ratings-table td:last-child {
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  text-align: right;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+/* ============================================================
+   Profanity Toggle Label & Tooltip (R2)
+   Groups the "Profanity:" label, info icon, and toggle switch.
+   Tooltip appears on hover/focus of the info icon.
+   ============================================================ */
+.profanity-toggle-group {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.profanity-label {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.profanity-info-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: var(--text-secondary);
+  cursor: help;
+  line-height: 1;
+}
+
+.profanity-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 280px;
+  padding: 0.5rem 0.75rem;
+  background: var(--text-primary);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.4;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  z-index: 100;
+  pointer-events: none;
+  white-space: normal;
+}
+
+/* Arrow pointing down from tooltip */
+.profanity-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--text-primary);
+}
+
+/* Show tooltip on hover or keyboard focus */
+.profanity-info-icon:hover .profanity-tooltip,
+.profanity-info-icon:focus .profanity-tooltip {
+  display: block;
+}
+
+/* ============================================================
+   Dorm Filter Dropdown (R5)
+   Custom dropdown for filtering rooms by dorm on the All Rooms
+   page. Styled similarly to the Filter_Tags_Dropdown on the
+   house page, with bold dorm names and a checkmark indicator.
+   ============================================================ */
+.dorm-filter-dropdown-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Shared button style — also used by the house-page tag filter.
+   Scoped here so the All Rooms page picks it up from the
+   global stylesheet.                                          */
+.dorm-filter-dropdown-wrapper .filter-tags-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.75rem;
+  border: 1.5px solid #800000;
+  border-radius: 0.35rem;
+  background: #fff;
+  color: #800000;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  user-select: none;
+}
+
+.dorm-filter-dropdown-wrapper .filter-tags-btn:hover {
+  background: rgba(128, 0, 0, 0.07);
+}
+
+.dorm-filter-dropdown-wrapper .filter-tags-btn.open {
+  background: #800000;
+  color: #fff;
+}
+
+/* Dropdown panel — positioned below the trigger button       */
+.dorm-filter-dropdown-wrapper .filter-tags-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 240px;
+  max-width: 320px;
+  max-height: 360px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  z-index: 200;
+  padding: 0.5rem 0;
+}
+
+.dorm-filter-dropdown-wrapper .filter-tags-dropdown.open {
+  display: block;
+}
+
+/* Individual dorm item — bold, large-font name per R5.2      */
+.dorm-filter-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.dorm-filter-item:hover {
+  background: #f3f4f6;
+}
+
+.dorm-filter-item.selected {
+  color: #800000;
+  background: rgba(128, 0, 0, 0.04);
+}
+
+/* Checkmark indicator — hidden by default, visible when
+   the dorm is selected (R5.6)                                */
+.dorm-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #800000;
+  opacity: 0;
+  flex-shrink: 0;
+  transition: opacity 0.15s ease;
+}
+
+.dorm-filter-item.selected .dorm-check {
+  opacity: 1;
+}
+
+/* ============================================================
+   Nav Bar Search (R10)
+   Search input with absolute-positioned dropdown for
+   autocomplete results. Sits between nav links and Logout.
+   ============================================================ */
+.nav-search-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0.5rem;
+}
+
+.nav-search-input {
+  width: 200px;
+  padding: 0.45rem 0.85rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-full);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  background: #fff;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, width 0.3s ease;
+  outline: none;
+}
+
+.nav-search-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.nav-search-input:focus {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 4px rgba(123, 0, 26, 0.1);
+  width: 260px;
+}
+
+.nav-search-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 280px;
+  max-width: 360px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12), 0 2px 6px rgba(15, 23, 42, 0.06);
+  z-index: 300;
+  padding: 0.35rem 0;
+}
+
+.nav-search-dropdown.open {
+  display: block;
+}
+
+.nav-search-result {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.55rem 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+  text-decoration: none;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+}
+
+.nav-search-result:last-child {
+  border-bottom: none;
+}
+
+.nav-search-result:hover {
+  background-color: rgba(123, 0, 26, 0.04);
+  color: var(--primary-color);
+}
+
+.nav-search-result .result-dorm {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.nav-search-result .result-type {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--primary-light);
+  opacity: 0.8;
+}
+
+.nav-search-dropdown .no-results {
+  padding: 0.75rem 0.9rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  text-align: center;
+  font-style: italic;
+}
+
+/* ============================================================
+   Nav Bar Feedback Button (R13)
+   Outlined / accent-colored button visually distinct from
+   regular nav links. Uses primary maroon outline style.
+   ============================================================ */
+.nav-feedback-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 1rem;
+  border: 2px solid var(--primary-color);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--primary-color);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.nav-feedback-btn:hover {
+  background: var(--primary-color);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(123, 0, 26, 0.25);
+  transform: translateY(-1px);
+}
+
+.nav-feedback-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* ============================================================
+   Campus Dorm Rankings Page (R8)
+   Card grid layout for comparing all dorms at a glance.
+   Visually distinct from the per-dorm house rankings page
+   (which uses a 5-column scrollable lists layout). This page
+   uses glassmorphism dorm cards with colored score bars.
+   ============================================================ */
+.dorm-rankings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.75rem;
+  margin-top: var(--spacing-lg);
+}
+
+/* Individual dorm card — glassmorphism style consistent with
+   the project's design language (feature-item, stat-card).    */
+.dorm-rank-card {
+  background: var(--surface-color);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 1.5rem 1.75rem;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dorm-rank-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  color: var(--text-primary);
+}
+
+/* Gradient accent bar at the top of each card                */
+.dorm-rank-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.dorm-rank-card:hover::before {
+  opacity: 1;
+}
+
+/* Card header: dorm name + house count badge                 */
+.dorm-rank-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.dorm-rank-card-name {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.dorm-rank-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.6rem;
+  background: rgba(123, 0, 26, 0.06);
+  color: var(--primary-color);
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+/* Score bars container — vertical stack of category rows     */
+.dorm-rank-scores {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+/* Single score row: label + bar + value                      */
+.dorm-score-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.dorm-score-label {
+  flex-shrink: 0;
+  width: 110px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* The bar track (background) and filled portion              */
+.dorm-score-bar {
+  flex: 1;
+  height: 10px;
+  background: rgba(243, 244, 246, 0.8);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+.dorm-score-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 2px;
+}
+
+/* Score value text next to the bar                           */
+.dorm-score-value {
+  flex-shrink: 0;
+  width: 36px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  text-align: left;
+}
+
+.dorm-score-value.null-score {
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-style: italic;
+}
+
+/* Empty state when no dorm data is available                 */
+.dorm-rankings-empty {
+  text-align: center;
+  padding: var(--spacing-xl) var(--spacing-lg);
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-style: italic;
+}
+
+/* Page header area                                           */
+.dorm-rankings-header {
+  margin-bottom: var(--spacing-sm);
+}
+
+.dorm-rankings-header h1 {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 1.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.dorm-rankings-header p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Responsive: stack to single column on narrow screens       */
+@media (max-width: 700px) {
+  .dorm-rankings-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .dorm-score-label {
+    width: 85px;
+    font-size: 0.72rem;
+  }
 }

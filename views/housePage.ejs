@@ -3,6 +3,12 @@
     <body>
         <%- include('partials/nav') %>
 
+        <!-- Word cloud hover tooltip -->
+        <div class="wc-tooltip" id="wc-tooltip">
+            <span class="wc-tooltip-word"></span> — <span class="wc-tooltip-count"></span>
+        </div>
+        <!-- Word cloud hover highlight overlay -->
+        <span class="wc-hover-highlight" id="wc-hover-highlight"></span>
         <style>
             /* Preview pill shared styles */
             .preview-pill {
@@ -54,7 +60,7 @@
             .preview-pill-text.swiping-up {
                 transform: translateY(-120%);
                 opacity: 0;
-                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+                transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s ease;
             }
             .preview-pill-text.preparing {
                 transform: translateY(120%);
@@ -64,7 +70,7 @@
             .preview-pill-text.visible {
                 transform: translateY(0);
                 opacity: 1;
-                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+                transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s ease;
             }
             .preview-pill-arrow {
                 flex-shrink: 0;
@@ -483,6 +489,45 @@
                 font-size: 0.72rem;
                 margin-bottom: 0.5rem;
             }
+
+            /* ── Word cloud hover tooltip ── */
+            .wc-tooltip {
+                position: fixed;
+                z-index: 9999;
+                pointer-events: none;
+                background: rgba(30, 30, 30, 0.92);
+                color: #fff;
+                padding: 0.45rem 0.75rem;
+                border-radius: 0.4rem;
+                font-size: 0.82rem;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                white-space: nowrap;
+                box-shadow: 0 3px 12px rgba(0,0,0,0.25);
+                opacity: 0;
+                transition: opacity 0.15s ease;
+            }
+            .wc-tooltip.visible {
+                opacity: 1;
+            }
+            .wc-tooltip .wc-tooltip-word {
+                font-weight: 700;
+            }
+            .wc-tooltip .wc-tooltip-count {
+                font-weight: 400;
+                opacity: 0.85;
+            }
+
+            /* ── Word cloud hover highlight overlay ── */
+            .wc-hover-highlight {
+                position: fixed;
+                z-index: 9998;
+                pointer-events: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: Georgia, serif;
+                transition: opacity 0.12s ease;
+            }
         </style>
 
             <main style="max-width:1200px; margin:0 auto; padding:2rem 1.5rem;">
@@ -659,7 +704,7 @@
                     <% const cw = (typeof cultureWords !== 'undefined' ? cultureWords : []); %>
                     <div class="word-cloud-section">
                         <h3>Culture Vibes</h3>
-                        <div class="word-cloud-sub">Aggregated culture descriptors &amp; short culture notes from all submissions for this house.</div>
+                        <div class="word-cloud-sub">Selected from a fixed checklist by residents — shows the most commonly chosen descriptors.</div>
                         <% if (cw.length > 0) { %>
                             <div id="culture-wordcloud" class="word-cloud-canvas"></div>
                             <div id="culture-wordcloud-fallback" class="word-cloud-fallback" style="display:none;"></div>
@@ -671,7 +716,7 @@
                     <% if (hdw.length > 0) { %>
                     <div class="word-cloud-section">
                         <h3>House Descriptors</h3>
-                        <div class="word-cloud-sub">Free-text descriptors residents have used for this house.</div>
+                        <div class="word-cloud-sub">Written freely by residents — shows the most frequently used words and phrases.</div>
                         <div id="descriptor-wordcloud" class="word-cloud-canvas"></div>
                         <div id="descriptor-wordcloud-fallback" class="word-cloud-fallback" style="display:none;"></div>
                     </div>
@@ -750,8 +795,12 @@
                         <!-- Profanity toggle + Clear filters — always locked to right end of row -->
                         <div class="filter-row-right">
                             <!-- Profanity toggle -->
-                            <div class="hp-profanity-toggle">
-                                <span style="font-size: 1.2rem; cursor: help;" title="Toggle content filter">🔞</span>
+                            <div class="profanity-toggle-group">
+                                <span class="profanity-label">Profanity:</span>
+                                <span class="profanity-info-icon" tabindex="0" aria-label="Info about profanity toggle">
+                                    ⓘ
+                                    <span class="profanity-tooltip">Toggles visibility of profane language in custom room names and notes. Some submissions contain adult language — this filter hides that content by default.</span>
+                                </span>
                                 <label class="toggle-switch">
                                     <input type="checkbox" id="censor-toggle" onchange="toggleCensorship()">
                                     <span class="toggle-slider"></span>
@@ -858,9 +907,14 @@
               </td>
               <td>
                 <% if (room.houseCultureVal) { %>
+                  <%
+                    var cultureRounded = Math.round(parseFloat(room.houseCultureVal));
+                    var cultureColors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
+                    var cultureBg = cultureColors[cultureRounded] || 'transparent';
+                    var cultureTxt = cultureRounded === 3 ? '#333' : '#fff';
+                  %>
                   <div style="display:flex; align-items:center; gap:0.4rem;">
-                    <div style="width:<%= (parseFloat(room.houseCultureVal)/5*48) %>px; height:6px; background:#10b981; border-radius:3px; min-width:4px;"></div>
-                    <span style="font-size:0.85rem; font-weight:600;"><%= room.houseCultureVal %></span>
+                    <span style="display:inline-block; padding:0.15em 0.5em; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= cultureBg %>; color:<%= cultureTxt %>;"><%= room.houseCultureVal %></span>
                   </div>
                 <% } else { %>
                   <span style="color:#ccc;">—</span>
@@ -868,9 +922,14 @@
               </td>
               <td>
                 <% if (room.outsideNoiseVal) { %>
+                  <%
+                    var noiseRounded = Math.round(parseFloat(room.outsideNoiseVal));
+                    var noiseColors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
+                    var noiseBg = noiseColors[noiseRounded] || 'transparent';
+                    var noiseTxt = noiseRounded === 3 ? '#333' : '#fff';
+                  %>
                   <div style="display:flex; align-items:center; gap:0.4rem;">
-                    <div style="width:<%= (parseFloat(room.outsideNoiseVal)/5*48) %>px; height:6px; background:#ef4444; border-radius:3px; min-width:4px;"></div>
-                    <span style="font-size:0.85rem; font-weight:600;"><%= room.outsideNoiseVal %></span>
+                    <span style="display:inline-block; padding:0.15em 0.5em; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= noiseBg %>; color:<%= noiseTxt %>;"><%= room.outsideNoiseVal %></span>
                   </div>
                 <% } else { %>
                   <span style="color:#ccc;">—</span>
@@ -878,9 +937,14 @@
               </td>
               <td>
                 <% if (room.roomSizeVal) { %>
+                  <%
+                    var sizeRounded = Math.round(parseFloat(room.roomSizeVal));
+                    var sizeColors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
+                    var sizeBg = sizeColors[sizeRounded] || 'transparent';
+                    var sizeTxt = sizeRounded === 3 ? '#333' : '#fff';
+                  %>
                   <div style="display:flex; align-items:center; gap:0.4rem;">
-                    <div style="width:<%= (parseFloat(room.roomSizeVal)/5*48) %>px; height:6px; background:#6366f1; border-radius:3px; min-width:4px;"></div>
-                    <span style="font-size:0.85rem; font-weight:600;"><%= room.roomSizeVal %></span>
+                    <span style="display:inline-block; padding:0.15em 0.5em; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= sizeBg %>; color:<%= sizeTxt %>;"><%= room.roomSizeVal %></span>
                   </div>
                 <% } else { %>
                   <span style="color:#ccc; font-size:0.8rem;">N/A</span>
@@ -888,9 +952,14 @@
               </td>
               <td>
                 <% if (room.naturalLightVal) { %>
+                  <%
+                    var lightRounded = Math.round(parseFloat(room.naturalLightVal));
+                    var lightColors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
+                    var lightBg = lightColors[lightRounded] || 'transparent';
+                    var lightTxt = lightRounded === 3 ? '#333' : '#fff';
+                  %>
                   <div style="display:flex; align-items:center; gap:0.4rem;">
-                    <div style="width:<%= (parseFloat(room.naturalLightVal)/5*48) %>px; height:6px; background:#f59e0b; border-radius:3px; min-width:4px;"></div>
-                    <span style="font-size:0.85rem; font-weight:600;"><%= room.naturalLightVal %></span>
+                    <span style="display:inline-block; padding:0.15em 0.5em; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= lightBg %>; color:<%= lightTxt %>;"><%= room.naturalLightVal %></span>
                   </div>
                 <% } else { %>
                   <span style="color:#ccc; font-size:0.8rem;">N/A</span>
@@ -898,9 +967,14 @@
               </td>
               <td>
                 <% if (room.tempControlVal) { %>
+                  <%
+                    var tempRounded = Math.round(parseFloat(room.tempControlVal));
+                    var tempColors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
+                    var tempBg = tempColors[tempRounded] || 'transparent';
+                    var tempTxt = tempRounded === 3 ? '#333' : '#fff';
+                  %>
                   <div style="display:flex; align-items:center; gap:0.4rem;">
-                    <div style="width:<%= (parseFloat(room.tempControlVal)/5*48) %>px; height:6px; background:#06b6d4; border-radius:3px; min-width:4px;"></div>
-                    <span style="font-size:0.85rem; font-weight:600;"><%= room.tempControlVal %></span>
+                    <span style="display:inline-block; padding:0.15em 0.5em; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= tempBg %>; color:<%= tempTxt %>;"><%= room.tempControlVal %></span>
                   </div>
                 <% } else { %>
                   <span style="color:#ccc; font-size:0.8rem;">N/A</span>
@@ -916,6 +990,8 @@
   </main>
 
   <footer><p>&copy; 2025 Room for Improvement</p></footer>
+
+  <%- include('partials/ratingColors') %>
 
   <!-- wordcloud2.js from CDN for both word clouds -->
   <script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud2.min.js"></script>
@@ -955,6 +1031,56 @@
                                 .slice(0, 80);
     }
 
+    // ── Word cloud tooltip helpers ──
+    function showWordCloudTooltip(word, count, event, dimension, container) {
+      var tooltip = document.getElementById('wc-tooltip');
+      var highlight = document.getElementById('wc-hover-highlight');
+      if (!tooltip || !highlight) return;
+
+      // Update tooltip content
+      tooltip.querySelector('.wc-tooltip-word').textContent = word;
+      tooltip.querySelector('.wc-tooltip-count').textContent = (count || 0) + ' responses';
+
+      // Position tooltip near cursor
+      var tx = event.clientX + 14;
+      var ty = event.clientY - 10;
+      // Keep tooltip on screen
+      var tw = tooltip.offsetWidth || 160;
+      if (tx + tw > window.innerWidth - 8) tx = event.clientX - tw - 10;
+      if (ty < 8) ty = 8;
+      tooltip.style.left = tx + 'px';
+      tooltip.style.top = ty + 'px';
+      tooltip.classList.add('visible');
+
+      // Show highlight overlay at the word's bounding box with 15% size increase
+      if (dimension) {
+        var canvasRect = container.getBoundingClientRect();
+        // dimension: { x, y, w, h } relative to canvas
+        var wordX = canvasRect.left + dimension.x;
+        var wordY = canvasRect.top + dimension.y;
+        var wordW = dimension.w;
+        var wordH = dimension.h;
+
+        highlight.textContent = word;
+        highlight.style.left = wordX + 'px';
+        highlight.style.top = wordY + 'px';
+        highlight.style.width = wordW + 'px';
+        highlight.style.height = wordH + 'px';
+        // Increase font size by ~15% from the rendered height
+        highlight.style.fontSize = Math.round(wordH * 1.15) + 'px';
+        highlight.style.color = '#800000';
+        highlight.style.fontWeight = '700';
+        highlight.style.opacity = '1';
+      }
+    }
+
+    function hideWordCloudTooltip() {
+      var tooltip = document.getElementById('wc-tooltip');
+      var highlight = document.getElementById('wc-hover-highlight');
+      if (tooltip) tooltip.classList.remove('visible');
+      if (highlight) highlight.style.opacity = '0';
+    }
+
     function renderWordCloud(containerId, fallbackId, list) {
       var container = document.getElementById(containerId);
       var fallback = document.getElementById(fallbackId);
@@ -983,7 +1109,14 @@
             rotateRatio: 0.2,
             minRotation: -Math.PI / 12,
             maxRotation: Math.PI / 12,
-            shrinkToFit: true
+            shrinkToFit: true,
+            hover: function(item, dimension, event) {
+              if (item) {
+                showWordCloudTooltip(item[0], item[1], event, dimension, container);
+              } else {
+                hideWordCloudTooltip();
+              }
+            }
           });
           return;
         } catch(err) {
@@ -1168,7 +1301,7 @@
       el.textContent = items[idx];
       if (items.length <= 1) return; // no need to rotate
 
-      var DISPLAY_MS = 5000; // 5 seconds per item
+      var DISPLAY_MS = 12000; // 12 seconds per item
 
       setTimeout(function() {
         setInterval(function() {
@@ -1190,7 +1323,7 @@
                 el.classList.add('visible');
               });
             });
-          }, 400); // Wait for swipe out to finish
+          }, 800); // Wait for swipe out to finish
         }, DISPLAY_MS);
       }, delayMs);
     }

@@ -202,10 +202,8 @@
           style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 0.5rem;">
           <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
             <div>
-              <label for="dorm-filter" style="margin-bottom: 0.25rem; font-size: 0.85rem;">Filter by Dorm</label>
-              <%# Dorm values must match exactly what Building Name contains in colored_rooms.csv %>
-              <%# To revert to legacy (rooms.csv) data, set USE_FLOORPLAN_CSV=false in server.js %>
-              <select id="dorm-filter" onchange="onDormChange(this.value)">
+              <%# Hidden select keeps existing JS (applyFilters, onDormChange, clear-filters) working %>
+              <select id="dorm-filter" style="display:none;">
                 <option value="">All Dorms</option>
                 <option value="Burton-Judson">Burton-Judson</option>
                 <option value="I-House">I-House</option>
@@ -214,6 +212,31 @@
                 <option value="Snell_Hitchcock">Snell-Hitchcock</option>
                 <option value="Woodlawn">Woodlawn</option>
               </select>
+
+              <%# Custom dorm filter dropdown (R5) %>
+              <div class="dorm-filter-dropdown-wrapper">
+                <button type="button" class="filter-tags-btn" id="dorm-filter-btn">Filter by Dorm ▾</button>
+                <div class="filter-tags-dropdown" id="dorm-filter-dropdown">
+                  <div class="dorm-filter-item" data-dorm="Burton-Judson">
+                    <span class="dorm-check">✓</span> Burton-Judson
+                  </div>
+                  <div class="dorm-filter-item" data-dorm="I-House">
+                    <span class="dorm-check">✓</span> I-House
+                  </div>
+                  <div class="dorm-filter-item" data-dorm="Max Palevsky">
+                    <span class="dorm-check">✓</span> Max Palevsky
+                  </div>
+                  <div class="dorm-filter-item" data-dorm="Renee_Granville-Grossman">
+                    <span class="dorm-check">✓</span> Renee Granville-Grossman
+                  </div>
+                  <div class="dorm-filter-item" data-dorm="Snell_Hitchcock">
+                    <span class="dorm-check">✓</span> Snell-Hitchcock
+                  </div>
+                  <div class="dorm-filter-item" data-dorm="Woodlawn">
+                    <span class="dorm-check">✓</span> Woodlawn
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div>
@@ -224,8 +247,12 @@
             </div>
           </div>
 
-          <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
-            <span style="font-size: 1.3rem; cursor: help;" title="Toggle content filter">🔞</span>
+          <div class="profanity-toggle-group" style="margin-top: 0.5rem;">
+            <span class="profanity-label">Profanity:</span>
+            <span class="profanity-info-icon" tabindex="0" aria-label="Info about profanity toggle">
+                ⓘ
+                <span class="profanity-tooltip">Toggles visibility of profane language in custom room names and notes. Some submissions contain adult language — this filter hides that content by default.</span>
+            </span>
             <label class="toggle-switch">
               <input type="checkbox" id="censor-toggle" onchange="toggleCensorship()">
               <span class="toggle-slider"></span>
@@ -374,18 +401,28 @@
 
                   <td>
                     <% if (room.houseCultureVal) { %>
+                      <%
+                        var cultureRounded = Math.round(parseFloat(room.houseCultureVal));
+                        var cultureColors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
+                        var cultureBg = cultureColors[cultureRounded] || 'transparent';
+                        var cultureTxt = cultureRounded === 3 ? '#333' : '#fff';
+                      %>
                       <div style="display:flex; align-items:center; gap:0.4rem;">
-                        <div style="width:<%= (parseFloat(room.houseCultureVal)/5*48) %>px; height:6px; background:#10b981; border-radius:3px; min-width:4px;"></div>
-                        <span style="font-size:0.85rem; font-weight:600;"><%= room.houseCultureVal %></span>
+                        <span style="display:inline-block; padding:0.15em 0.5em; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= cultureBg %>; color:<%= cultureTxt %>;"><%= room.houseCultureVal %></span>
                       </div>
                     <% } else { %><span style="color:#ccc;">&mdash;</span><% } %>
                   </td>
 
                   <td>
                     <% if (room.outsideNoiseVal) { %>
+                      <%
+                        var noiseRounded = Math.round(parseFloat(room.outsideNoiseVal));
+                        var noiseColors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
+                        var noiseBg = noiseColors[noiseRounded] || 'transparent';
+                        var noiseTxt = noiseRounded === 3 ? '#333' : '#fff';
+                      %>
                       <div style="display:flex; align-items:center; gap:0.4rem;">
-                        <div style="width:<%= (parseFloat(room.outsideNoiseVal)/5*48) %>px; height:6px; background:#ef4444; border-radius:3px; min-width:4px;"></div>
-                        <span style="font-size:0.85rem; font-weight:600;"><%= room.outsideNoiseVal %></span>
+                        <span style="display:inline-block; padding:0.15em 0.5em; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= noiseBg %>; color:<%= noiseTxt %>;"><%= room.outsideNoiseVal %></span>
                       </div>
                     <% } else { %><span style="color:#ccc;">&mdash;</span><% } %>
                   </td>
@@ -707,6 +744,71 @@
         document.addEventListener('DOMContentLoaded', function () {
           toggleCensorship();
         });
+
+        // ── Custom Dorm Filter Dropdown (R5) ──────────────────────
+        (function() {
+          var btn = document.getElementById('dorm-filter-btn');
+          var dropdown = document.getElementById('dorm-filter-dropdown');
+          var hiddenSelect = document.getElementById('dorm-filter');
+          var items = dropdown.querySelectorAll('.dorm-filter-item');
+          var selectedDorm = '';
+
+          // Toggle dropdown open/close
+          btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var isOpen = dropdown.classList.contains('open');
+            dropdown.classList.toggle('open');
+            btn.classList.toggle('open');
+          });
+
+          // Click on a dorm item: select or deselect
+          items.forEach(function(item) {
+            item.addEventListener('click', function(e) {
+              e.stopPropagation();
+              var dorm = item.getAttribute('data-dorm');
+
+              if (selectedDorm === dorm) {
+                // Deselect (click again)
+                selectedDorm = '';
+                item.classList.remove('selected');
+                btn.textContent = 'Filter by Dorm ▾';
+              } else {
+                // Deselect previous
+                items.forEach(function(i) { i.classList.remove('selected'); });
+                // Select new
+                selectedDorm = dorm;
+                item.classList.add('selected');
+                btn.textContent = dorm + ' ▾';
+              }
+
+              // Sync hidden select and trigger existing filter logic
+              hiddenSelect.value = selectedDorm;
+              onDormChange(selectedDorm);
+
+              // Close dropdown after selection
+              dropdown.classList.remove('open');
+              btn.classList.remove('open');
+            });
+          });
+
+          // Close dropdown on outside click
+          document.addEventListener('click', function(e) {
+            if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+              dropdown.classList.remove('open');
+              btn.classList.remove('open');
+            }
+          });
+
+          // Sync dropdown state when clear-filters resets the hidden select
+          var origClearHandler = document.getElementById('filter-clear-btn');
+          if (origClearHandler) {
+            origClearHandler.addEventListener('click', function() {
+              selectedDorm = '';
+              items.forEach(function(i) { i.classList.remove('selected'); });
+              btn.textContent = 'Filter by Dorm ▾';
+            });
+          }
+        })();
       </script>
   </body>
 

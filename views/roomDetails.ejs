@@ -130,41 +130,59 @@
             </p>
 
             <%
-              const roomSzLabels   = ["","Cramped","Tight","Average","Spacious","Expansive"];
-              const lightLabels    = ["","Very Dark","Dim","Moderate","Bright","Very Bright"];
-              const noiseLabels    = ["","Silent","Quiet","Moderate","Noisy","Very Noisy"];
-              const tempLabels     = ["","Very Difficult","Difficult","Manageable","Easy","Very Easy"];
-              const cultureLabels  = ["","Very Negative","Negative","Neutral","Positive","Very Positive"];
+              const roomSzLabels   = ["","Cramped","Small","Average","Spacious","Very Spacious"];
+              const lightLabels    = ["","Very Dark","Dark","Average","Bright","Very Bright"];
+              const noiseLabels    = ["","Very Loud","Loud","Average","Quiet","Very Quiet"];
+              const tempLabels     = ["","Very Poor","Poor","Average","Good","Excellent"];
+              const cultureLabels  = ["","Very Poor","Poor","Average","Good","Excellent"];
+
+              function ratingColor(val) {
+                const colors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
+                return colors[Math.round(val)] || 'transparent';
+              }
+              function ratingTextColor(val) {
+                return Math.round(val) === 3 ? '#333' : '#fff';
+              }
             %>
             <div style="background: #f9f9f9; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
               <h4 style="margin-top: 0;">Ratings (1–5)</h4>
-              <ul class="stat-list">
+              <table class="ratings-table">
                 <% if (latestEntry.scalars && latestEntry.scalars["room size"]) { %>
-                <li><span>Room Size</span>
-                  <strong><%= roomSzLabels[latestEntry.scalars["room size"]] || latestEntry.scalars["room size"] %> (<%= latestEntry.scalars["room size"] %>/5)</strong>
-                </li>
+                <% const rsVal = latestEntry.scalars["room size"]; %>
+                <tr style="background-color: <%= ratingColor(rsVal) %>; color: <%= ratingTextColor(rsVal) %>;">
+                  <td class="rating-label">Room Size</td>
+                  <td class="rating-value"><%= roomSzLabels[rsVal] || rsVal %> (<strong><%= rsVal %>/5</strong>)</td>
+                </tr>
                 <% } %>
                 <% if (latestEntry.scalars && latestEntry.scalars["natural light"]) { %>
-                <li><span>Natural Light</span>
-                  <strong><%= lightLabels[latestEntry.scalars["natural light"]] || latestEntry.scalars["natural light"] %> (<%= latestEntry.scalars["natural light"] %>/5)</strong>
-                </li>
+                <% const nlVal = latestEntry.scalars["natural light"]; %>
+                <tr style="background-color: <%= ratingColor(nlVal) %>; color: <%= ratingTextColor(nlVal) %>;">
+                  <td class="rating-label">Natural Light</td>
+                  <td class="rating-value"><%= lightLabels[nlVal] || nlVal %> (<strong><%= nlVal %>/5</strong>)</td>
+                </tr>
                 <% } %>
                 <% if (latestEntry.scalars && latestEntry.scalars["my room gets a lot of outside noise"]) { %>
-                <li><span>Outside Noise</span>
-                  <strong><%= noiseLabels[latestEntry.scalars["my room gets a lot of outside noise"]] || latestEntry.scalars["my room gets a lot of outside noise"] %> (<%= latestEntry.scalars["my room gets a lot of outside noise"] %>/5)</strong>
-                </li>
+                <% const onVal = latestEntry.scalars["my room gets a lot of outside noise"]; %>
+                <tr style="background-color: <%= ratingColor(onVal) %>; color: <%= ratingTextColor(onVal) %>;">
+                  <td class="rating-label">Outside Noise</td>
+                  <td class="rating-value"><%= noiseLabels[onVal] || onVal %> (<strong><%= onVal %>/5</strong>)</td>
+                </tr>
                 <% } %>
                 <% if (latestEntry.scalars && latestEntry.scalars["temperature control"]) { %>
-                <li><span>Temperature Control</span>
-                  <strong><%= tempLabels[latestEntry.scalars["temperature control"]] || latestEntry.scalars["temperature control"] %> (<%= latestEntry.scalars["temperature control"] %>/5)</strong>
-                </li>
+                <% const tcVal = latestEntry.scalars["temperature control"]; %>
+                <tr style="background-color: <%= ratingColor(tcVal) %>; color: <%= ratingTextColor(tcVal) %>;">
+                  <td class="rating-label">Temperature Control</td>
+                  <td class="rating-value"><%= tempLabels[tcVal] || tcVal %> (<strong><%= tcVal %>/5</strong>)</td>
+                </tr>
                 <% } %>
                 <% if (latestEntry.scalars && latestEntry.scalars["my house has a good culture"]) { %>
-                <li><span>House Culture</span>
-                  <strong><%= cultureLabels[latestEntry.scalars["my house has a good culture"]] || latestEntry.scalars["my house has a good culture"] %> (<%= latestEntry.scalars["my house has a good culture"] %>/5)</strong>
-                </li>
+                <% const hcVal = latestEntry.scalars["my house has a good culture"]; %>
+                <tr style="background-color: <%= ratingColor(hcVal) %>; color: <%= ratingTextColor(hcVal) %>;">
+                  <td class="rating-label">House Culture</td>
+                  <td class="rating-value"><%= cultureLabels[hcVal] || hcVal %> (<strong><%= hcVal %>/5</strong>)</td>
+                </tr>
                 <% } %>
-              </ul>
+              </table>
             </div>
 
             <% if (latestEntry.cultureTags && latestEntry.cultureTags.length > 0) { %>

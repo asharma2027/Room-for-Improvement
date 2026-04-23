@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<%- include('partials/head', { title: 'Dorm Rankings | Room for Improvement' }) %>
+</head>
+
+<body>
+  <%- include('partials/nav') %>
+
+  <main style="max-width:1100px; margin:0 auto; padding:2rem 1.5rem;">
+
+    <!-- Header -->
+    <div class="dorm-rankings-header">
+      <div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.5rem;">
+        <a href="/map"
+           style="display:flex; align-items:center; gap:0.4rem; color:var(--text-secondary); font-size:0.9rem; font-weight:500;">
+          ← Map
+        </a>
+        <span style="color:var(--border-color);">|</span>
+        <h1 style="margin:0; font-size:1.75rem;">Campus Dorm Rankings</h1>
+      </div>
+      <p>Compare all dorms at a glance — click a card to see house-level rankings</p>
+    </div>
+
+    <%
+      // Rating Color Scale helpers (R9)
+      function ratingColor(val) {
+        var colors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
+        return colors[Math.round(val)] || 'transparent';
+      }
+      function ratingTextColor(val) {
+        return Math.round(val) === 3 ? '#333' : '#fff';
+      }
+
+      var categories = [
+        { key: 'culture',     icon: '🏆', label: 'House Culture' },
+        { key: 'quietness',   icon: '🔇', label: 'Outside Noise' },
+        { key: 'sunlight',    icon: '☀️', label: 'Natural Light' },
+        { key: 'roomSize',    icon: '📦', label: 'Room Size' },
+        { key: 'tempControl', icon: '❄️', label: 'Temp Control' }
+      ];
+    %>
+
+    <% if (!dormScores || dormScores.length === 0) { %>
+      <div class="dorm-rankings-empty">
+        <p>No data available</p>
+      </div>
+    <% } else { %>
+      <div class="dorm-rankings-grid">
+        <% dormScores.forEach(function(dorm) { %>
+          <a href="/dorm/<%= encodeURIComponent(dorm.name) %>" class="dorm-rank-card">
+
+            <!-- Card Header: Dorm Name + House Count -->
+            <div class="dorm-rank-card-header">
+              <h2 class="dorm-rank-card-name"><%= dorm.name.replace(/_/g, '-') %></h2>
+              <span class="dorm-rank-card-badge">
+                🏠 <%= dorm.houseCount %> house<%= dorm.houseCount !== 1 ? 's' : '' %>
+              </span>
+            </div>
+
+            <!-- Score Bars -->
+            <div class="dorm-rank-scores">
+              <% categories.forEach(function(cat) {
+                var score = dorm.scores[cat.key];
+                var hasScore = score !== null && score !== undefined;
+                var rounded = hasScore ? Math.round(score) : null;
+                var pct = hasScore ? Math.max(4, (score / 5) * 100) : 0;
+              %>
+                <div class="dorm-score-row">
+                  <span class="dorm-score-label"><%= cat.icon %> <%= cat.label %></span>
+                  <div class="dorm-score-bar">
+                    <% if (hasScore) { %>
+                      <div class="dorm-score-bar-fill"
+                           style="width:<%= pct %>%; background:<%= ratingColor(score) %>;"></div>
+                    <% } %>
+                  </div>
+                  <% if (hasScore) { %>
+                    <span class="dorm-score-value"
+                          style="color:<%= ratingColor(score) %>;">
+                      <%= score.toFixed(1) %>
+                    </span>
+                  <% } else { %>
+                    <span class="dorm-score-value null-score">—</span>
+                  <% } %>
+                </div>
+              <% }); %>
+            </div>
+
+          </a>
+        <% }); %>
+      </div>
+    <% } %>
+
+    <!-- Hint -->
+    <p style="text-align:center; color:var(--text-secondary); font-size:0.85rem; margin-top:1.5rem;">
+      💡 Click any card to view house-level rankings within that dorm
+    </p>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Room for Improvement</p>
+  </footer>
+
+  <script id="dorm-scores-data" type="application/json"><%- dormScoresJson %></script>
+</body>
+</html>

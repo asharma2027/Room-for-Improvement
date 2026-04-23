@@ -4,9 +4,17 @@
         style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.35rem; color: var(--primary-color);">Room
         for Improvement</a></li>
     <% if (typeof user !=='undefined' && user) { %>
+      <li>
+        <div class="nav-search-wrapper">
+          <input type="text" class="nav-search-input" id="nav-search-input" placeholder="Search houses & rooms…" autocomplete="off" aria-label="Search houses and rooms" />
+          <div class="nav-search-dropdown" id="nav-search-dropdown" role="listbox" aria-label="Search results"></div>
+        </div>
+      </li>
       <li><a href="/map" class="<%= path === '/map' ? 'active' : '' %>">Campus
           Map</a></li>
       <li><a href="/rooms" class="<%= path === '/rooms' ? 'active' : '' %>">All Rooms</a></li>
+      <li><a href="/dorm-rankings" class="<%= path === '/dorm-rankings' ? 'active' : '' %>">Dorm Rankings</a></li>
+      <li><a href="<%= path === '/' ? '#feedback-section' : '/#feedback-section' %>" class="nav-feedback-btn">Leave Feedback</a></li>
       <li><a href="/logout">Logout</a></li>
       <% } else { %>
         <li><a href="/register" class="<%= path === '/register' ? 'active' : '' %>">Register</a></li>
@@ -15,3 +23,74 @@
         <% } %>
   </ul>
 </nav>
+
+<% if (typeof user !== 'undefined' && user) { %>
+<script>
+(function() {
+  const searchInput = document.getElementById('nav-search-input');
+  const dropdown = document.getElementById('nav-search-dropdown');
+  if (!searchInput || !dropdown) return;
+
+  let debounceTimer = null;
+
+  searchInput.addEventListener('input', function() {
+    const query = searchInput.value.trim();
+    clearTimeout(debounceTimer);
+
+    if (!query) {
+      dropdown.classList.remove('open');
+      dropdown.innerHTML = '';
+      return;
+    }
+
+    debounceTimer = setTimeout(function() {
+      fetch('/api/search?q=' + encodeURIComponent(query))
+        .then(function(res) { return res.json(); })
+        .then(function(results) {
+          dropdown.innerHTML = '';
+          if (results.length === 0) {
+            dropdown.innerHTML = '<div class="no-results">No results found</div>';
+          } else {
+            results.forEach(function(r) {
+              var item = document.createElement('a');
+              item.href = r.url;
+              item.className = 'nav-search-result';
+              item.setAttribute('role', 'option');
+              item.innerHTML =
+                '<span class="result-type">' + (r.type === 'house' ? 'House' : 'Room') + '</span>' +
+                '<span>' + escapeHtml(r.name) + '</span>' +
+                '<span class="result-dorm">' + escapeHtml(r.dorm) + '</span>';
+              dropdown.appendChild(item);
+            });
+          }
+          dropdown.classList.add('open');
+        })
+        .catch(function() {
+          dropdown.classList.remove('open');
+        });
+    }, 300);
+  });
+
+  // Close dropdown on outside click
+  document.addEventListener('click', function(e) {
+    if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.classList.remove('open');
+    }
+  });
+
+  // Close dropdown on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      dropdown.classList.remove('open');
+      searchInput.blur();
+    }
+  });
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+  }
+})();
+</script>
+<% } %>
