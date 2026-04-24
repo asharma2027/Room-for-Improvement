@@ -346,7 +346,7 @@
                   data-roomnumber="<%= parseInt(room.roomNumber) || 0 %>"
                   onclick="window.location='/rooms/<%= room.id %>'">
 
-                  <td style="font-weight: 600; font-size: 1.05em;">
+                  <td data-label="Room" style="font-weight: 600; font-size: 1.05em;">
                     <% if (room.customName) { %>
                       <div>
                         <span class="room-name" data-original="<%= room.customName %>" style="color:#800000;">
@@ -363,13 +363,13 @@
                     <% } %>
                   </td>
 
-                  <td><%= room.dorm %></td>
+                  <td data-label="Dorm"><%= room.dorm %></td>
 
-                  <td><%= room.house || '\u2014' %></td>
+                  <td data-label="House"><%= room.house || '\u2014' %></td>
 
-                  <td><%= room.floor || '\u2014' %></td>
+                  <td data-label="Floor"><%= room.floor || '\u2014' %></td>
 
-                  <td>
+                  <td data-label="Type">
                     <% if (room.roomType) { %>
                       <span style="display:inline-block; padding:0.2em 0.6em; border-radius:0.4rem; font-size:0.78rem; font-weight:600;
                         background: <%= room.roomType && room.roomType.toLowerCase().includes('double') ? '#dbeafe' : room.roomType && room.roomType.toLowerCase().includes('suite') ? '#f3e8ff' : '#f3f4f6' %>;
@@ -400,7 +400,7 @@
                     return '\ud83c\udff7\ufe0f';
                   }; %>
 
-                  <td>
+                  <td data-label="Tags">
                     <% if (room.tags) { %>
                       <div class="tags-container">
                         <% room.tags.split(', ').forEach(t => { %>
@@ -414,7 +414,7 @@
                     <% } %>
                   </td>
 
-                  <td>
+                  <td data-label="Culture">
                     <% if (room.houseCultureVal) { %>
                       <%
                         var cultureRounded = Math.round(parseFloat(room.houseCultureVal));
@@ -428,7 +428,7 @@
                     <% } else { %><span style="color:#ccc;">&mdash;</span><% } %>
                   </td>
 
-                  <td>
+                  <td data-label="Noise">
                     <% if (room.outsideNoiseVal) { %>
                       <%
                         var noiseRounded = Math.round(parseFloat(room.outsideNoiseVal));

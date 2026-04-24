@@ -239,6 +239,61 @@
         <script id="all-houses-data" type="application/json"><%- allHousesJson %></script>
         <script id="dorm-scores-data" type="application/json"><%- dormScoresJson %></script>
 
+        <!-- SVG legend repositioning at ≤480px (Requirement 3.5) -->
+        <script>
+            (function () {
+                var svg = document.getElementById('campus-svg');
+                // The two legend <g> elements are the last two children of the SVG
+                // Legend 1: translate(16, 450), Legend 2: translate(152, 450)
+                var legendGroups = svg ? Array.from(svg.querySelectorAll('g[transform^="translate(16, 450)"], g[transform^="translate(152, 450)"]')) : [];
+
+                var ORIGINAL_VIEWBOX = '0 0 900 560';
+                var MOBILE_VIEWBOX   = '0 0 900 680';  // extra 120px below map for legends
+
+                // Original transforms (inside the 900×560 viewBox)
+                var ORIGINAL_TRANSFORMS = ['translate(16, 450)', 'translate(152, 450)'];
+                // Repositioned transforms: side-by-side below the map content area
+                var MOBILE_TRANSFORMS   = ['translate(16, 575)', 'translate(152, 575)'];
+
+                function applyMobile() {
+                    if (!svg || legendGroups.length === 0) return;
+                    svg.setAttribute('viewBox', MOBILE_VIEWBOX);
+                    legendGroups.forEach(function (g, i) {
+                        g.setAttribute('transform', MOBILE_TRANSFORMS[i]);
+                    });
+                }
+
+                function applyDesktop() {
+                    if (!svg || legendGroups.length === 0) return;
+                    svg.setAttribute('viewBox', ORIGINAL_VIEWBOX);
+                    legendGroups.forEach(function (g, i) {
+                        g.setAttribute('transform', ORIGINAL_TRANSFORMS[i]);
+                    });
+                }
+
+                var mq = window.matchMedia('(max-width: 480px)');
+
+                function handleChange(e) {
+                    if (e.matches) {
+                        applyMobile();
+                    } else {
+                        applyDesktop();
+                    }
+                }
+
+                // Apply on load
+                handleChange(mq);
+
+                // Listen for viewport changes
+                if (mq.addEventListener) {
+                    mq.addEventListener('change', handleChange);
+                } else {
+                    // Safari <14 fallback
+                    mq.addListener(handleChange);
+                }
+            })();
+        </script>
+
         <script>
             let allHouses = [];
             try { allHouses = JSON.parse(document.getElementById('all-houses-data').textContent); } catch (e) { }

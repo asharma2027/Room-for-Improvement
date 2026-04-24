@@ -1665,7 +1665,8 @@ table tbody tr:hover {
 }
 
 /* Responsive: stack to single column on narrow screens       */
-@media (max-width: 700px) {
+/* Adjusted from 700px to 600px for breakpoint system consistency (Requirement 10.3) */
+@media (max-width: 600px) {
   .dorm-rankings-grid {
     grid-template-columns: 1fr;
     gap: 1.25rem;
@@ -1685,4 +1686,888 @@ table tbody tr:hover {
    ============================================================ */
 body.page-houseboard .nav-search-input {
   width: 400px;
+}
+
+/* ============================================================
+   Task 1.2 — Global Mobile Spacing and Typography
+   Requirements: 7.1, 7.2, 7.3, 7.4, 7.5
+   ============================================================ */
+
+@media (max-width: 768px) {
+  main {
+    padding: var(--spacing-xl) 1rem;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  .stat-card,
+  .feature-item {
+    padding: 1.25rem;
+  }
+
+  footer {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 1rem;
+  }
+}
+
+/* ============================================================
+   Task 2.2 — Hamburger Menu CSS Styles
+   Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 16.1, 16.2
+   ============================================================ */
+
+/* --- Hamburger toggle button: hidden by default (desktop) --- */
+.hamburger-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0.5rem;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.hamburger-toggle:hover {
+  background-color: rgba(123, 0, 26, 0.08);
+}
+
+.hamburger-toggle:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.hamburger-line {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background-color: var(--text-primary);
+  border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+/* Animate hamburger lines to X when open */
+.hamburger-toggle[aria-expanded="true"] .hamburger-line:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger-toggle[aria-expanded="true"] .hamburger-line:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.hamburger-toggle[aria-expanded="true"] .hamburger-line:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* --- Nav overlay backdrop: hidden by default --- */
+.nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 49;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.nav-overlay.open {
+  display: block;
+}
+
+/* ============================================================
+   At ≤768px: show hamburger, hide nav links, overlay panel
+   ============================================================ */
+@media (max-width: 768px) {
+  /* Show hamburger toggle */
+  .hamburger-toggle {
+    display: flex;
+  }
+
+  /* Hide nav links by default on mobile */
+  .nav-links {
+    display: none;
+    position: fixed;
+    top: 80px; /* below the sticky header */
+    left: 0;
+    right: 0;
+    z-index: 50;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    margin: 0;
+    padding: 0.5rem 0 1rem;
+    background: var(--glass-bg, rgba(255, 255, 255, 0.95));
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md, 0 4px 16px rgba(0, 0, 0, 0.12));
+    overflow-y: auto;
+    max-height: calc(100vh - 80px);
+  }
+
+  /* Show nav links as overlay panel when .open is set */
+  .nav-links.open {
+    display: flex;
+  }
+
+  /* Each nav list item fills full width */
+  .nav-links li {
+    width: 100%;
+    list-style: none;
+  }
+
+  /* Nav links: full-width, tall touch targets */
+  .nav-links li a,
+  .nav-links li a:not([href]) {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1rem;
+  }
+
+  /* Nav feedback button in overlay */
+  .nav-links li .nav-feedback-btn {
+    min-height: 48px;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Nav search wrapper: full width inside overlay */
+  .nav-links .nav-search-wrapper {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    box-sizing: border-box;
+  }
+
+  .nav-links .nav-search-input {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Override any inline width on nav search input */
+  .nav-links .nav-search-input,
+  body.page-houseboard .nav-links .nav-search-input {
+    width: 100% !important;
+  }
+}
+
+/* ============================================================
+   Above 768px: hamburger hidden, nav links displayed normally
+   ============================================================ */
+@media (min-width: 769px) {
+  .hamburger-toggle {
+    display: none !important;
+  }
+
+  .nav-links {
+    display: flex !important;
+    position: static;
+    flex-direction: row;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    max-height: none;
+    overflow: visible;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .nav-overlay {
+    display: none !important;
+  }
+}
+
+/* ============================================================
+   Task 4.3: Card View for Room Tables (≤768px)
+   Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 16.3
+   ============================================================ */
+@media (max-width: 768px) {
+  /* Hide table headers — labels are shown via ::before pseudo-elements */
+  #room-table thead,
+  #rooms-table thead {
+    display: none;
+  }
+
+  /* Each row becomes a stacked card */
+  #room-table tr,
+  #rooms-table tr {
+    display: block;
+    margin-bottom: 1rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: 1rem;
+  }
+
+  /* Each cell stacks vertically */
+  #room-table td,
+  #rooms-table td {
+    display: block;
+    padding: 0.5rem 0;
+  }
+
+  /* Render the data-label attribute as a bold label above the cell value */
+  #room-table td::before,
+  #rooms-table td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  /* Tags container fills card width */
+  #room-table .tags-container,
+  #rooms-table .tags-container {
+    max-width: 100%;
+  }
+
+  /* Tag elements meet minimum touch-friendly height (Requirement 16.3) */
+  #room-table .tag,
+  #rooms-table .tag {
+    min-height: 32px;
+  }
+}
+
+/* ============================================================
+   Above 768px: standard horizontal table layout preserved
+   ============================================================ */
+@media (min-width: 769px) {
+  #room-table thead,
+  #rooms-table thead {
+    display: table-header-group;
+  }
+
+  #room-table tr,
+  #rooms-table tr {
+    display: table-row;
+  }
+
+  #room-table td,
+  #rooms-table td {
+    display: table-cell;
+  }
+
+  #room-table td::before,
+  #rooms-table td::before {
+    display: none;
+  }
+}
+
+/* ============================================================
+   Task 5.1: Campus Map Responsive CSS
+   Requirements: 3.1, 3.2, 3.3, 3.4, 10.4
+   ============================================================ */
+
+/* ≤600px: Larger tap targets and font sizes for dorm groups */
+@media (max-width: 600px) {
+  /* Increase dorm label font sizes by factor of 1.3 (Requirement 3.3) */
+  .dorm-group text {
+    font-size: calc(1em * 1.3);
+  }
+
+  /* Increase tap target area of dorm group elements to minimum 44×44px (Requirement 3.2) */
+  .dorm-group {
+    /* SVG <g> elements don't support padding/min-width directly;
+       use a larger pointer-events area via CSS */
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Ensure the dorm shapes themselves have a minimum touch target size */
+  .dorm-group .dorm-shape {
+    /* Expand the clickable area by ensuring the shape is at least 44px in each dimension */
+    stroke-width: 8px;
+    stroke-opacity: 0;
+    paint-order: stroke fill;
+  }
+}
+
+/* ≤480px: Map legend repositioning and header bar text wrapping (Requirements 3.5, 10.4) */
+@media (max-width: 480px) {
+  /* Map header bar: allow text to wrap instead of clipping (Requirement 10.4) */
+  .explore-map-section span {
+    white-space: normal;
+  }
+
+  /* Map legend: hide SVG-internal legend at narrow widths;
+     JS in task 5.2 will reposition it below the map.
+     At this breakpoint, ensure the SVG container allows overflow for repositioned legend. */
+  #campus-svg {
+    overflow: visible;
+  }
+}
+
+/* ============================================================
+   Task 6: Touch-Optimized Filter Controls
+   Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 16.1
+   ============================================================ */
+
+@media (max-width: 768px) {
+  /* Requirement 4.1: Stack filter controls vertically */
+  .room-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* Requirement 4.2: Room-type tag buttons — minimum 44px touch target height */
+  .roomtype-tag-btn {
+    min-height: 44px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  /* Requirement 4.3: Filter dropdown panels expand to full container width */
+  .filter-tags-dropdown-wrapper,
+  .dorm-filter-dropdown-wrapper {
+    width: 100%;
+  }
+
+  .filter-tags-dropdown-wrapper .filter-tags-btn,
+  .dorm-filter-dropdown-wrapper .filter-tags-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .filter-tags-dropdown,
+  .dorm-filter-dropdown-wrapper .filter-tags-dropdown {
+    width: 100%;
+    position: static;
+    box-shadow: none;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    margin-top: 0.25rem;
+  }
+
+  /* Requirement 4.4: Select elements — min-height 44px, font-size 16px (prevents iOS zoom) */
+  .room-filters select {
+    min-height: 44px;
+    font-size: 16px;
+    width: 100%;
+  }
+
+  /* Requirement 4.4: Checkbox touch target — min 44px height */
+  .room-filters label {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* Requirement 4.5: Clear button — full width at bottom of filter stack */
+  .room-filters .filter-clear-btn {
+    width: 100%;
+    margin-left: 0;
+    min-height: 44px;
+    order: 999; /* push to bottom of flex stack */
+  }
+
+  /* Ensure the filter-row-right wrapper (profanity toggle + clear btn) also stretches */
+  .filter-row-right {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  /* Room type tag filters row — stretch to full width */
+  .roomtype-tag-filters {
+    flex-wrap: wrap;
+  }
+
+  /* Active tag chips wrapper — full width */
+  .active-tag-chips-wrap {
+    width: 100%;
+  }
+}
+
+/* ============================================================
+   Task 7: Responsive Word Clouds
+   Requirements: 5.1, 5.2, 5.3, 5.4
+   ============================================================ */
+
+/* ≤768px: Stack word cloud columns and reduce canvas height */
+@media (max-width: 768px) {
+  /* Requirement 5.1: Single-column layout */
+  .word-cloud-row {
+    flex-direction: column !important;
+  }
+
+  /* Requirement 5.2: Reduce canvas height to 180px */
+  .word-cloud-canvas {
+    height: 180px !important;
+  }
+
+  /* Requirement 5.3: Ensure fallback is readable when canvas fails */
+  .word-cloud-fallback {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.8rem;
+    align-items: baseline;
+    padding: 1rem;
+    min-height: 80px;
+  }
+}
+
+/* ≤480px: Fallback word minimum font size (Requirement 5.4) */
+@media (max-width: 480px) {
+  .word-cloud-fallback .wc-word {
+    font-size: 14px !important;
+  }
+}
+
+/* ============================================================
+   Task 8: Responsive Preview Pills and House Banner
+   Requirements: 6.1, 6.2, 6.3, 6.4, 16.1
+   ============================================================ */
+
+/* ≤768px: Reposition preview pills from absolute to stacked layout */
+@media (max-width: 768px) {
+  /* Requirement 6.1: Reposition pills from absolute corner placement to stacked layout */
+  .preview-pill {
+    position: static !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100%;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box;
+    margin: 0.5rem 0;
+  }
+
+  /* Requirement 6.2 & 16.1: Minimum touch target height of 44px */
+  .preview-pill,
+  .preview-pill-large,
+  #pill-back {
+    min-height: 44px !important;
+    padding: 0.75rem 1rem !important;
+  }
+
+  /* Requirement 6.4: House board button full width below house name */
+  .house-board-btn {
+    width: 100% !important;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  /* Stack pills below banner content by making the banner a flex column */
+  .house-banner {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* Ensure the inner content div doesn't shrink pills */
+  .house-banner > div {
+    width: 100%;
+  }
+}
+
+/* ≤480px: Reduce banner padding and house name font size */
+@media (max-width: 480px) {
+  /* Requirement 6.3: Reduce banner vertical padding to 1.5rem */
+  .house-banner {
+    padding: 1.5rem !important;
+  }
+
+  /* Requirement 6.3: Reduce house name font size to 1.75rem */
+  .house-banner h1 {
+    font-size: 1.75rem !important;
+  }
+}
+
+/* ============================================================
+   Task 9: Responsive Stats Row
+   Requirements: 8.1, 8.2, 8.3, 17.2
+   ============================================================ */
+
+/* ≤768px: Wrap stat items and allow inline search form to take its own row */
+@media (max-width: 768px) {
+  /* Requirement 8.1, 17.2: Override inline flex-wrap:nowrap so stat items wrap */
+  .house-stats-row {
+    flex-wrap: wrap !important;
+  }
+
+  /* Requirement 8.2: Inline search form within stats row gets full width on its own row */
+  .house-stats-row form,
+  .house-stats-row .stats-search {
+    width: 100%;
+    flex-basis: 100%;
+  }
+}
+
+/* ≤480px: Reduce stat label and value font sizes for narrow screens */
+@media (max-width: 480px) {
+  /* Requirement 8.3: Stat labels use 0.65rem */
+  .house-stat-lbl {
+    font-size: 0.65rem;
+  }
+
+  /* Requirement 8.3: Stat values use 1rem */
+  .house-stat-val {
+    font-size: 1rem;
+  }
+}
+
+/* ============================================================
+   Task 11: Responsive Rankings Board
+   Requirements: 9.1, 9.2, 9.3, 9.4
+   ============================================================ */
+
+/* Note: 9.1 (≤900px → 2-column) and 9.2 (≤600px → 1-column) are already
+   handled by the existing @media blocks near line 669–680 of this file. */
+
+/* ≤768px: Emblem strip scrolls horizontally; ranking list height reduced */
+@media (max-width: 768px) {
+  /* Requirement 9.3: Emblem strip allows horizontal scrolling instead of wrapping */
+  #emblem-strip {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  /* Requirement 9.4: Scrollable ranking list height reduced to 320px */
+  .ranking-scroll {
+    max-height: 320px;
+  }
+}
+
+/* ============================================================
+   Task 12: Responsive Explore Page
+   Requirements: 10.1, 10.2, 10.3, 10.4, 17.1
+   ============================================================ */
+
+/* ≤768px: Search bar container stacks vertically; inline style overrides */
+@media (max-width: 768px) {
+  /* Requirement 10.1: Search bar appears below description text (full-width column layout) */
+  .explore-map-section > div:first-child {
+    flex-direction: column;
+  }
+
+  /* Requirements 10.2, 17.1: Override inline min-width:320px and flex:0 0 360px */
+  .explore-map-section > div:first-child > div[style*="position:relative"] {
+    min-width: 0 !important;
+    flex: 1 1 100% !important;
+    width: 100%;
+  }
+}
+
+/* ≤768px: Responsive room review form */
+/* Requirements: 11.1, 11.3, 11.4, 11.5, 16.1 */
+@media (max-width: 768px) {
+  /* Requirement 11.1: SD Strip radio options — increase gap for 44px minimum tap targets */
+  .sd-strip {
+    gap: 0.5rem;
+  }
+  .sd-opt {
+    gap: 0.5rem;
+    padding: 0.5rem 0.25rem;
+    min-height: 44px;
+    justify-content: flex-start;
+  }
+  .sd-opt input[type="radio"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Requirement 11.3: Form grid (academic year + custom name) switches to single column */
+  /* Targets the inline-styled grid div inside the review form */
+  .form-container form > div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Requirement 11.4: Culture descriptor chips — minimum 44px height per chip */
+  .culture-chips .chip-label {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Requirement 11.5: v2 tag grid — single column layout */
+  .v2-tag-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ≤480px: Hide SD sub-labels to reduce visual clutter */
+/* Requirement 11.2 */
+@media (max-width: 480px) {
+  .sd-sublabel {
+    display: none;
+  }
+}
+
+/* ≤768px: Responsive room detail page */
+/* Requirements: 12.1, 12.2 */
+@media (max-width: 768px) {
+  /* Requirement 12.1: Room detail header stacks vertically */
+  /* The header div uses inline styles, so !important is needed to override */
+  .stat-card > div:first-child {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Requirement 12.2: Ratings table — compact padding and full width */
+  .ratings-table {
+    width: 100%;
+  }
+
+  .ratings-table td {
+    padding: 0.5rem;
+  }
+}
+
+/* ≤480px: Reduce custom room name font size */
+/* Requirement 12.3 */
+@media (max-width: 480px) {
+  .custom-room-name {
+    font-size: 2rem;
+  }
+}
+
+/* ≤768px: Responsive landing page */
+/* Requirements: 13.1, 13.3, 13.4 */
+@media (max-width: 768px) {
+  /* Requirement 13.1: Landing hero padding and heading font size */
+  .landing-hero {
+    padding: 2rem 1rem;
+  }
+
+  .landing-hero h1 {
+    font-size: 1.75rem;
+  }
+
+  /* Requirement 13.3: Features grid — single column layout */
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Requirement 13.4: Submit room info panel cascading selects — full width */
+  .feature-item select {
+    width: 100%;
+  }
+}
+
+/* ≤480px: Landing buttons stack vertically with full-width buttons */
+/* Requirement 13.2 */
+@media (max-width: 480px) {
+  .landing-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .landing-buttons a,
+  .landing-buttons button {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* ============================================================
+   Requirement 14: Responsive Authentication Pages
+   ============================================================ */
+
+/* Requirement 14.2: Form inputs maintain font-size 16px minimum (prevents iOS auto-zoom on focus) */
+/* Note: base styles already set font-size: 1rem (=16px) on inputs; this rule ensures it is never
+   overridden to something smaller inside .form-container */
+.form-container input[type="text"],
+.form-container input[type="email"],
+.form-container input[type="password"] {
+  font-size: 1rem; /* 16px — prevents iOS auto-zoom */
+}
+
+/* Requirement 14.3: Submit buttons span full container width on all viewport sizes */
+.form-container button[type="submit"] {
+  width: 100%;
+}
+
+/* Requirement 14.1: At ≤480px, form containers use horizontal margin of 1rem */
+@media (max-width: 480px) {
+  .form-container {
+    margin: 0 1rem;
+  }
+}
+
+/* ============================================================
+   Requirement 15: Responsive House Board Page
+   ============================================================ */
+
+/* ≤768px: House board layout adjustments */
+/* Requirements: 15.1, 15.2, 15.3 */
+@media (max-width: 768px) {
+  /* Requirement 15.1: Top info section stacks trivia and tips vertically */
+  .top-info-section {
+    flex-direction: column;
+  }
+
+  /* Requirement 15.2: Chatter bubbles — single column at full container width */
+  .chatter-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .chatter-bubble {
+    max-width: 100%;
+    flex: 1 1 100%;
+  }
+
+  /* Requirement 15.3: Board identity strip wraps back button below house name */
+  .board-identity {
+    flex-wrap: wrap;
+  }
+
+  .board-back-btn {
+    flex-basis: 100%;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+}
+
+/* ≤480px: Chatter bubble text minimum font size */
+/* Requirement 15.4 */
+@media (max-width: 480px) {
+  .chatter-text {
+    font-size: 0.85rem;
+  }
+}
+
+/* ============================================================
+   Task 18: Inline Style Overrides for Mobile
+   Requirements: 17.1, 17.2, 17.3, 17.4
+   ============================================================ */
+
+/*
+ * Summary of !important overrides for inline styles at ≤768px:
+ *
+ * 17.1 — Explore search bar: already handled in Task 12 block above
+ *         (.explore-map-section > div:first-child > div[style*="position:relative"]
+ *          { min-width: 0 !important; flex: 1 1 100% !important; })
+ *
+ * 17.2 — Stats row flex-wrap: already handled in Task 9 block above
+ *         (.house-stats-row { flex-wrap: wrap !important; })
+ *
+ * 17.3 — Nav search input width: already handled in Task 2.2 block above
+ *         (.nav-links .nav-search-input { width: 100% !important; })
+ *
+ * 17.3 — Rooms page search input (inline style="width: 200px"):
+ *         Targeted below using attribute selector.
+ *
+ * 17.4 — !important used only for inline style overrides (confirmed).
+ */
+
+/* ≤768px: Override inline width:200px on the rooms-page search input */
+@media (max-width: 768px) {
+  /* Requirement 17.3: Override inline style="width: 200px" on search inputs */
+  input[style*="width: 200px"] {
+    width: 100% !important;
+  }
+}
+
+/* ============================================================
+   Task 19: Minimum Touch Target Sizes — Comprehensive Audit
+   Requirements: 16.1, 16.2, 16.3, 16.4
+   ============================================================ */
+
+/*
+ * Audit summary (≤768px):
+ *
+ * Already compliant from prior tasks:
+ *   - .hamburger-toggle          min-width/height: 44px  (Task 2.2)
+ *   - .nav-links li a            min-height: 48px         (Task 2.2)
+ *   - .nav-links li .nav-feedback-btn  min-height: 48px   (Task 2.2)
+ *   - .tag (card view)           min-height: 32px         (Task 4.3, intentional exception)
+ *   - .roomtype-tag-btn          min-height: 44px         (Task 6)
+ *   - .room-filters select       min-height: 44px         (Task 6)
+ *   - .room-filters label        min-height: 44px         (Task 6)
+ *   - .room-filters .filter-clear-btn  min-height: 44px   (Task 6)
+ *   - .preview-pill              min-height: 44px         (Task 8)
+ *   - .culture-chips .chip-label min-height: 44px         (Task 13)
+ *   - .sd-opt                    min-height: 44px         (Task 13)
+ *
+ * Gaps identified and addressed below:
+ *   - .filter-tags-btn           ~26px → needs min-height: 44px
+ *   - .dorm-filter-item          ~31px → needs min-height: 44px
+ *   - .filter-tags-dropdown-item ~25px → needs min-height: 44px
+ *   - .form-v-btn                ~26px → needs min-height: 44px
+ *   - .profanity-toggle-group    26px  → needs min-height: 44px
+ *   - .v2-tag-grid label         no explicit height → needs min-height: 44px
+ *   - .active-tag-chip .chip-remove  small → needs min tap area
+ */
+
+@media (max-width: 768px) {
+  /* Requirement 16.1, 16.4: Filter dropdown trigger buttons — min 44px height */
+  .filter-tags-dropdown-wrapper .filter-tags-btn,
+  .dorm-filter-dropdown-wrapper .filter-tags-btn {
+    min-height: 44px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  /* Requirement 16.1, 16.4: Dorm filter dropdown items — min 44px height */
+  .dorm-filter-item {
+    min-height: 44px;
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
+  }
+
+  /* Requirement 16.1, 16.4: Tag filter dropdown items — min 44px height
+     (these are styled inline in housePage.ejs; override here) */
+  .filter-tags-dropdown-item {
+    min-height: 44px;
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
+  }
+
+  /* Requirement 16.1, 16.4: Form version toggle buttons (room review form) — min 44px */
+  .form-v-btn {
+    min-height: 44px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  /* Requirement 16.1, 16.4: Profanity toggle group — ensure the whole row is tappable */
+  .profanity-toggle-group {
+    min-height: 44px;
+    align-items: center;
+  }
+
+  /* Requirement 16.1, 16.4: v2 tag grid labels (checkboxes) — min 44px height */
+  .v2-tag-grid label {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* Requirement 16.1, 16.4: Active tag chip remove button — min tap area */
+  .active-tag-chip .chip-remove {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }

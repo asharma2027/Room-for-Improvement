@@ -1,5 +1,10 @@
 <nav class="glass">
-  <ul>
+  <button class="hamburger-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
+  <ul class="nav-links" id="nav-links">
     <li><a href="/" class="<%= path === '/' ? 'active' : '' %>"
         style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.35rem; color: var(--primary-color);">Room
         for Improvement</a></li>
@@ -21,6 +26,7 @@
         <% } %>
   </ul>
 </nav>
+<div class="nav-overlay" id="nav-overlay"></div>
 
 <% if (typeof user !== 'undefined' && user) { %>
 <script>
@@ -92,3 +98,54 @@
 })();
 </script>
 <% } %>
+
+<script>
+(function() {
+  var toggle = document.querySelector('.hamburger-toggle');
+  var navLinks = document.getElementById('nav-links');
+  var overlay = document.getElementById('nav-overlay');
+
+  if (!toggle || !navLinks || !overlay) return;
+
+  function openNav() {
+    navLinks.classList.add('open');
+    overlay.classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+  }
+
+  function closeNav() {
+    navLinks.classList.remove('open');
+    overlay.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+  }
+
+  // Toggle on hamburger click
+  toggle.addEventListener('click', function() {
+    if (navLinks.classList.contains('open')) {
+      closeNav();
+    } else {
+      openNav();
+    }
+  });
+
+  // Close on nav link click
+  navLinks.querySelectorAll('a').forEach(function(link) {
+    link.addEventListener('click', function() {
+      closeNav();
+    });
+  });
+
+  // Close on overlay (outside) click
+  overlay.addEventListener('click', function() {
+    closeNav();
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && navLinks.classList.contains('open')) {
+      closeNav();
+      toggle.focus();
+    }
+  });
+})();
+</script>
