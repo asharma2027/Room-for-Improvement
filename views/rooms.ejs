@@ -239,12 +239,27 @@
               </div>
             </div>
 
-            <div>
-              <label for="house-filter" style="margin-bottom: 0.25rem; font-size: 0.85rem;">Filter by House</label>
-              <select id="house-filter" onchange="applyFilters()" disabled>
-                <option value="">All Houses</option>
-              </select>
+            <%# Custom house filter dropdown (R12) %>
+            <div class="dorm-filter-dropdown-wrapper">
+              <button type="button" class="filter-tags-btn" id="house-filter-btn">Filter by Houses ▾</button>
+              <div class="filter-tags-dropdown" id="house-filter-dropdown">
+                <% Object.keys(dormHousesMap).sort().forEach(function(dorm) { %>
+                  <div class="house-filter-dorm-header" data-dorm="<%= dorm %>">
+                    <%= dorm %>
+                  </div>
+                  <% (dormHousesMap[dorm] || []).sort().forEach(function(house) { %>
+                    <div class="house-filter-item" data-dorm="<%= dorm %>" data-house="<%= house %>">
+                      <span class="house-check">✓</span> <%= house %>
+                    </div>
+                  <% }) %>
+                <% }) %>
+              </div>
             </div>
+
+            <%# Hidden legacy house select — kept for applyFilters compatibility %>
+            <select id="house-filter" style="display:none;" onchange="applyFilters()">
+              <option value="">All Houses</option>
+            </select>
           </div>
 
           <div class="profanity-toggle-group" style="margin-top: 0.5rem;">
@@ -309,7 +324,7 @@
                 <th class="sortable" data-sort-key="roomtype">Type <span class="sort-indicator"></span></th>
                 <th>Tags</th>
                 <th class="sortable" data-sort-key="culture">Culture <span class="sort-indicator"></span></th>
-                <th class="sortable" data-sort-key="noise">Noise <span class="sort-indicator"></span></th>
+                <th class="sortable" data-sort-key="noise">Noise Level <span class="sort-indicator"></span></th>
               </tr>
             </thead>
             <tbody id="rooms-body">
@@ -417,9 +432,9 @@
                     <% if (room.outsideNoiseVal) { %>
                       <%
                         var noiseRounded = Math.round(parseFloat(room.outsideNoiseVal));
-                        var noiseColors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
+                        var noiseColors = { 1: '#34877A', 2: '#92B89D', 3: '#EFE6D1', 4: '#D69772', 5: '#AE5436' };
                         var noiseBg = noiseColors[noiseRounded] || 'transparent';
-                        var noiseTxt = noiseRounded === 3 ? '#333' : '#fff';
+                        var noiseTxt = (noiseRounded === 1 || noiseRounded === 5) ? '#fff' : '#1a1a1a';
                       %>
                       <div style="display:flex; align-items:center; gap:0.4rem;">
                         <span style="display:inline-block; padding:0.15em 0.5em; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= noiseBg %>; color:<%= noiseTxt %>;"><%= room.outsideNoiseVal %></span>
@@ -539,9 +554,11 @@
         }
 
         // ── Unified applyFilters ───────────────────────────────────
+        // selectedHouseFilters is managed by the house filter dropdown
+        var selectedHouseFilters = [];
+
         function applyFilters() {
           const selectedDorm = document.getElementById("dorm-filter").value;
-          const selectedHouse = document.getElementById("house-filter").value;
           const floorSel = document.getElementById("filter-floor");
           const reviewChk = document.getElementById("filter-hasreview");
           const selectedFloor = floorSel ? floorSel.value : '';
@@ -562,7 +579,10 @@
 
             let show = true;
             if (selectedDorm && rowDorm !== selectedDorm) show = false;
-            if (show && selectedHouse && rowHouse !== selectedHouse) show = false;
+            // House filter: if houses are selected, row must match one of them
+            if (show && selectedHouseFilters.length > 0) {
+              if (selectedHouseFilters.indexOf(rowHouse) === -1) show = false;
+            }
             if (show && selectedFloor && rowFloor !== selectedFloor) show = false;
             if (show && activeRoomTyp && rowType !== activeRoomTyp) show = false;
             if (show && hasReview && rowHasReview !== '1') show = false;
@@ -590,6 +610,17 @@
           const hf = document.getElementById('house-filter');
           hf.innerHTML = '<option value="">All Houses</option>';
           hf.disabled = true;
+          // Clear house filter dropdown selections
+          selectedHouseFilters = [];
+          var hfItems = document.querySelectorAll('#house-filter-dropdown .house-filter-item');
+          hfItems.forEach(function(i) { i.classList.remove('selected'); });
+          var hfBtn = document.getElementById('house-filter-btn');
+          if (hfBtn) hfBtn.textContent = 'Filter by Houses ▾';
+          // Show all dorm headers and house items in the house dropdown
+          var hfHeaders = document.querySelectorAll('#house-filter-dropdown .house-filter-dorm-header');
+          hfHeaders.forEach(function(h) { h.style.display = ''; });
+          hfItems.forEach(function(i) { i.style.display = ''; });
+
           const ff = document.getElementById('filter-floor');
           if (ff) ff.value = '';
           if (window._clearRoomTypeBtns) window._clearRoomTypeBtns();
@@ -759,6 +790,11 @@
             var isOpen = dropdown.classList.contains('open');
             dropdown.classList.toggle('open');
             btn.classList.toggle('open');
+            // Close house dropdown if open
+            var houseDropdown = document.getElementById('house-filter-dropdown');
+            var houseBtn = document.getElementById('house-filter-btn');
+            if (houseDropdown) houseDropdown.classList.remove('open');
+            if (houseBtn) houseBtn.classList.remove('open');
           });
 
           // Click on a dorm item: select or deselect
@@ -785,6 +821,10 @@
               hiddenSelect.value = selectedDorm;
               onDormChange(selectedDorm);
 
+              // When dorm filter changes, clear house selections that no longer belong
+              // and update house dropdown visibility
+              updateHouseDropdownForDorm(selectedDorm);
+
               // Close dropdown after selection
               dropdown.classList.remove('open');
               btn.classList.remove('open');
@@ -808,6 +848,110 @@
               btn.textContent = 'Filter by Dorm ▾';
             });
           }
+        })();
+
+        // ── Custom House Filter Dropdown (R12) ────────────────────
+        function updateHouseDropdownForDorm(activeDorm) {
+          var houseItems = document.querySelectorAll('#house-filter-dropdown .house-filter-item');
+          var dormHeaders = document.querySelectorAll('#house-filter-dropdown .house-filter-dorm-header');
+
+          if (!activeDorm) {
+            // No dorm filter — show all houses and headers
+            dormHeaders.forEach(function(h) { h.style.display = ''; });
+            houseItems.forEach(function(i) { i.style.display = ''; });
+          } else {
+            // Show only houses within the selected dorm
+            dormHeaders.forEach(function(h) {
+              h.style.display = h.getAttribute('data-dorm') === activeDorm ? '' : 'none';
+            });
+            houseItems.forEach(function(i) {
+              i.style.display = i.getAttribute('data-dorm') === activeDorm ? '' : 'none';
+            });
+          }
+
+          // Clear house selections that no longer belong to the selected dorm
+          var changed = false;
+          for (var idx = selectedHouseFilters.length - 1; idx >= 0; idx--) {
+            var house = selectedHouseFilters[idx];
+            // Find the item for this house and check its dorm
+            var matchItem = document.querySelector('#house-filter-dropdown .house-filter-item[data-house="' + house + '"]');
+            if (matchItem) {
+              var itemDorm = matchItem.getAttribute('data-dorm');
+              if (activeDorm && itemDorm !== activeDorm) {
+                matchItem.classList.remove('selected');
+                selectedHouseFilters.splice(idx, 1);
+                changed = true;
+              }
+            }
+          }
+
+          // Update button text
+          var houseBtn = document.getElementById('house-filter-btn');
+          if (selectedHouseFilters.length === 0) {
+            houseBtn.textContent = 'Filter by Houses ▾';
+          } else if (selectedHouseFilters.length === 1) {
+            houseBtn.textContent = selectedHouseFilters[0] + ' ▾';
+          } else {
+            houseBtn.textContent = selectedHouseFilters.length + ' Houses ▾';
+          }
+
+          if (changed) applyFilters();
+        }
+
+        (function() {
+          var btn = document.getElementById('house-filter-btn');
+          var dropdown = document.getElementById('house-filter-dropdown');
+          var items = dropdown.querySelectorAll('.house-filter-item');
+
+          // Toggle dropdown open/close
+          btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdown.classList.toggle('open');
+            btn.classList.toggle('open');
+            // Close dorm dropdown if open
+            var dormDropdown = document.getElementById('dorm-filter-dropdown');
+            var dormBtn = document.getElementById('dorm-filter-btn');
+            if (dormDropdown) dormDropdown.classList.remove('open');
+            if (dormBtn) dormBtn.classList.remove('open');
+          });
+
+          // Click on a house item: toggle selection
+          items.forEach(function(item) {
+            item.addEventListener('click', function(e) {
+              e.stopPropagation();
+              var house = item.getAttribute('data-house');
+
+              if (item.classList.contains('selected')) {
+                // Deselect
+                item.classList.remove('selected');
+                var idx = selectedHouseFilters.indexOf(house);
+                if (idx !== -1) selectedHouseFilters.splice(idx, 1);
+              } else {
+                // Select
+                item.classList.add('selected');
+                selectedHouseFilters.push(house);
+              }
+
+              // Update button text
+              if (selectedHouseFilters.length === 0) {
+                btn.textContent = 'Filter by Houses ▾';
+              } else if (selectedHouseFilters.length === 1) {
+                btn.textContent = selectedHouseFilters[0] + ' ▾';
+              } else {
+                btn.textContent = selectedHouseFilters.length + ' Houses ▾';
+              }
+
+              applyFilters();
+            });
+          });
+
+          // Close dropdown on outside click
+          document.addEventListener('click', function(e) {
+            if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+              dropdown.classList.remove('open');
+              btn.classList.remove('open');
+            }
+          });
         })();
       </script>
   </body>

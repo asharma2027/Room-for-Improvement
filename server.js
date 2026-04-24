@@ -488,12 +488,13 @@ function getDormBackground(dormName) {
   return dormBackgroundsCache[dormName] || null;
 }
 
-// GET /map - campus map
-app.get('/map', ensureAuthenticated, (req, res) => {
+// GET /explore - combined campus map + dorm rankings page
+app.get('/explore', ensureAuthenticated, (req, res) => {
   readRooms((err, rooms) => {
     if (err) return res.status(500).send('Error');
+
+    // Map data
     const dormHousesMap = buildDormHousesMap(rooms);
-    // Build list of all houses for search
     const allHouses = [];
     Object.entries(dormHousesMap).forEach(([dorm, houses]) => {
       houses.forEach(house => {
@@ -504,8 +505,33 @@ app.get('/map', ensureAuthenticated, (req, res) => {
         });
       });
     });
-    res.render('map', { user: req.user, allHousesJson: JSON.stringify(allHouses) });
+
+    // Rankings data
+    const entries = readRoomEntries();
+    const dorms = [...new Set(rooms.map(r => r.dorm))];
+    const dormScores = dorms.map(dorm => {
+      const houseRankings = computeDormRankings(dorm, rooms, entries);
+      const categories = ['culture', 'quietness', 'sunlight', 'roomSize', 'tempControl'];
+      const scores = {};
+      categories.forEach(cat => {
+        const vals = houseRankings.map(h => h.scores[cat]).filter(v => v !== null);
+        scores[cat] = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+      });
+      return { name: dorm, scores, houseCount: houseRankings.length };
+    });
+
+    res.render('explore', {
+      user: req.user,
+      allHousesJson: JSON.stringify(allHouses),
+      dormScores,
+      dormScoresJson: JSON.stringify(dormScores)
+    });
   });
+});
+
+// GET /map - redirect to /explore (R5.6)
+app.get('/map', ensureAuthenticated, (req, res) => {
+  res.redirect('/explore');
 });
 
 // GET /api/houses - JSON for search autocomplete
@@ -553,24 +579,9 @@ app.get('/api/search', ensureAuthenticated, (req, res) => {
   });
 });
 
-// GET /dorm-rankings - campus-wide dorm rankings page
+// GET /dorm-rankings - redirect to /explore (R5.7)
 app.get('/dorm-rankings', ensureAuthenticated, (req, res) => {
-  readRooms((err, rooms) => {
-    if (err) return res.status(500).send('Error');
-    const entries = readRoomEntries();
-    const dorms = [...new Set(rooms.map(r => r.dorm))];
-    const dormScores = dorms.map(dorm => {
-      const houseRankings = computeDormRankings(dorm, rooms, entries);
-      const categories = ['culture', 'quietness', 'sunlight', 'roomSize', 'tempControl'];
-      const scores = {};
-      categories.forEach(cat => {
-        const vals = houseRankings.map(h => h.scores[cat]).filter(v => v !== null);
-        scores[cat] = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
-      });
-      return { name: dorm, scores, houseCount: houseRankings.length };
-    });
-    res.render('dormRankingsAll', { user: req.user, dormScores, dormScoresJson: JSON.stringify(dormScores) });
-  });
+  res.redirect('/explore');
 });
 
 // GET /dorm/:dorm - house rankings for a dorm

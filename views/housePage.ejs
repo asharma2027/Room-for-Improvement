@@ -464,7 +464,7 @@
             #room-table th[data-sort-key="tempControl"] {
                 width: 74px;
                 min-width: 68px;
-                max-width: 82px;
+                max-width: 76px;
             }
 
             /* ── Fix #2: Word cloud two-column layout ── */
@@ -482,11 +482,11 @@
                 height: 180px;
             }
             .word-cloud-row .word-cloud-section h3 {
-                font-size: 0.95rem;
+                font-size: 1.15rem;
                 margin-bottom: 0.25rem;
             }
             .word-cloud-row .word-cloud-sub {
-                font-size: 0.72rem;
+                font-size: 0.82rem;
                 margin-bottom: 0.5rem;
             }
 
@@ -822,7 +822,7 @@
                                 <th class="sortable" data-sort-key="roomType">Type <span class="sort-indicator"></span></th>
                                 <th class="sortable" data-sort-key="tags">Tags <span class="sort-indicator"></span></th>
                                 <th class="sortable" data-sort-key="culture">Culture <span class="sort-indicator"></span></th>
-                                <th class="sortable" data-sort-key="noise">Noise <span class="sort-indicator"></span></th>
+                                <th class="sortable" data-sort-key="noise">Noise Level <span class="sort-indicator"></span></th>
                                 <th class="sortable" data-sort-key="roomSize">Room Size <span class="sort-indicator"></span></th>
                                 <th class="sortable" data-sort-key="naturalLight">Natural Light <span class="sort-indicator"></span></th>
                                 <th class="sortable" data-sort-key="tempControl">Temp Control <span class="sort-indicator"></span></th>
@@ -924,9 +924,9 @@
                 <% if (room.outsideNoiseVal) { %>
                   <%
                     var noiseRounded = Math.round(parseFloat(room.outsideNoiseVal));
-                    var noiseColors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
+                    var noiseColors = { 1: '#34877A', 2: '#92B89D', 3: '#EFE6D1', 4: '#D69772', 5: '#AE5436' };
                     var noiseBg = noiseColors[noiseRounded] || 'transparent';
-                    var noiseTxt = noiseRounded === 3 ? '#333' : '#fff';
+                    var noiseTxt = (noiseRounded === 1 || noiseRounded === 5) ? '#fff' : '#1a1a1a';
                   %>
                   <div style="display:flex; align-items:center; gap:0.4rem;">
                     <span style="display:inline-block; padding:0.15em 0.5em; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= noiseBg %>; color:<%= noiseTxt %>;"><%= room.outsideNoiseVal %></span>
@@ -993,8 +993,11 @@
 
   <%- include('partials/ratingColors') %>
 
-  <!-- wordcloud2.js from CDN for both word clouds -->
+  <!-- wordcloud2.js from CDN for culture word cloud -->
   <script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud2.min.js"></script>
+  <!-- D3 + d3-cloud from CDN for descriptor word cloud (Req 9.1) -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-cloud@1/build/d3.layout.cloud.min.js"></script>
 
   <script>
     // Data injected from the server — for word clouds
@@ -1003,6 +1006,38 @@
 
     // Basic stopword list for splitting free-text descriptors into useful tokens.
     var STOP = new Set(['the','a','an','and','or','but','of','in','on','to','for','with','is','it','its','this','that','these','those','be','are','was','were','at','by','my','your','our','their','very','really','just','not','no','yes','so','too','also']);
+
+    // ── Sentiment mapping for culture checklist words (Req 11.1–11.5) ──
+    var cultureSentiment = {
+      // Positive (green tones) — score 5
+      'Welcoming': 5, 'Supportive': 5, 'Inclusive': 5, 'Fun': 5,
+      // Positive (light green) — score 4
+      'Social': 4, 'Collaborative': 4, 'Friendly': 4, 'Tight-knit': 4,
+      'Active': 4, 'Spirited': 4,
+      // Neutral (beige) — score 3
+      'Chill': 3, 'Quiet': 3, 'Independent': 3, 'Studious': 3,
+      'Diverse': 3, 'Laid-back': 3,
+      // Negative (orange) — score 2
+      'Cliquey': 2, 'Exclusive': 2, 'Disconnected': 2, 'Competitive': 2,
+      // Negative (red) — score 1
+      'Loud': 1, 'Unwelcoming': 1, 'Toxic': 1
+    };
+
+    function sentimentColor(score) {
+      var colors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
+      return colors[score] || '#EFE6D1';
+    }
+
+    // ── Free-text descriptor sentiment heuristic (Req 11.5) ──
+    var positiveWords = ['great','good','nice','beautiful','clean','spacious','bright','cozy','quiet','friendly','warm','comfortable','modern','amazing','love','best','awesome'];
+    var negativeWords = ['bad','dirty','small','dark','loud','noisy','cold','cramped','old','broken','worst','terrible','ugly','smelly','gross'];
+
+    function descriptorSentiment(word) {
+      var lower = word.toLowerCase();
+      if (positiveWords.some(function(p) { return lower.includes(p); })) return 4;
+      if (negativeWords.some(function(n) { return lower.includes(n); })) return 2;
+      return 3; // neutral default
+    }
 
     // Turn raw phrase strings into [word, weight] pairs.
     // Keeps multi-word descriptor chips ("Tight-knit community") intact by treating whole phrases
@@ -1081,7 +1116,91 @@
       if (highlight) highlight.style.opacity = '0';
     }
 
-    function renderWordCloud(containerId, fallbackId, list) {
+    // ── D3-cloud descriptor word cloud (Req 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 11.5) ──
+    function renderDescriptorCloud(container, rawList) {
+      if (!container || !rawList || rawList.length === 0) return;
+
+      var pairs = tokenizePhrases(rawList);
+      if (pairs.length === 0) return;
+
+      var maxW = pairs[0][1];
+      var width = container.clientWidth || 400;
+      var height = 180;
+
+      // Build word data with scaled sizes
+      var wordData = pairs.map(function(p) {
+        var sz = Math.max(12, (p[1] / maxW) * 48);
+        return { text: p[0], size: sz, count: p[1], sentiment: descriptorSentiment(p[0]) };
+      });
+
+      var layout = d3.layout.cloud()
+        .size([width, height])
+        .words(wordData.map(function(d) {
+          return { text: d.text, size: d.size, count: d.count, sentiment: d.sentiment };
+        }))
+        .padding(4)
+        .rotate(function() { return 0; })
+        .font('Georgia, serif')
+        .fontSize(function(d) { return d.size; })
+        .on('end', draw);
+
+      layout.start();
+
+      function draw(words) {
+        if (!words || words.length === 0) return;
+
+        var svg = d3.select(container).append('svg')
+          .attr('width', width)
+          .attr('height', height);
+
+        var g = svg.append('g')
+          .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
+
+        g.selectAll('text')
+          .data(words)
+          .enter().append('text')
+          .style('font-size', function(d) { return d.size + 'px'; })
+          .style('font-family', 'Georgia, serif')
+          .style('fill', function(d) { return sentimentColor(d.sentiment); })
+          .style('cursor', 'pointer')
+          .attr('text-anchor', 'middle')
+          .attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; })
+          .text(function(d) { return d.text; })
+          .on('mouseover', function(event, d) {
+            // Scale up word with 200ms transition (Req 9.2)
+            d3.select(this)
+              .transition().duration(200)
+              .style('font-size', (d.size * 1.4) + 'px');
+
+            // Show tooltip: "[word in bold]: according to [x] students" (Req 9.3)
+            var tooltip = document.getElementById('wc-tooltip');
+            if (tooltip) {
+              tooltip.querySelector('.wc-tooltip-word').textContent = d.text;
+              tooltip.querySelector('.wc-tooltip-count').textContent = 'according to ' + d.count + ' students';
+              var tx = event.clientX + 14;
+              var ty = event.clientY - 10;
+              var tw = tooltip.offsetWidth || 160;
+              if (tx + tw > window.innerWidth - 8) tx = event.clientX - tw - 10;
+              if (ty < 8) ty = 8;
+              tooltip.style.left = tx + 'px';
+              tooltip.style.top = ty + 'px';
+              tooltip.classList.add('visible');
+            }
+          })
+          .on('mouseout', function(event, d) {
+            // Return to original size (Req 9.4)
+            d3.select(this)
+              .transition().duration(200)
+              .style('font-size', d.size + 'px');
+
+            // Hide tooltip
+            var tooltip = document.getElementById('wc-tooltip');
+            if (tooltip) tooltip.classList.remove('visible');
+          });
+      }
+    }
+
+    function renderWordCloud(containerId, fallbackId, list, colorFn) {
       var container = document.getElementById(containerId);
       var fallback = document.getElementById(fallbackId);
       if (!container || !list || list.length === 0) return;
@@ -1090,6 +1209,12 @@
       if (pairs.length === 0) return;
 
       var maxW = pairs[0][1];
+      // Default color function: random palette
+      var defaultColorFn = function() {
+        var palette = ['#800000','#b45309','#065f46','#0f766e','#4338ca','#7c3aed','#be185d','#1f2937'];
+        return palette[Math.floor(Math.random() * palette.length)];
+      };
+      var getColor = colorFn || defaultColorFn;
       var useCanvas = (typeof WordCloud === 'function');
       if (useCanvas) {
         try {
@@ -1101,9 +1226,8 @@
               return Math.max(12, (size / maxW) * 48);
             },
             fontFamily: 'Georgia, serif',
-            color: function() {
-              var palette = ['#800000','#b45309','#065f46','#0f766e','#4338ca','#7c3aed','#be185d','#1f2937'];
-              return palette[Math.floor(Math.random() * palette.length)];
+            color: function(word) {
+              return getColor(word);
             },
             backgroundColor: '#fff',
             rotateRatio: 0.2,
@@ -1135,6 +1259,7 @@
         var sizePx = Math.max(12, (p[1] / maxW) * 40);
         span.style.fontSize = sizePx + 'px';
         span.style.opacity = String(0.55 + 0.45 * (p[1] / maxW));
+        span.style.color = getColor(p[0]);
         span.textContent = p[0];
         fallback.appendChild(span);
       });
@@ -1142,8 +1267,17 @@
 
     // Render both clouds once DOM is ready
     document.addEventListener('DOMContentLoaded', function() {
-      renderWordCloud('culture-wordcloud', 'culture-wordcloud-fallback', CULTURE_WORDS);
-      renderWordCloud('descriptor-wordcloud', 'descriptor-wordcloud-fallback', DESCRIPTOR_WORDS);
+      // Culture cloud: sentiment-based coloring using wordcloud2.js (Req 11.1–11.4)
+      renderWordCloud('culture-wordcloud', 'culture-wordcloud-fallback', CULTURE_WORDS, function(word) {
+        // Look up the word in the sentiment map; default to neutral (3) for unknown words
+        var score = cultureSentiment[word] || cultureSentiment[word.charAt(0).toUpperCase() + word.slice(1)] || 3;
+        return sentimentColor(score);
+      });
+      // Descriptor cloud: D3-cloud SVG rendering with sentiment coloring (Req 9.1, 9.5, 9.6, 11.5)
+      var descriptorContainer = document.getElementById('descriptor-wordcloud');
+      if (descriptorContainer) {
+        renderDescriptorCloud(descriptorContainer, DESCRIPTOR_WORDS);
+      }
     });
   </script>
 

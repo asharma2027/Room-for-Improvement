@@ -4,6 +4,15 @@
     return colors[Math.round(val)] || 'transparent';
   }
   function ratingTextColor(val) {
-    return Math.round(val) === 3 ? '#333' : '#fff';
+    var r = Math.round(val);
+    return (r === 1 || r === 5) ? '#fff' : '#1a1a1a';
+  }
+  function noiseColor(val) {
+    var colors = { 1: '#34877A', 2: '#92B89D', 3: '#EFE6D1', 4: '#D69772', 5: '#AE5436' };
+    return colors[Math.round(val)] || 'transparent';
+  }
+  function noiseTextColor(val) {
+    var r = Math.round(val);
+    return (r === 1 || r === 5) ? '#fff' : '#1a1a1a';
   }
 </script>

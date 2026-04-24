@@ -1,0 +1,302 @@
+<%- include('partials/head', { title: 'Explore Campus | Room for Improvement' }) %>
+
+    <body>
+        <%- include('partials/nav') %>
+
+        <main class="explore-page" style="padding: 2.5rem 1.5rem;">
+
+            <!-- Page Header -->
+            <div class="explore-page-header">
+                <h1 style="margin-bottom:0.5rem;">Explore Campus</h1>
+                <p style="margin:0;">Browse the interactive campus map and compare dorm rankings — all in one place.</p>
+            </div>
+
+            <!-- ====== MAP SECTION ====== -->
+            <section class="explore-map-section">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1.5rem; margin-bottom:2rem;">
+                    <div>
+                        <p style="color:var(--text-secondary); margin:0; font-size: 1.05rem;">Click a dorm to see house rankings, or search for a house directly.</p>
+                    </div>
+
+                    <!-- Search Bar -->
+                    <div style="position:relative; min-width:320px; flex:0 0 360px;">
+                        <input id="house-search" type="text" placeholder="🔍  Search for a house..." autocomplete="off"
+                            style="width:100%; padding:0.85rem 1.25rem; border:2px solid var(--border-color); border-radius:var(--radius-full);
+                 font-size:1rem; background:rgba(255,255,255,0.9); box-shadow:var(--shadow-sm); transition:all 0.25s;"
+                            oninput="onSearch(this.value)" onfocus="showDropdown()"
+                            onblur="setTimeout(hideDropdown, 200)" />
+                        <div id="search-dropdown" class="glass" style="
+          display:none; position:absolute; top:calc(100% + 8px); left:0; right:0; z-index:100;
+          border-radius:var(--radius-md); box-shadow:var(--shadow-lg);
+          max-height:320px; overflow-y:auto;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campus Map SVG -->
+                <div style="background:#fff; border-radius:1rem; box-shadow:var(--shadow-md); overflow:hidden; position:relative;">
+                    <div style="background: linear-gradient(135deg, #1a2a1a 0%, #2d3b2d 100%); padding:1rem 1.5rem; display:flex; align-items:center; gap:0.75rem;">
+                        <span style="font-size:1.5rem;">🗺️</span>
+                        <span style="color:#e8f5e9; font-weight:600; font-size:1.1rem;">UChicago South Campus — Residential Dorms</span>
+                        <span style="color:#81c784; font-size:0.85rem; margin-left:auto;">Click any building to explore</span>
+                    </div>
+
+                    <svg id="campus-svg" viewBox="0 0 900 560" xmlns="http://www.w3.org/2000/svg"
+                        style="width:100%; height:auto; display:block; background: #eef2e6; cursor:default;"
+                        font-family="Inter, sans-serif">
+
+                        <!-- Background streets / green space -->
+                        <rect x="200" y="60" width="500" height="440" rx="4" fill="#dce8d0" opacity="0.4" />
+
+                        <!-- Street lines -->
+                        <line x1="0" y1="200" x2="900" y2="200" stroke="#c8c8b4" stroke-width="14" opacity="0.5" />
+                        <line x1="0" y1="380" x2="900" y2="380" stroke="#c8c8b4" stroke-width="14" opacity="0.5" />
+                        <line x1="150" y1="0" x2="150" y2="560" stroke="#c8c8b4" stroke-width="14" opacity="0.5" />
+                        <line x1="750" y1="0" x2="750" y2="560" stroke="#c8c8b4" stroke-width="14" opacity="0.5" />
+
+                        <!-- Street labels -->
+                        <text x="450" y="188" text-anchor="middle" fill="#a0a088" font-size="11" font-weight="600">57th Street</text>
+                        <text x="450" y="368" text-anchor="middle" fill="#a0a088" font-size="11" font-weight="600">59th Street</text>
+                        <text x="138" y="290" text-anchor="middle" fill="#a0a088" font-size="11" font-weight="600" transform="rotate(-90,138,290)">Ellis Ave</text>
+                        <text x="762" y="290" text-anchor="middle" fill="#a0a088" font-size="11" font-weight="600" transform="rotate(-90,762,290)">Woodlawn Ave</text>
+
+                        <!-- Compass rose -->
+                        <g transform="translate(852,45)">
+                            <circle cx="0" cy="0" r="20" fill="white" stroke="#ccc" stroke-width="1.5" />
+                            <text x="0" y="-8" text-anchor="middle" fill="#555" font-size="10" font-weight="700">N</text>
+                            <polygon points="0,-15 -4,-2 0,-6 4,-2" fill="#800000" />
+                            <polygon points="0,15 -4,2 0,6 4,2" fill="#ccc" />
+                        </g>
+
+                        <!-- ====== DORM BUILDINGS ====== -->
+
+                        <!-- Burton-Judson -->
+                        <g class="dorm-group" onclick="window.location='/dorm/Burton-Judson'" style="cursor:pointer;">
+                            <rect x="215" y="215" width="160" height="120" rx="6" fill="#800000" stroke="#5a0000" stroke-width="2" class="dorm-shape" data-dorm="Burton-Judson" opacity="0.82" />
+                            <text x="295" y="265" text-anchor="middle" fill="white" font-size="13" font-weight="700">Burton-Judson</text>
+                            <text x="295" y="282" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10">6 Houses</text>
+                            <text x="295" y="298" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="9">Click to explore →</text>
+                            <rect x="282" y="333" width="26" height="5" rx="2" fill="#5a0000" />
+                        </g>
+
+                        <!-- Snell-Hitchcock -->
+                        <g class="dorm-group" onclick="window.location='/dorm/Snell_Hitchcock'" style="cursor:pointer;">
+                            <polygon points="420,215 540,215 545,330 415,330" fill="#4a235a" stroke="#2d1338" stroke-width="2" class="dorm-shape" data-dorm="Snell_Hitchcock" opacity="0.85" />
+                            <text x="480" y="265" text-anchor="middle" fill="white" font-size="13" font-weight="700">Snell-Hitchcock</text>
+                            <text x="480" y="282" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10">2 Houses</text>
+                            <text x="480" y="298" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="9">Click to explore →</text>
+                        </g>
+
+                        <!-- I-House -->
+                        <g class="dorm-group" onclick="window.location='/dorm/I-House'" style="cursor:pointer;">
+                            <rect x="320" y="390" width="175" height="100" rx="6" fill="#1a4a7a" stroke="#0d2e52" stroke-width="2" class="dorm-shape" data-dorm="I-House" opacity="0.85" />
+                            <text x="407" y="430" text-anchor="middle" fill="white" font-size="13" font-weight="700">I-House</text>
+                            <text x="407" y="447" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10">5 Houses</text>
+                            <text x="407" y="463" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="9">Click to explore →</text>
+                        </g>
+
+                        <!-- Max Palevsky -->
+                        <g class="dorm-group" onclick="window.location='/dorm/Max Palevsky'" style="cursor:pointer;">
+                            <rect x="580" y="215" width="155" height="130" rx="6" fill="#1a5a1a" stroke="#0d3b0d" stroke-width="2" class="dorm-shape" data-dorm="Max Palevsky" opacity="0.85" />
+                            <text x="657" y="268" text-anchor="middle" fill="white" font-size="13" font-weight="700">Max Palevsky</text>
+                            <text x="657" y="285" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10">9 Houses</text>
+                            <text x="657" y="301" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="9">Click to explore →</text>
+                        </g>
+
+                        <!-- Renee GRC -->
+                        <g class="dorm-group" onclick="window.location='/dorm/Renee_Granville-Grossman'" style="cursor:pointer;">
+                            <rect x="555" y="80" width="160" height="100" rx="6" fill="#7a4a00" stroke="#4d2d00" stroke-width="2" class="dorm-shape" data-dorm="Renee_Granville-Grossman" opacity="0.85" />
+                            <text x="635" y="120" text-anchor="middle" fill="white" font-size="11" font-weight="700">Renee</text>
+                            <text x="635" y="135" text-anchor="middle" fill="white" font-size="11" font-weight="700">Granville-Grossman</text>
+                            <text x="635" y="152" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10">7 Houses</text>
+                            <text x="635" y="165" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="9">Click to explore →</text>
+                        </g>
+
+                        <!-- Woodlawn -->
+                        <g class="dorm-group" onclick="window.location='/dorm/Woodlawn'" style="cursor:pointer;">
+                            <rect x="780" y="215" width="100" height="160" rx="6" fill="#004d5a" stroke="#003040" stroke-width="2" class="dorm-shape" data-dorm="Woodlawn" opacity="0.85" />
+                            <text x="830" y="278" text-anchor="middle" fill="white" font-size="13" font-weight="700">Woodlawn</text>
+                            <text x="830" y="295" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10">11 Houses</text>
+                            <text x="830" y="311" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="9">Click to explore →</text>
+                        </g>
+
+                        <!-- Legend -->
+                        <g transform="translate(16, 450)">
+                            <rect x="0" y="0" width="130" height="95" rx="8" fill="white" opacity="0.92" stroke="#e0e0d0" stroke-width="1" />
+                            <text x="10" y="18" fill="#555" font-size="10" font-weight="700">LEGEND</text>
+                            <rect x="10" y="26" width="12" height="12" rx="2" fill="#800000" />
+                            <text x="28" y="37" fill="#444" font-size="10">Burton-Judson</text>
+                            <rect x="10" y="44" width="12" height="12" rx="2" fill="#4a235a" />
+                            <text x="28" y="55" fill="#444" font-size="10">Snell-Hitchcock</text>
+                            <rect x="10" y="62" width="12" height="12" rx="2" fill="#1a4a7a" />
+                            <text x="28" y="73" fill="#444" font-size="10">I-House</text>
+                            <rect x="10" y="80" width="12" height="12" rx="2" fill="#1a5a1a" />
+                            <text x="28" y="91" fill="#444" font-size="10">Max Palevsky</text>
+                        </g>
+                        <g transform="translate(152, 450)">
+                            <rect x="0" y="0" width="130" height="60" rx="8" fill="white" opacity="0.92" stroke="#e0e0d0" stroke-width="1" />
+                            <rect x="10" y="10" width="12" height="12" rx="2" fill="#7a4a00" />
+                            <text x="28" y="21" fill="#444" font-size="10">Renee GRC</text>
+                            <rect x="10" y="28" width="12" height="12" rx="2" fill="#004d5a" />
+                            <text x="28" y="39" fill="#444" font-size="10">Woodlawn</text>
+                        </g>
+                    </svg>
+                </div>
+            </section>
+            <!-- Quick Access section intentionally removed (R6.1) -->
+
+            <!-- ====== DIVIDER ====== -->
+            <div class="explore-section-divider">
+                <span>🏆 Dorm Rankings</span>
+            </div>
+
+            <!-- ====== RANKINGS SECTION ====== -->
+            <section class="explore-rankings-section">
+                <%- include('partials/ratingColors') %>
+
+                <%
+                  // Server-side rating color helpers for EJS template rendering
+                  function ratingColor(val) {
+                    var colors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
+                    return colors[Math.round(val)] || 'transparent';
+                  }
+                  function ratingTextColor(val) {
+                    var r = Math.round(val);
+                    return (r === 1 || r === 5) ? '#fff' : '#1a1a1a';
+                  }
+
+                  var categories = [
+                    { key: 'culture',     icon: '🏆', label: 'House Culture' },
+                    { key: 'quietness',   icon: '🔇', label: 'Outside Noise' },
+                    { key: 'sunlight',    icon: '☀️', label: 'Natural Light' },
+                    { key: 'roomSize',    icon: '📦', label: 'Room Size' },
+                    { key: 'tempControl', icon: '❄️', label: 'Temp Control' }
+                  ];
+                %>
+
+                <% if (!dormScores || dormScores.length === 0) { %>
+                  <div class="dorm-rankings-empty">
+                    <p>No data available</p>
+                  </div>
+                <% } else { %>
+                  <div class="dorm-rankings-grid">
+                    <% dormScores.forEach(function(dorm) { %>
+                      <a href="/dorm/<%= encodeURIComponent(dorm.name) %>" class="dorm-rank-card">
+
+                        <!-- Card Header -->
+                        <div class="dorm-rank-card-header">
+                          <h2 class="dorm-rank-card-name"><%= dorm.name.replace(/_/g, '-') %></h2>
+                          <span class="dorm-rank-card-badge">
+                            🏠 <%= dorm.houseCount %> house<%= dorm.houseCount !== 1 ? 's' : '' %>
+                          </span>
+                        </div>
+
+                        <!-- Score Bars -->
+                        <div class="dorm-rank-scores">
+                          <% categories.forEach(function(cat) {
+                            var score = dorm.scores[cat.key];
+                            var hasScore = score !== null && score !== undefined;
+                            var rounded = hasScore ? Math.round(score) : null;
+                            var pct = hasScore ? Math.max(4, (score / 5) * 100) : 0;
+                          %>
+                            <div class="dorm-score-row">
+                              <span class="dorm-score-label"><%= cat.icon %> <%= cat.label %></span>
+                              <div class="dorm-score-bar">
+                                <% if (hasScore) { %>
+                                  <div class="dorm-score-bar-fill"
+                                       style="width:<%= pct %>%; background:<%= ratingColor(score) %>;"></div>
+                                <% } %>
+                              </div>
+                              <% if (hasScore) { %>
+                                <span class="dorm-score-value"
+                                      style="color:<%= ratingColor(score) %>;">
+                                  <%= score.toFixed(1) %>
+                                </span>
+                              <% } else { %>
+                                <span class="dorm-score-value null-score">—</span>
+                              <% } %>
+                            </div>
+                          <% }); %>
+                        </div>
+
+                      </a>
+                    <% }); %>
+                  </div>
+                <% } %>
+
+                <p style="text-align:center; color:var(--text-secondary); font-size:0.85rem; margin-top:1.5rem;">
+                  💡 Click any card to view house-level rankings within that dorm
+                </p>
+            </section>
+
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Room for Improvement</p>
+        </footer>
+
+        <!-- Injected house data for map search -->
+        <script id="all-houses-data" type="application/json"><%- allHousesJson %></script>
+        <script id="dorm-scores-data" type="application/json"><%- dormScoresJson %></script>
+
+        <script>
+            let allHouses = [];
+            try { allHouses = JSON.parse(document.getElementById('all-houses-data').textContent); } catch (e) { }
+
+            // SVG hover effect
+            document.querySelectorAll('.dorm-group').forEach(g => {
+                const shape = g.querySelector('.dorm-shape');
+                const origOpacity = parseFloat(shape.getAttribute('opacity')) || 0.85;
+                g.addEventListener('mouseenter', () => {
+                    shape.style.opacity = '1';
+                    shape.style.filter = 'brightness(1.15) drop-shadow(0 4px 12px rgba(0,0,0,0.4))';
+                    shape.style.transition = 'all 0.2s';
+                });
+                g.addEventListener('mouseleave', () => {
+                    shape.style.opacity = origOpacity;
+                    shape.style.filter = '';
+                });
+            });
+
+            function onSearch(val) {
+                const q = val.trim().toLowerCase();
+                if (!q) { hideDropdown(); return; }
+                const matches = allHouses.filter(h =>
+                    h.house.toLowerCase().includes(q) || h.dorm.toLowerCase().includes(q)
+                );
+                renderDropdown(matches);
+            }
+
+            function renderDropdown(matches) {
+                const dd = document.getElementById('search-dropdown');
+                if (matches.length === 0) {
+                    dd.innerHTML = '<div style="padding:1rem; color:var(--text-secondary); font-size:0.9rem;">No houses found</div>';
+                } else {
+                    dd.innerHTML = matches.map(h => `
+          <div class="search-result-item" onclick="window.location='/house/${encodeURIComponent(h.dorm)}/${encodeURIComponent(h.house)}'"
+               style="display:flex; align-items:center; gap:0.75rem; padding:0.65rem 1rem; cursor:pointer; border-bottom:1px solid #f0f0f0; transition:background 0.15s;"
+               onmouseenter="this.style.background='#f9f0f0'" onmouseleave="this.style.background=''">
+            <div style="width:36px; height:36px; border-radius:50%; background:${h.color}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+              <span style="color:white; font-weight:700; font-size:0.75rem;">${h.initials}</span>
+            </div>
+            <div>
+              <div style="font-weight:600; color:var(--text-primary);">${h.house}</div>
+              <div style="font-size:0.78rem; color:var(--text-secondary);">${h.dorm}</div>
+            </div>
+          </div>`).join('');
+                }
+                dd.style.display = 'block';
+            }
+
+            function showDropdown() {
+                const val = document.getElementById('house-search').value.trim();
+                if (val) onSearch(val);
+            }
+
+            function hideDropdown() {
+                document.getElementById('search-dropdown').style.display = 'none';
+            }
+        </script>
+    </body>
+
+</html>

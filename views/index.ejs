@@ -10,9 +10,9 @@
                 <%= user.email %>
               </strong>.</p>
             <div class="landing-buttons">
-              <a href="/map" class="btn-secondary"
-                style="padding: 0.875rem 1.75rem; text-decoration: none; border-radius: var(--radius-full); font-weight: 600;">Campus
-                Map</a>
+              <a href="/explore" class="btn-secondary"
+                style="padding: 0.875rem 1.75rem; text-decoration: none; border-radius: var(--radius-full); font-weight: 600;">Explore
+                Campus</a>
               <a href="/logout" class="btn-secondary"
                 style="padding: 0.875rem 1.75rem; text-decoration: none; border-radius: var(--radius-full); font-weight: 600; background: rgba(0,0,0,0.1); border-color: transparent;">Logout</a>
             </div>
@@ -32,17 +32,11 @@
 
         <% if (user) { %>
         <div class="features-grid">
-          <!-- Dorm Rankings panel -->
-          <a href="/dorm-rankings" class="feature-item" style="text-decoration: none; color: inherit; cursor: pointer;">
-            <span class="feature-icon">🏆</span>
-            <h3>Dorm Rankings</h3>
-            <p>Compare all dorms at a glance and see which ones rank highest across categories.</p>
-          </a>
-          <!-- Campus Map panel -->
-          <a href="/map" class="feature-item" style="text-decoration: none; color: inherit; cursor: pointer;">
+          <!-- Explore Campus panel (replaces separate Dorm Rankings + Campus Map) -->
+          <a href="/explore" class="feature-item" style="text-decoration: none; color: inherit; cursor: pointer;">
             <span class="feature-icon">🗺️</span>
-            <h3>Campus Map</h3>
-            <p>Explore the interactive campus map to find dorms, houses, and room locations.</p>
+            <h3>Explore Campus</h3>
+            <p>Browse the interactive campus map and compare dorm rankings all in one place.</p>
           </a>
           <!-- Search Rooms panel -->
           <a href="/rooms" class="feature-item" style="text-decoration: none; color: inherit; cursor: pointer;">

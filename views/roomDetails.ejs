@@ -141,7 +141,16 @@
                 return colors[Math.round(val)] || 'transparent';
               }
               function ratingTextColor(val) {
-                return Math.round(val) === 3 ? '#333' : '#fff';
+                var r = Math.round(val);
+                return (r === 1 || r === 5) ? '#fff' : '#1a1a1a';
+              }
+              function noiseColor(val) {
+                var colors = { 1: '#34877A', 2: '#92B89D', 3: '#EFE6D1', 4: '#D69772', 5: '#AE5436' };
+                return colors[Math.round(val)] || 'transparent';
+              }
+              function noiseTextColor(val) {
+                var r = Math.round(val);
+                return (r === 1 || r === 5) ? '#fff' : '#1a1a1a';
               }
             %>
             <div style="background: #f9f9f9; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
@@ -149,35 +158,35 @@
               <table class="ratings-table">
                 <% if (latestEntry.scalars && latestEntry.scalars["room size"]) { %>
                 <% const rsVal = latestEntry.scalars["room size"]; %>
-                <tr style="background-color: <%= ratingColor(rsVal) %>; color: <%= ratingTextColor(rsVal) %>;">
+                <tr style="background-color: <%= ratingColor(rsVal) %>; color: <%= ratingTextColor(rsVal) %>; font-weight: 700;">
                   <td class="rating-label">Room Size</td>
                   <td class="rating-value"><%= roomSzLabels[rsVal] || rsVal %> (<strong><%= rsVal %>/5</strong>)</td>
                 </tr>
                 <% } %>
                 <% if (latestEntry.scalars && latestEntry.scalars["natural light"]) { %>
                 <% const nlVal = latestEntry.scalars["natural light"]; %>
-                <tr style="background-color: <%= ratingColor(nlVal) %>; color: <%= ratingTextColor(nlVal) %>;">
+                <tr style="background-color: <%= ratingColor(nlVal) %>; color: <%= ratingTextColor(nlVal) %>; font-weight: 700;">
                   <td class="rating-label">Natural Light</td>
                   <td class="rating-value"><%= lightLabels[nlVal] || nlVal %> (<strong><%= nlVal %>/5</strong>)</td>
                 </tr>
                 <% } %>
                 <% if (latestEntry.scalars && latestEntry.scalars["my room gets a lot of outside noise"]) { %>
                 <% const onVal = latestEntry.scalars["my room gets a lot of outside noise"]; %>
-                <tr style="background-color: <%= ratingColor(onVal) %>; color: <%= ratingTextColor(onVal) %>;">
+                <tr style="background-color: <%= noiseColor(onVal) %>; color: <%= noiseTextColor(onVal) %>; font-weight: 700;">
                   <td class="rating-label">Outside Noise</td>
                   <td class="rating-value"><%= noiseLabels[onVal] || onVal %> (<strong><%= onVal %>/5</strong>)</td>
                 </tr>
                 <% } %>
                 <% if (latestEntry.scalars && latestEntry.scalars["temperature control"]) { %>
                 <% const tcVal = latestEntry.scalars["temperature control"]; %>
-                <tr style="background-color: <%= ratingColor(tcVal) %>; color: <%= ratingTextColor(tcVal) %>;">
+                <tr style="background-color: <%= ratingColor(tcVal) %>; color: <%= ratingTextColor(tcVal) %>; font-weight: 700;">
                   <td class="rating-label">Temperature Control</td>
                   <td class="rating-value"><%= tempLabels[tcVal] || tcVal %> (<strong><%= tcVal %>/5</strong>)</td>
                 </tr>
                 <% } %>
                 <% if (latestEntry.scalars && latestEntry.scalars["my house has a good culture"]) { %>
                 <% const hcVal = latestEntry.scalars["my house has a good culture"]; %>
-                <tr style="background-color: <%= ratingColor(hcVal) %>; color: <%= ratingTextColor(hcVal) %>;">
+                <tr style="background-color: <%= ratingColor(hcVal) %>; color: <%= ratingTextColor(hcVal) %>; font-weight: 700;">
                   <td class="rating-label">House Culture</td>
                   <td class="rating-value"><%= cultureLabels[hcVal] || hcVal %> (<strong><%= hcVal %>/5</strong>)</td>
                 </tr>
