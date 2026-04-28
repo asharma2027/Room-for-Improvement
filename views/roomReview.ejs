@@ -1,4 +1,4 @@
-<%- include('partials/head', { title: 'Submit Review | Room for Improvement' }) %>
+<%- include('partials/head', { title: (room ? 'Submit Your Review — ' + room.dorm + ' ' + room.house + ' ' + room.roomNumber : 'Submit a Review') + ' | Room for Improvement' }) %>
 
   <body>
     <%- include('partials/nav') %>

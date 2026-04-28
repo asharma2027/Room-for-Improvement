@@ -688,8 +688,7 @@
                 border: 1px solid currentColor;
                 cursor: default;
                 white-space: nowrap;
-                /* background and border set by JS via assignTheme; font color always #444 */
-                color: #444 !important;
+                /* background, border, and font color set by JS via assignTheme */
             }
             /* Prevent the generic .tag hover from overriding theme colors */
             .fs-vibe-tag:hover {
@@ -1668,8 +1667,11 @@
         var r = parseInt(color.slice(1,3),16);
         var g = parseInt(color.slice(3,5),16);
         var b = parseInt(color.slice(5,7),16);
-        // Font color always matches the "neutral" tag (#444), background/border use theme color
-        tagEl.style.color = '#444';
+        // Darken the color by ~40% for the font
+        var dr = Math.round(r * 0.55);
+        var dg = Math.round(g * 0.55);
+        var db = Math.round(b * 0.55);
+        tagEl.style.color = 'rgb(' + dr + ',' + dg + ',' + db + ')';
         tagEl.style.backgroundColor = 'rgba(' + r + ',' + g + ',' + b + ',0.1)';
         tagEl.style.borderColor = 'rgba(' + r + ',' + g + ',' + b + ',0.35)';
       });
