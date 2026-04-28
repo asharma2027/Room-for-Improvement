@@ -3,7 +3,7 @@
   <body>
     <%- include('partials/nav') %>
 
-      <main style="max-width:1200px; margin:0 auto; padding:2rem 1.5rem;">
+      <main style="max-width:1300px; margin:0 auto; padding:2rem 1.5rem;">
         
         <!-- Hero Banner for All Rooms -->
         <div class="house-banner" style="background-color: var(--primary-dark); position: relative; overflow: visible;">
@@ -36,14 +36,18 @@
                 </div>
                 <% if (avgCulture !== null) { %>
                 <div class="house-stat-mini" style="border-left:1px solid var(--border-color); padding-left:1rem;">
-                    <span class="house-stat-val" style="color:var(--success-color);"><%= avgCulture %>/5</span>
-                    <span class="house-stat-lbl">Avg Culture</span>
+                    <span class="house-stat-val" style="color:var(--success-color);">
+                        <%= avgCulture %>/5
+                    </span>
+                    <span class="house-stat-lbl">House Culture</span>
                 </div>
                 <% } %>
                 <% if (avgNoise !== null) { %>
                 <div class="house-stat-mini" style="border-left:1px solid var(--border-color); padding-left:1rem;">
-                    <span class="house-stat-val" style="color:var(--error-color);"><%= avgNoise %>/5</span>
-                    <span class="house-stat-lbl">Avg Noise</span>
+                    <span class="house-stat-val" style="color:var(--error-color);">
+                        <%= avgNoise %>/5
+                    </span>
+                    <span class="house-stat-lbl">Outside Noise</span>
                 </div>
                 <% } %>
             </div>
@@ -324,7 +328,7 @@
                 <th class="sortable" data-sort-key="roomtype">Type <span class="sort-indicator"></span></th>
                 <th>Tags</th>
                 <th class="sortable" data-sort-key="culture">Culture <span class="sort-indicator"></span></th>
-                <th class="sortable" data-sort-key="noise">Noise Level <span class="sort-indicator"></span></th>
+                <th class="sortable" data-sort-key="noise">Noise <span class="sort-indicator"></span></th>
               </tr>
             </thead>
             <tbody id="rooms-body">
@@ -403,8 +407,14 @@
                   <td data-label="Tags">
                     <% if (room.tags) { %>
                       <div class="tags-container">
-                        <% room.tags.split(', ').forEach(t => { %>
-                          <span class="tag" title="<%= t %>" onclick="event.stopPropagation(); addRoomsTagFilter('<%= t.replace(/'/g, "&#39;") %>')">
+                        <% room.tags.split(', ').forEach(t => {
+                            var tagSentiment = 'neutral';
+                            var tl = t.toLowerCase();
+                            if (tl === 'particularly high ceiling' || tl === 'extra storage / closet space' || tl === 'good furniture layout flexibility' || tl === 'particularly big windows' || tl === 'gets good sunlight' || tl === 'notably quiet' || tl === 'good ventilation') tagSentiment = 'positive';
+                            else if (tl === 'limited storage / closet space' || tl === 'gets poor sunlight' || tl === 'notable hallway noise' || tl === 'noise from adjacent rooms' || tl === 'noise from above or below' || tl === 'ac/heating issues' || tl === 'poor ventilation') tagSentiment = 'negative';
+                            else if (tl === 'particularly small windows' || tl === 'drafty windows' || tl === 'gets very hot' || tl === 'gets very cold' || tl === 'significant radiator noise') tagSentiment = 'mild-negative';
+                        %>
+                          <span class="tag" data-tag-sentiment="<%= tagSentiment %>" title="<%= t %>" onclick="event.stopPropagation(); addRoomsTagFilter('<%= t.replace(/'/g, "&#39;") %>')">
                             <%= getTagEmojiR(t) %> <%= t %>
                           </span>
                         <% }) %>
@@ -420,10 +430,9 @@
                         var cultureRounded = Math.round(parseFloat(room.houseCultureVal));
                         var cultureColors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
                         var cultureBg = cultureColors[cultureRounded] || 'transparent';
-                        var cultureTxt = cultureRounded === 3 ? '#333' : '#fff';
                       %>
                       <div style="display:flex; align-items:center; gap:0.4rem;">
-                        <span style="display:inline-block; padding:0.15em 0.5em; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= cultureBg %>; color:<%= cultureTxt %>;"><%= room.houseCultureVal %></span>
+                        <span style="display:inline-block; width:2.2em; text-align:center; padding:0.15em 0; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= cultureBg %>; color:#fff; text-shadow:-1px -1px 0 rgba(0,0,0,0.5),1px -1px 0 rgba(0,0,0,0.5),-1px 1px 0 rgba(0,0,0,0.5),1px 1px 0 rgba(0,0,0,0.5);"><%= room.houseCultureVal %></span>
                       </div>
                     <% } else { %><span style="color:#ccc;">&mdash;</span><% } %>
                   </td>
@@ -434,10 +443,9 @@
                         var noiseRounded = Math.round(parseFloat(room.outsideNoiseVal));
                         var noiseColors = { 1: '#34877A', 2: '#92B89D', 3: '#EFE6D1', 4: '#D69772', 5: '#AE5436' };
                         var noiseBg = noiseColors[noiseRounded] || 'transparent';
-                        var noiseTxt = (noiseRounded === 1 || noiseRounded === 5) ? '#fff' : '#1a1a1a';
                       %>
                       <div style="display:flex; align-items:center; gap:0.4rem;">
-                        <span style="display:inline-block; padding:0.15em 0.5em; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= noiseBg %>; color:<%= noiseTxt %>;"><%= room.outsideNoiseVal %></span>
+                        <span style="display:inline-block; width:2.2em; text-align:center; padding:0.15em 0; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= noiseBg %>; color:#fff; text-shadow:-1px -1px 0 rgba(0,0,0,0.5),1px -1px 0 rgba(0,0,0,0.5),-1px 1px 0 rgba(0,0,0,0.5),1px 1px 0 rgba(0,0,0,0.5);"><%= room.outsideNoiseVal %></span>
                       </div>
                     <% } else { %><span style="color:#ccc;">&mdash;</span><% } %>
                   </td>

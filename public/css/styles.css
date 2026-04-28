@@ -136,7 +136,7 @@ header {
 }
 
 nav {
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 0 var(--spacing-lg);
   height: 80px;
@@ -189,7 +189,7 @@ nav ul li:first-child a[href="/"] {
 main {
   flex: 1;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: var(--spacing-xl) var(--spacing-lg);
 }
@@ -377,6 +377,38 @@ table tbody tr:hover {
   /* slight maroon hover */
   color: var(--primary-color);
   border-color: rgba(123, 0, 26, 0.2);
+}
+
+/* Tag color coding by sentiment (same scale as rating columns) */
+.tag[data-tag-sentiment="positive"] {
+  background-color: rgba(52, 135, 122, 0.15);
+  color: #1e6b61;
+  border-color: rgba(52, 135, 122, 0.35);
+}
+.tag[data-tag-sentiment="positive"]:hover {
+  background-color: rgba(52, 135, 122, 0.28);
+  color: #155049;
+  border-color: rgba(52, 135, 122, 0.55);
+}
+.tag[data-tag-sentiment="negative"] {
+  background-color: rgba(174, 84, 54, 0.12);
+  color: #8b3a22;
+  border-color: rgba(174, 84, 54, 0.3);
+}
+.tag[data-tag-sentiment="negative"]:hover {
+  background-color: rgba(174, 84, 54, 0.24);
+  color: #6b2a14;
+  border-color: rgba(174, 84, 54, 0.5);
+}
+.tag[data-tag-sentiment="mild-negative"] {
+  background-color: rgba(214, 151, 114, 0.15);
+  color: #8a4e28;
+  border-color: rgba(214, 151, 114, 0.35);
+}
+.tag[data-tag-sentiment="mild-negative"]:hover {
+  background-color: rgba(214, 151, 114, 0.28);
+  color: #6b3a1a;
+  border-color: rgba(214, 151, 114, 0.55);
 }
 
 /* Landing Page Specific */
@@ -812,8 +844,9 @@ table tbody tr:hover {
 
 .house-stat-mini {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
 }
 
 .house-stat-val {

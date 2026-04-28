@@ -584,6 +584,61 @@ app.get('/dorm-rankings', ensureAuthenticated, (req, res) => {
   res.redirect('/explore');
 });
 
+// GET /submit-review - room selection page before review form
+app.get('/submit-review', ensureAuthenticated, (req, res) => {
+  res.render('submitReview', { user: req.user });
+});
+
+// GET /api/rooms-by-house?dorm=&house= - rooms for a specific dorm/house
+app.get('/api/rooms-by-house', ensureAuthenticated, (req, res) => {
+  const dorm = (req.query.dorm || '').trim();
+  const house = (req.query.house || '').trim();
+  if (!dorm || !house) return res.json([]);
+  readRooms((err, rooms) => {
+    if (err) return res.json([]);
+    const filtered = rooms.filter(r => r.dorm === dorm && r.house === house);
+    filtered.sort((a, b) => {
+      const na = parseInt(a.roomNumber) || 0;
+      const nb = parseInt(b.roomNumber) || 0;
+      return na - nb || a.roomNumber.localeCompare(b.roomNumber);
+    });
+    res.json(filtered.map(r => ({ id: r.id, roomNumber: r.roomNumber, floor: r.floor, roomType: r.roomType })));
+  });
+});
+
+// POST /api/add-room - add a new room to the floorplan CSV and return its id
+app.post('/api/add-room', ensureAuthenticated, express.json(), (req, res) => {
+  const { dorm, house, roomNumber } = req.body || {};
+  if (!dorm || !house || !roomNumber) return res.status(400).json({ error: 'Missing fields' });
+
+  const cleanDorm = String(dorm).trim();
+  const cleanHouse = String(house).trim();
+  const cleanRoom = String(roomNumber).trim();
+
+  // Build deterministic id (same formula as readRoomsFromFloorplans)
+  const id = `${cleanDorm}__${cleanHouse}__${cleanRoom}__f`
+    .toLowerCase()
+    .replace(/\s+/g, '_');
+
+  // Check if room already exists
+  readRooms((err, rooms) => {
+    if (err) return res.status(500).json({ error: 'Error reading rooms' });
+    const existing = rooms.find(r => r.id === id || (r.dorm === cleanDorm && r.house === cleanHouse && r.roomNumber === cleanRoom));
+    if (existing) return res.json({ id: existing.id });
+
+    // Append to the appropriate colored_rooms.csv
+    const csvPath = path.join(FLOORPLAN_DIR, cleanDorm, 'colored_rooms.csv');
+    const newRow = `\n${cleanRoom},,${cleanDorm},${cleanHouse},,`;
+    fs.appendFile(csvPath, newRow, 'utf8')
+      .then(() => res.json({ id }))
+      .catch(() => {
+        // If CSV doesn't exist for this dorm, still return the id so the review can proceed
+        res.json({ id });
+      });
+  });
+});
+
+
 // GET /dorm/:dorm - house rankings for a dorm
 app.get('/dorm/:dorm', ensureAuthenticated, (req, res) => {
   const dormName = req.params.dorm;

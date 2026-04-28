@@ -5,34 +5,8 @@
 
         <main class="explore-page" style="padding: 2.5rem 1.5rem;">
 
-            <!-- Page Header -->
-            <div class="explore-page-header">
-                <h1 style="margin-bottom:0.5rem;">Explore Campus</h1>
-                <p style="margin:0;">Browse the interactive campus map and compare dorm rankings — all in one place.</p>
-            </div>
-
             <!-- ====== MAP SECTION ====== -->
             <section class="explore-map-section">
-                <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1.5rem; margin-bottom:2rem;">
-                    <div>
-                        <p style="color:var(--text-secondary); margin:0; font-size: 1.05rem;">Click a dorm to see house rankings, or search for a house directly.</p>
-                    </div>
-
-                    <!-- Search Bar -->
-                    <div style="position:relative; min-width:320px; flex:0 0 360px;">
-                        <input id="house-search" type="text" placeholder="🔍  Search for a house..." autocomplete="off"
-                            style="width:100%; padding:0.85rem 1.25rem; border:2px solid var(--border-color); border-radius:var(--radius-full);
-                 font-size:1rem; background:rgba(255,255,255,0.9); box-shadow:var(--shadow-sm); transition:all 0.25s;"
-                            oninput="onSearch(this.value)" onfocus="showDropdown()"
-                            onblur="setTimeout(hideDropdown, 200)" />
-                        <div id="search-dropdown" class="glass" style="
-          display:none; position:absolute; top:calc(100% + 8px); left:0; right:0; z-index:100;
-          border-radius:var(--radius-md); box-shadow:var(--shadow-lg);
-          max-height:320px; overflow-y:auto;">
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Campus Map SVG -->
                 <div style="background:#fff; border-radius:1rem; box-shadow:var(--shadow-md); overflow:hidden; position:relative;">
                     <div style="background: linear-gradient(135deg, #1a2a1a 0%, #2d3b2d 100%); padding:1rem 1.5rem; display:flex; align-items:center; gap:0.75rem;">
@@ -170,7 +144,7 @@
                     { key: 'quietness',   icon: '🔇', label: 'Outside Noise' },
                     { key: 'sunlight',    icon: '☀️', label: 'Natural Light' },
                     { key: 'roomSize',    icon: '📦', label: 'Room Size' },
-                    { key: 'tempControl', icon: '❄️', label: 'Temp Control' }
+                    { key: 'tempControl', icon: '🌡️', label: 'Temp Control' }
                   ];
                 %>
 
@@ -314,42 +288,19 @@
             });
 
             function onSearch(val) {
-                const q = val.trim().toLowerCase();
-                if (!q) { hideDropdown(); return; }
-                const matches = allHouses.filter(h =>
-                    h.house.toLowerCase().includes(q) || h.dorm.toLowerCase().includes(q)
-                );
-                renderDropdown(matches);
+                // Search bar removed — function kept for compatibility
             }
 
             function renderDropdown(matches) {
-                const dd = document.getElementById('search-dropdown');
-                if (matches.length === 0) {
-                    dd.innerHTML = '<div style="padding:1rem; color:var(--text-secondary); font-size:0.9rem;">No houses found</div>';
-                } else {
-                    dd.innerHTML = matches.map(h => `
-          <div class="search-result-item" onclick="window.location='/house/${encodeURIComponent(h.dorm)}/${encodeURIComponent(h.house)}'"
-               style="display:flex; align-items:center; gap:0.75rem; padding:0.65rem 1rem; cursor:pointer; border-bottom:1px solid #f0f0f0; transition:background 0.15s;"
-               onmouseenter="this.style.background='#f9f0f0'" onmouseleave="this.style.background=''">
-            <div style="width:36px; height:36px; border-radius:50%; background:${h.color}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-              <span style="color:white; font-weight:700; font-size:0.75rem;">${h.initials}</span>
-            </div>
-            <div>
-              <div style="font-weight:600; color:var(--text-primary);">${h.house}</div>
-              <div style="font-size:0.78rem; color:var(--text-secondary);">${h.dorm}</div>
-            </div>
-          </div>`).join('');
-                }
-                dd.style.display = 'block';
+                // Search bar removed — function kept for compatibility
             }
 
             function showDropdown() {
-                const val = document.getElementById('house-search').value.trim();
-                if (val) onSearch(val);
+                // Search bar removed — function kept for compatibility
             }
 
             function hideDropdown() {
-                document.getElementById('search-dropdown').style.display = 'none';
+                // Search bar removed — function kept for compatibility
             }
         </script>
     </body>

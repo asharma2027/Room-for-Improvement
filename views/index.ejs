@@ -45,26 +45,11 @@
             <p>Browse and filter all rooms by dorm, house, and room attributes.</p>
           </a>
           <!-- Submit Room Info panel -->
-          <div class="feature-item">
+          <a href="/submit-review" class="feature-item" style="text-decoration: none; color: inherit; cursor: pointer;">
             <span class="feature-icon">📝</span>
             <h3>Submit Room Info</h3>
             <p>Select your dorm, house, and room to leave a review.</p>
-            <form id="submit-room-form" style="margin-top: 1rem; text-align: left;">
-              <label for="panel-dorm-select" style="font-size: 0.8rem;">Dorm</label>
-              <select id="panel-dorm-select" style="width: 100%; margin-bottom: 0.5rem; padding: 0.5rem; border-radius: var(--radius-sm); border: 1.5px solid var(--border-color); font-size: 0.85rem;">
-                <option value="">Select a dorm…</option>
-              </select>
-              <label for="panel-house-select" style="font-size: 0.8rem;">House</label>
-              <select id="panel-house-select" disabled style="width: 100%; margin-bottom: 0.5rem; padding: 0.5rem; border-radius: var(--radius-sm); border: 1.5px solid var(--border-color); font-size: 0.85rem;">
-                <option value="">Select a house…</option>
-              </select>
-              <label for="panel-room-select" style="font-size: 0.8rem;">Room</label>
-              <select id="panel-room-select" disabled style="width: 100%; margin-bottom: 0.75rem; padding: 0.5rem; border-radius: var(--radius-sm); border: 1.5px solid var(--border-color); font-size: 0.85rem;">
-                <option value="">Select a room…</option>
-              </select>
-              <button type="submit" disabled id="panel-room-go" style="width: 100%; padding: 0.6rem; font-size: 0.85rem;">Go to Review</button>
-            </form>
-          </div>
+          </a>
           <!-- Leave Feedback panel -->
           <div class="feature-item" style="cursor: pointer;" onclick="document.getElementById('feedback-section').scrollIntoView({ behavior: 'smooth' });">
             <span class="feature-icon">💬</span>
@@ -73,110 +58,6 @@
           </div>
         </div>
 
-        <script>
-        (function() {
-          var allHouses = [];
-          var dormSelect = document.getElementById('panel-dorm-select');
-          var houseSelect = document.getElementById('panel-house-select');
-          var roomSelect = document.getElementById('panel-room-select');
-          var goBtn = document.getElementById('panel-room-go');
-          var form = document.getElementById('submit-room-form');
-
-          // Fetch house data from API
-          fetch('/api/houses')
-            .then(function(r) { return r.json(); })
-            .then(function(houses) {
-              allHouses = houses;
-              // Build unique dorm list
-              var dorms = [];
-              var seen = {};
-              houses.forEach(function(h) {
-                if (!seen[h.dorm]) {
-                  seen[h.dorm] = true;
-                  dorms.push(h.dorm);
-                }
-              });
-              dorms.sort();
-              dorms.forEach(function(d) {
-                var opt = document.createElement('option');
-                opt.value = d;
-                opt.textContent = d;
-                dormSelect.appendChild(opt);
-              });
-            })
-            .catch(function() {
-              dormSelect.innerHTML = '<option value="">Could not load data</option>';
-            });
-
-          dormSelect.addEventListener('change', function() {
-            var dorm = dormSelect.value;
-            houseSelect.innerHTML = '<option value="">Select a house…</option>';
-            roomSelect.innerHTML = '<option value="">Select a room…</option>';
-            roomSelect.disabled = true;
-            goBtn.disabled = true;
-            if (!dorm) {
-              houseSelect.disabled = true;
-              return;
-            }
-            houseSelect.disabled = false;
-            var houses = allHouses.filter(function(h) { return h.dorm === dorm; });
-            houses.sort(function(a, b) { return a.house.localeCompare(b.house); });
-            houses.forEach(function(h) {
-              var opt = document.createElement('option');
-              opt.value = h.house;
-              opt.textContent = h.house;
-              houseSelect.appendChild(opt);
-            });
-          });
-
-          houseSelect.addEventListener('change', function() {
-            var dorm = dormSelect.value;
-            var house = houseSelect.value;
-            roomSelect.innerHTML = '<option value="">Loading rooms…</option>';
-            roomSelect.disabled = true;
-            goBtn.disabled = true;
-            if (!house) {
-              roomSelect.innerHTML = '<option value="">Select a room…</option>';
-              return;
-            }
-            // Fetch rooms for this dorm/house via the search API
-            fetch('/api/search?q=' + encodeURIComponent(house))
-              .then(function(r) { return r.json(); })
-              .then(function(results) {
-                roomSelect.innerHTML = '<option value="">Select a room…</option>';
-                var rooms = results.filter(function(r) {
-                  return r.type === 'room' && r.dorm === dorm && r.name.indexOf(house) === 0;
-                });
-                rooms.sort(function(a, b) { return a.name.localeCompare(b.name); });
-                if (rooms.length === 0) {
-                  roomSelect.innerHTML = '<option value="">No rooms found</option>';
-                  return;
-                }
-                roomSelect.disabled = false;
-                rooms.forEach(function(r) {
-                  var opt = document.createElement('option');
-                  opt.value = r.url + '/review';
-                  opt.textContent = r.name.replace(house + ' ', '');
-                  roomSelect.appendChild(opt);
-                });
-              })
-              .catch(function() {
-                roomSelect.innerHTML = '<option value="">Error loading rooms</option>';
-              });
-          });
-
-          roomSelect.addEventListener('change', function() {
-            goBtn.disabled = !roomSelect.value;
-          });
-
-          form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            if (roomSelect.value) {
-              window.location.href = roomSelect.value;
-            }
-          });
-        })();
-        </script>
         <% } else { %>
         <div class="features-grid">
           <div class="feature-item">

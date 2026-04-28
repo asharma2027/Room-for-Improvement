@@ -455,6 +455,7 @@
             /* ── Fix #1: Rating column headers — narrow width + wrappable text ── */
             #room-table th.sortable {
                 white-space: normal;
+                word-break: break-word;
                 line-height: 1.3;
             }
             #room-table th[data-sort-key="naturalLight"],
@@ -462,9 +463,14 @@
             #room-table th[data-sort-key="noise"],
             #room-table th[data-sort-key="culture"],
             #room-table th[data-sort-key="tempControl"] {
-                width: 74px;
-                min-width: 68px;
-                max-width: 76px;
+                width: 80px;
+                min-width: 72px;
+                max-width: 84px;
+            }
+            #room-table th[data-sort-key="tags"] {
+                width: 160px;
+                min-width: 140px;
+                max-width: 180px;
             }
 
             /* ── Fix #2: Word cloud two-column layout ── */
@@ -528,9 +534,41 @@
                 font-family: Georgia, serif;
                 transition: opacity 0.12s ease;
             }
+
+            /* ── Word cloud legend: centered + hover dim effect ── */
+            #culture-wc-legend,
+            #descriptor-wc-legend {
+                justify-content: center;
+            }
+            #culture-wc-legend .wc-legend-item,
+            #descriptor-wc-legend .wc-legend-item {
+                transition: opacity 0.2s ease;
+            }
+            #culture-wc-legend.has-hover .wc-legend-item:not(.hovered),
+            #descriptor-wc-legend.has-hover .wc-legend-item:not(.hovered) {
+                opacity: 0.25;
+            }
+
+            /* ── Tag color coding by sentiment (same scale as rating columns) ── */
+            .tag[data-tag-sentiment="positive"] {
+                background-color: rgba(52, 135, 122, 0.15);
+                color: #1e6b61;
+                border-color: rgba(52, 135, 122, 0.35);
+            }
+            .tag[data-tag-sentiment="negative"] {
+                background-color: rgba(174, 84, 54, 0.12);
+                color: #8b3a22;
+                border-color: rgba(174, 84, 54, 0.3);
+            }
+            .tag[data-tag-sentiment="mild-negative"] {
+                background-color: rgba(214, 151, 114, 0.15);
+                color: #8a4e28;
+                border-color: rgba(214, 151, 114, 0.35);
+            }
+            /* neutral tags keep the default .tag styling */
         </style>
 
-            <main style="max-width:1200px; margin:0 auto; padding:2rem 1.5rem;">
+            <main style="max-width:1300px; margin:0 auto; padding:2rem 1.5rem;">
 
                 <!-- Header Banner -->
                 <div class="house-banner" style="background-color: var(--primary-dark); <% if (typeof dormBackground !== 'undefined' && dormBackground) { %>background-image: linear-gradient(rgba(0,0,0,0.48), rgba(0,0,0,0.72)), url('<%= dormBackground %>'); background-size: cover; background-position: center;<% } %> position: relative; overflow: visible;">
@@ -626,7 +664,7 @@
                 </div><!-- end house-banner -->
 
                 <!-- Inline Stats Row -->
-                <div class="house-stats-row" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:nowrap; overflow-x:auto;">
+                <div class="house-stats-row" style="display:flex; align-items:stretch; justify-content:space-between; flex-wrap:nowrap; overflow-x:auto; gap:0; padding:0.75rem 1.5rem;">
                     <% const ratedRooms=rooms.filter(r=> r.houseCultureVal || r.outsideNoiseVal);
                         const cultureRated = rooms.filter(r => r.houseCultureVal);
                         const avgCulture = cultureRated.length ? (cultureRated.reduce((s,r) => s +
@@ -635,36 +673,48 @@
                         const avgNoise = noiseRated.length ? (noiseRated.reduce((s,r) => s +
                         parseFloat(r.outsideNoiseVal), 0) / noiseRated.length).toFixed(1) : null;
                         %>
-                        <div style="display:flex; gap:1rem; flex-wrap:nowrap; align-items:center;">
-                            <div class="house-stat-mini">
-                                <span class="house-stat-val" style="color:<%= houseColor %>;">
+                        <div style="display:flex; gap:0; flex-wrap:nowrap; align-items:center;">
+                            <div class="house-stat-mini" style="padding:0.25rem 1.5rem 0.25rem 0; flex-direction:column; align-items:flex-start;">
+                                <span class="house-stat-val" style="color:#0f172a; font-size:2.4rem; line-height:1;">
                                     <%= rooms.length %>
                                 </span>
-                                <span class="house-stat-lbl">Total Rooms</span>
+                                <span class="house-stat-lbl" style="font-size:0.72rem; margin-top:0.2rem;">Total Rooms</span>
                             </div>
                             <div class="house-stat-mini"
-                                style="border-left:1px solid var(--border-color); padding-left:1rem;">
-                                <span class="house-stat-val" style="color:var(--accent-color);">
+                                style="border-left:1px solid var(--border-color); padding:0.25rem 1.5rem; flex-direction:column; align-items:flex-start;">
+                                <span class="house-stat-val" style="color:var(--accent-color); font-size:2.4rem; line-height:1;">
                                     <%= ratedRooms.length> 0 ? ratedRooms.length : '—' %>
                                 </span>
-                                <span class="house-stat-lbl">Reviews</span>
+                                <span class="house-stat-lbl" style="font-size:0.72rem; margin-top:0.2rem;">Reviews</span>
                             </div>
                             <% if (avgCulture !==null) { %>
                                 <div class="house-stat-mini"
-                                    style="border-left:1px solid var(--border-color); padding-left:1rem;">
-                                    <span class="house-stat-val" style="color:var(--success-color);">
+                                    style="border-left:1px solid var(--border-color); padding:0.25rem 1.5rem; flex-direction:column; align-items:flex-start;">
+                                    <%
+                                        var avgCultureRounded = Math.round(parseFloat(avgCulture));
+                                        var avgCultureColors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
+                                        var avgCultureBg = avgCultureColors[avgCultureRounded] || '#92B89D';
+                                        var avgCultureTxt = avgCultureRounded === 3 ? '#333' : '#fff';
+                                    %>
+                                    <span class="house-stat-val" style="color:<%= avgCultureBg %>; font-size:2.4rem; line-height:1; text-shadow: -1px -1px 0 rgba(0,0,0,0.35), 1px -1px 0 rgba(0,0,0,0.35), -1px 1px 0 rgba(0,0,0,0.35), 1px 1px 0 rgba(0,0,0,0.35);">
                                         <%= avgCulture %>/5
                                     </span>
-                                    <span class="house-stat-lbl">Culture</span>
+                                    <span class="house-stat-lbl" style="font-size:0.72rem; margin-top:0.2rem;">House Culture</span>
                                 </div>
                                 <% } %>
                                     <% if (avgNoise !==null) { %>
                                         <div class="house-stat-mini"
-                                            style="border-left:1px solid var(--border-color); padding-left:1rem;">
-                                            <span class="house-stat-val" style="color:var(--error-color);">
+                                            style="border-left:1px solid var(--border-color); padding:0.25rem 1.5rem; flex-direction:column; align-items:flex-start;">
+                                            <%
+                                                var avgNoiseRounded = Math.round(parseFloat(avgNoise));
+                                                var avgNoiseColors = { 1: '#34877A', 2: '#92B89D', 3: '#EFE6D1', 4: '#D69772', 5: '#AE5436' };
+                                                var avgNoiseBg = avgNoiseColors[avgNoiseRounded] || '#EFE6D1';
+                                                var avgNoiseTxt = (avgNoiseRounded === 1 || avgNoiseRounded === 5) ? '#fff' : '#1a1a1a';
+                                            %>
+                                            <span class="house-stat-val" style="color:<%= avgNoiseBg %>; font-size:2.4rem; line-height:1; text-shadow: -1px -1px 0 rgba(0,0,0,0.35), 1px -1px 0 rgba(0,0,0,0.35), -1px 1px 0 rgba(0,0,0,0.35), 1px 1px 0 rgba(0,0,0,0.35);">
                                                 <%= avgNoise %>/5
                                             </span>
-                                            <span class="house-stat-lbl">Noise</span>
+                                            <span class="house-stat-lbl" style="font-size:0.72rem; margin-top:0.2rem;">Outside Noise</span>
                                         </div>
                                         <% } %>
                         </div>
@@ -673,23 +723,23 @@
                         <% if (typeof houseRanks !== 'undefined' && houseRanks) {
                             const categoryIcons = {
                                 culture: { icon: '🏆', label: 'Culture' },
-                                quietness: { icon: '🔇', label: 'Quietness' },
-                                sunlight: { icon: '☀️', label: 'Sunlight' },
+                                quietness: { icon: '🔇', label: 'Outside Noise' },
+                                sunlight: { icon: '☀️', label: 'Nat. Light' },
                                 roomSize: { icon: '📦', label: 'Room Size' },
-                                tempControl: { icon: '❄️', label: 'Temp Control' }
+                                tempControl: { icon: '🌡️', label: 'Temp Control' }
                             };
                             const activeRanks = Object.entries(houseRanks).filter(([k,v]) => v !== null);
                             if (activeRanks.length > 0) {
                         %>
-                            <div style="display:flex; gap:0.75rem; flex-wrap:nowrap; align-items:center; padding-left:1rem; border-left:1px solid var(--border-color); margin-left:auto;">
-                                <% activeRanks.sort((a,b) => a[1] - b[1]).forEach(([cat, rank]) => {
+                            <div style="display:flex; gap:0; flex-wrap:nowrap; align-items:center; border-left:1px solid var(--border-color); margin-left:auto;">
+                                <% activeRanks.sort((a,b) => a[1] - b[1]).forEach(([cat, rank], idx) => {
                                     const isTop3 = rank <= 3;
                                 %>
-                                    <div class="house-stat-mini" style="align-items:center;">
-                                        <span class="house-stat-val" style="font-size:1.1rem; color:<%= isTop3 ? 'var(--primary-color)' : 'var(--text-primary)' %>;">
-                                            <span style="font-size:0.8rem; margin-right:2px;"><%= categoryIcons[cat].icon %></span>#<%= rank %>
+                                    <div class="house-stat-mini" style="flex-direction:column; align-items:flex-start; padding:0.25rem 1.25rem; <%= idx > 0 ? 'border-left:1px solid var(--border-color);' : '' %>">
+                                        <span class="house-stat-val" style="font-size:2rem; line-height:1; color:<%= isTop3 ? 'var(--primary-color)' : 'var(--text-primary)' %>;">
+                                            <span style="font-size:1.6rem; margin-right:3px; vertical-align:middle;"><%= categoryIcons[cat].icon %></span><span style="vertical-align:middle;">#<%= rank %></span>
                                         </span>
-                                        <span class="house-stat-lbl"><%= categoryIcons[cat].label %></span>
+                                        <span class="house-stat-lbl" style="font-size:0.72rem; margin-top:0.2rem;"><%= categoryIcons[cat].label %></span>
                                     </div>
                                 <% }); %>
                             </div>
@@ -704,10 +754,11 @@
                     <% const cw = (typeof cultureWords !== 'undefined' ? cultureWords : []); %>
                     <div class="word-cloud-section">
                         <h3>Culture Vibes</h3>
-                        <div class="word-cloud-sub">Selected from a fixed checklist by residents — shows the most commonly chosen descriptors.</div>
+                        <div class="word-cloud-sub">Selected from a checklist by residents; shows the most commonly chosen descriptors.</div>
                         <% if (cw.length > 0) { %>
                             <div id="culture-wordcloud" class="word-cloud-canvas"></div>
                             <div id="culture-wordcloud-fallback" class="word-cloud-fallback" style="display:none;"></div>
+                            <div id="culture-wc-legend" style="display:flex; flex-wrap:wrap; margin-top:0.4rem; justify-content:center;"></div>
                         <% } else { %>
                             <div class="word-cloud-empty">No culture notes yet — be the first to submit.</div>
                         <% } %>
@@ -716,9 +767,10 @@
                     <% if (hdw.length > 0) { %>
                     <div class="word-cloud-section">
                         <h3>House Descriptors</h3>
-                        <div class="word-cloud-sub">Written freely by residents — shows the most frequently used words and phrases.</div>
+                        <div class="word-cloud-sub">Written freely by residents; shows the most frequently used words and phrases.</div>
                         <div id="descriptor-wordcloud" class="word-cloud-canvas"></div>
                         <div id="descriptor-wordcloud-fallback" class="word-cloud-fallback" style="display:none;"></div>
+                        <div id="descriptor-wc-legend" style="display:flex; flex-wrap:wrap; margin-top:0.4rem; justify-content:center;"></div>
                     </div>
                     <% } %>
                 </div>
@@ -819,12 +871,12 @@
                             <tr>
                                 <th class="sortable" data-sort-key="name" style="width:200px;">Room <span class="sort-indicator"></span></th>
                                 <th class="sortable" data-sort-key="floor">Floor <span class="sort-indicator"></span></th>
-                                <th class="sortable" data-sort-key="roomType">Type <span class="sort-indicator"></span></th>
-                                <th class="sortable" data-sort-key="tags">Tags <span class="sort-indicator"></span></th>
+                                <th class="sortable" data-sort-key="roomType" style="width:55px; min-width:45px; max-width:60px;">Type <span class="sort-indicator"></span></th>
+                                <th class="sortable" data-sort-key="tags" style="width:175px; min-width:155px; max-width:195px;">Tags <span class="sort-indicator"></span></th>
                                 <th class="sortable" data-sort-key="culture">Culture <span class="sort-indicator"></span></th>
-                                <th class="sortable" data-sort-key="noise">Noise Level <span class="sort-indicator"></span></th>
+                                <th class="sortable" data-sort-key="noise">Noise <span class="sort-indicator"></span></th>
                                 <th class="sortable" data-sort-key="roomSize">Room Size <span class="sort-indicator"></span></th>
-                                <th class="sortable" data-sort-key="naturalLight">Natural Light <span class="sort-indicator"></span></th>
+                                <th class="sortable" data-sort-key="naturalLight">Nat. Light <span class="sort-indicator"></span></th>
                                 <th class="sortable" data-sort-key="tempControl">Temp Control <span class="sort-indicator"></span></th>
                             </tr>
                         </thead>
@@ -897,8 +949,19 @@
                                     <td data-label="Tags">
                                         <% if (room.tags) { %>
                                             <div style="display:flex; flex-wrap:wrap; gap:0.25rem; max-width:280px;">
-                                                <% room.tags.split(', ').forEach(t => { %>
-                      <span class="tag" onclick="event.stopPropagation(); addTagFilter('<%= t.replace(/'/g, "&#39;") %>')" title="Filter by this tag"><%= t %></span>
+                                                <% room.tags.split(', ').forEach(t => {
+                                                    var tagSentiment = 'neutral';
+                                                    var tl = t.toLowerCase();
+                                                    // Positive tags (green scale)
+                                                    if (tl === 'particularly high ceiling' || tl === 'extra storage / closet space' || tl === 'good furniture layout flexibility' || tl === 'particularly big windows' || tl === 'gets good sunlight' || tl === 'notably quiet' || tl === 'good ventilation') tagSentiment = 'positive';
+                                                    // Strong negative tags (red)
+                                                    else if (tl === 'limited storage / closet space' || tl === 'gets poor sunlight' || tl === 'notable hallway noise' || tl === 'noise from adjacent rooms' || tl === 'noise from above or below' || tl === 'ac/heating issues' || tl === 'poor ventilation') tagSentiment = 'negative';
+                                                    // Mild negative tags (orange)
+                                                    else if (tl === 'particularly small windows' || tl === 'drafty windows' || tl === 'gets very hot' || tl === 'gets very cold' || tl === 'significant radiator noise') tagSentiment = 'mild-negative';
+                                                    // Neutral/ambiguous
+                                                    // else: 'neutral' (particularly low ceiling, unusually shaped room)
+                                                %>
+                      <span class="tag" data-tag-sentiment="<%= tagSentiment %>" onclick="event.stopPropagation(); addTagFilter('<%= t.replace(/'/g, "&#39;") %>')" title="Filter by this tag"><%= t %></span>
                     <% }) %>
                   </div>
                 <% } else { %>
@@ -911,10 +974,9 @@
                     var cultureRounded = Math.round(parseFloat(room.houseCultureVal));
                     var cultureColors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
                     var cultureBg = cultureColors[cultureRounded] || 'transparent';
-                    var cultureTxt = cultureRounded === 3 ? '#333' : '#fff';
                   %>
                   <div style="display:flex; align-items:center; gap:0.4rem;">
-                    <span style="display:inline-block; padding:0.15em 0.5em; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= cultureBg %>; color:<%= cultureTxt %>;"><%= room.houseCultureVal %></span>
+                    <span style="display:inline-block; width:2.2em; text-align:center; padding:0.15em 0; border-radius:0.3rem; font-size:1.15rem; font-weight:600; background-color:<%= cultureBg %>; color:#fff; text-shadow:-1px -1px 0 rgba(0,0,0,0.5),1px -1px 0 rgba(0,0,0,0.5),-1px 1px 0 rgba(0,0,0,0.5),1px 1px 0 rgba(0,0,0,0.5);"><%= room.houseCultureVal %></span>
                   </div>
                 <% } else { %>
                   <span style="color:#ccc;">—</span>
@@ -926,10 +988,9 @@
                     var noiseRounded = Math.round(parseFloat(room.outsideNoiseVal));
                     var noiseColors = { 1: '#34877A', 2: '#92B89D', 3: '#EFE6D1', 4: '#D69772', 5: '#AE5436' };
                     var noiseBg = noiseColors[noiseRounded] || 'transparent';
-                    var noiseTxt = (noiseRounded === 1 || noiseRounded === 5) ? '#fff' : '#1a1a1a';
                   %>
                   <div style="display:flex; align-items:center; gap:0.4rem;">
-                    <span style="display:inline-block; padding:0.15em 0.5em; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= noiseBg %>; color:<%= noiseTxt %>;"><%= room.outsideNoiseVal %></span>
+                    <span style="display:inline-block; width:2.2em; text-align:center; padding:0.15em 0; border-radius:0.3rem; font-size:1.15rem; font-weight:600; background-color:<%= noiseBg %>; color:#fff; text-shadow:-1px -1px 0 rgba(0,0,0,0.5),1px -1px 0 rgba(0,0,0,0.5),-1px 1px 0 rgba(0,0,0,0.5),1px 1px 0 rgba(0,0,0,0.5);"><%= room.outsideNoiseVal %></span>
                   </div>
                 <% } else { %>
                   <span style="color:#ccc;">—</span>
@@ -941,10 +1002,9 @@
                     var sizeRounded = Math.round(parseFloat(room.roomSizeVal));
                     var sizeColors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
                     var sizeBg = sizeColors[sizeRounded] || 'transparent';
-                    var sizeTxt = sizeRounded === 3 ? '#333' : '#fff';
                   %>
                   <div style="display:flex; align-items:center; gap:0.4rem;">
-                    <span style="display:inline-block; padding:0.15em 0.5em; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= sizeBg %>; color:<%= sizeTxt %>;"><%= room.roomSizeVal %></span>
+                    <span style="display:inline-block; width:2.2em; text-align:center; padding:0.15em 0; border-radius:0.3rem; font-size:1.15rem; font-weight:600; background-color:<%= sizeBg %>; color:#fff; text-shadow:-1px -1px 0 rgba(0,0,0,0.5),1px -1px 0 rgba(0,0,0,0.5),-1px 1px 0 rgba(0,0,0,0.5),1px 1px 0 rgba(0,0,0,0.5);"><%= room.roomSizeVal %></span>
                   </div>
                 <% } else { %>
                   <span style="color:#ccc; font-size:0.8rem;">N/A</span>
@@ -956,10 +1016,9 @@
                     var lightRounded = Math.round(parseFloat(room.naturalLightVal));
                     var lightColors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
                     var lightBg = lightColors[lightRounded] || 'transparent';
-                    var lightTxt = lightRounded === 3 ? '#333' : '#fff';
                   %>
                   <div style="display:flex; align-items:center; gap:0.4rem;">
-                    <span style="display:inline-block; padding:0.15em 0.5em; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= lightBg %>; color:<%= lightTxt %>;"><%= room.naturalLightVal %></span>
+                    <span style="display:inline-block; width:2.2em; text-align:center; padding:0.15em 0; border-radius:0.3rem; font-size:1.15rem; font-weight:600; background-color:<%= lightBg %>; color:#fff; text-shadow:-1px -1px 0 rgba(0,0,0,0.5),1px -1px 0 rgba(0,0,0,0.5),-1px 1px 0 rgba(0,0,0,0.5),1px 1px 0 rgba(0,0,0,0.5);"><%= room.naturalLightVal %></span>
                   </div>
                 <% } else { %>
                   <span style="color:#ccc; font-size:0.8rem;">N/A</span>
@@ -971,10 +1030,9 @@
                     var tempRounded = Math.round(parseFloat(room.tempControlVal));
                     var tempColors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
                     var tempBg = tempColors[tempRounded] || 'transparent';
-                    var tempTxt = tempRounded === 3 ? '#333' : '#fff';
                   %>
                   <div style="display:flex; align-items:center; gap:0.4rem;">
-                    <span style="display:inline-block; padding:0.15em 0.5em; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= tempBg %>; color:<%= tempTxt %>;"><%= room.tempControlVal %></span>
+                    <span style="display:inline-block; width:2.2em; text-align:center; padding:0.15em 0; border-radius:0.3rem; font-size:1.15rem; font-weight:600; background-color:<%= tempBg %>; color:#fff; text-shadow:-1px -1px 0 rgba(0,0,0,0.5),1px -1px 0 rgba(0,0,0,0.5),-1px 1px 0 rgba(0,0,0,0.5),1px 1px 0 rgba(0,0,0,0.5);"><%= room.tempControlVal %></span>
                   </div>
                 <% } else { %>
                   <span style="color:#ccc; font-size:0.8rem;">N/A</span>
@@ -993,9 +1051,7 @@
 
   <%- include('partials/ratingColors') %>
 
-  <!-- wordcloud2.js from CDN for culture word cloud -->
-  <script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud2.min.js"></script>
-  <!-- D3 + d3-cloud from CDN for descriptor word cloud (Req 9.1) -->
+  <!-- D3 + d3-cloud from CDN for both word clouds -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/d3-cloud@1/build/d3.layout.cloud.min.js"></script>
 
@@ -1007,54 +1063,60 @@
     // Basic stopword list for splitting free-text descriptors into useful tokens.
     var STOP = new Set(['the','a','an','and','or','but','of','in','on','to','for','with','is','it','its','this','that','these','those','be','are','was','were','at','by','my','your','our','their','very','really','just','not','no','yes','so','too','also']);
 
-    // ── Sentiment mapping for culture checklist words (Req 11.1–11.5) ──
-    var cultureSentiment = {
-      // Positive (green tones) — score 5
-      'Welcoming': 5, 'Supportive': 5, 'Inclusive': 5, 'Fun': 5,
-      // Positive (light green) — score 4
-      'Social': 4, 'Collaborative': 4, 'Friendly': 4, 'Tight-knit': 4,
-      'Active': 4, 'Spirited': 4,
-      // Neutral (beige) — score 3
-      'Chill': 3, 'Quiet': 3, 'Independent': 3, 'Studious': 3,
-      'Diverse': 3, 'Laid-back': 3,
-      // Negative (orange) — score 2
-      'Cliquey': 2, 'Exclusive': 2, 'Disconnected': 2, 'Competitive': 2,
-      // Negative (red) — score 1
-      'Loud': 1, 'Unwelcoming': 1, 'Toxic': 1
+    // ── Deterministic theme classification ──────────────────────────────────
+    // Themes are assigned deterministically based on keyword matching.
+    // Given the same input, the same theme is always assigned.
+    var THEMES = {
+      'community':  { label: 'Community',   color: '#2563eb' },
+      'social':     { label: 'Social',       color: '#7c3aed' },
+      'academic':   { label: 'Academic',     color: '#0891b2' },
+      'positive':   { label: 'Positive',     color: '#16a34a' },
+      'negative':   { label: 'Negative',     color: '#dc2626' },
+      'neutral':    { label: 'Neutral',      color: '#78716c' },
+      'physical':   { label: 'Physical',     color: '#d97706' },
     };
 
-    function sentimentColor(score) {
-      var colors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
-      return colors[score] || '#EFE6D1';
+    var THEME_KEYWORDS = [
+      { theme: 'community',  words: ['welcoming','inclusive','tight-knit','tight','knit','community','friendly','warm','supportive','diverse','belonging','together','family','close','bond','connected','unity','cohesive','collaborative','welcom'] },
+      { theme: 'social',     words: ['social','fun','lively','party','events','active','spirited','outgoing','vibrant','energetic','loud','noisy','busy','happening','nightlife','gatherings','hangout','chill','laid-back','relaxed','casual'] },
+      { theme: 'academic',   words: ['studious','quiet','independent','focused','academic','study','intellectual','competitive','pressure','serious','hardworking','driven','ambitious','scholarly','research','library','work'] },
+      { theme: 'positive',   words: ['great','good','nice','beautiful','clean','spacious','bright','cozy','comfortable','modern','amazing','love','best','awesome','excellent','wonderful','fantastic','perfect','ideal','pleasant','enjoyable','happy','positive'] },
+      { theme: 'negative',   words: ['bad','dirty','small','dark','cramped','old','broken','worst','terrible','ugly','smelly','gross','cliquey','exclusive','disconnected','toxic','unwelcoming','hostile','isolated','lonely','negative','poor','awful'] },
+      { theme: 'physical',   words: ['big','large','spacious','small','tiny','room','floor','window','light','sunlight','sunny','temperature','hot','cold','drafty','heating','ac','storage','ceiling','view','bathroom','kitchen','furniture','layout'] },
+    ];
+
+    function assignTheme(word) {
+      var lower = word.toLowerCase().replace(/[^a-z0-9\-]/g, '');
+      for (var i = 0; i < THEME_KEYWORDS.length; i++) {
+        var entry = THEME_KEYWORDS[i];
+        for (var j = 0; j < entry.words.length; j++) {
+          if (lower.indexOf(entry.words[j]) !== -1 || entry.words[j].indexOf(lower) !== -1) {
+            return entry.theme;
+          }
+        }
+      }
+      return 'neutral';
     }
 
-    // ── Free-text descriptor sentiment heuristic (Req 11.5) ──
-    var positiveWords = ['great','good','nice','beautiful','clean','spacious','bright','cozy','quiet','friendly','warm','comfortable','modern','amazing','love','best','awesome'];
-    var negativeWords = ['bad','dirty','small','dark','loud','noisy','cold','cramped','old','broken','worst','terrible','ugly','smelly','gross'];
-
-    function descriptorSentiment(word) {
-      var lower = word.toLowerCase();
-      if (positiveWords.some(function(p) { return lower.includes(p); })) return 4;
-      if (negativeWords.some(function(n) { return lower.includes(n); })) return 2;
-      return 3; // neutral default
+    function themeColor(word, count, maxCount) {
+      var theme = assignTheme(word);
+      var baseColor = THEMES[theme].color;
+      var mag = maxCount > 0 ? (count / maxCount) : 1;
+      return { color: baseColor, opacity: 0.45 + 0.55 * mag, theme: theme };
     }
 
     // Turn raw phrase strings into [word, weight] pairs.
-    // Keeps multi-word descriptor chips ("Tight-knit community") intact by treating whole phrases
-    // as one token, then also contributes individual words from free-form notes.
     function tokenizePhrases(rawList) {
       var counts = {};
       rawList.forEach(function(raw) {
         if (!raw) return;
         var phrase = String(raw).trim();
         if (!phrase) return;
-        // If it looks like a short tag/chip (<= 4 words), keep the whole phrase.
         var wordCount = phrase.split(/\s+/).length;
         if (wordCount <= 4 && phrase.length <= 40) {
           var key = phrase.replace(/\s+/g,' ');
           counts[key] = (counts[key] || 0) + 2;
         }
-        // Also break into individual meaningful words.
         phrase.toLowerCase().split(/[^a-z0-9'-]+/).forEach(function(w) {
           if (!w || w.length < 3) return;
           if (STOP.has(w)) return;
@@ -1116,8 +1178,49 @@
       if (highlight) highlight.style.opacity = '0';
     }
 
-    // ── D3-cloud descriptor word cloud (Req 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 11.5) ──
-    function renderDescriptorCloud(container, rawList) {
+    // ── Render a legend for the word cloud ──────────────────────────────────
+    function renderLegend(legendEl, usedThemes, svgContainer) {
+      if (!legendEl) return;
+      legendEl.innerHTML = '';
+      var themesInOrder = ['community','social','academic','positive','negative','physical','neutral'];
+      themesInOrder.forEach(function(key) {
+        if (!usedThemes.has(key)) return;
+        var item = document.createElement('div');
+        item.className = 'wc-legend-item';
+        item.dataset.theme = key;
+        item.style.cssText = 'display:inline-flex; align-items:center; gap:0.3rem; margin-right:0.75rem; margin-bottom:0.25rem; cursor:default;';
+        var dot = document.createElement('span');
+        dot.style.cssText = 'display:inline-block; width:9px; height:9px; border-radius:50%; background:' + THEMES[key].color + '; flex-shrink:0;';
+        var label = document.createElement('span');
+        label.style.cssText = 'font-size:0.7rem; color:var(--text-secondary); font-weight:500;';
+        label.textContent = THEMES[key].label;
+        item.appendChild(dot);
+        item.appendChild(label);
+        // Hover: dim all other legend items AND dim non-matching words in the cloud
+        item.addEventListener('mouseenter', function() {
+          legendEl.classList.add('has-hover');
+          item.classList.add('hovered');
+          if (svgContainer) {
+            d3.select(svgContainer).select('svg').selectAll('text')
+              .transition().duration(150)
+              .style('opacity', function(w) { return w.theme === key ? w.opacity : 0.08; });
+          }
+        });
+        item.addEventListener('mouseleave', function() {
+          legendEl.classList.remove('has-hover');
+          item.classList.remove('hovered');
+          if (svgContainer) {
+            d3.select(svgContainer).select('svg').selectAll('text')
+              .transition().duration(200)
+              .style('opacity', function(w) { return w.opacity; });
+          }
+        });
+        legendEl.appendChild(item);
+      });
+    }
+
+    // ── Core D3-cloud renderer (used for both clouds) ────────────────────────
+    function renderD3Cloud(container, legendEl, rawList) {
       if (!container || !rawList || rawList.length === 0) return;
 
       var pairs = tokenizePhrases(rawList);
@@ -1127,16 +1230,20 @@
       var width = container.clientWidth || 400;
       var height = 180;
 
-      // Build word data with scaled sizes
+      var usedThemes = new Set();
       var wordData = pairs.map(function(p) {
-        var sz = Math.max(12, (p[1] / maxW) * 48);
-        return { text: p[0], size: sz, count: p[1], sentiment: descriptorSentiment(p[0]) };
+        var tc = themeColor(p[0], p[1], maxW);
+        usedThemes.add(tc.theme);
+        var sz = Math.max(11, (p[1] / maxW) * 46);
+        return { text: p[0], size: sz, count: p[1], color: tc.color, opacity: tc.opacity, theme: tc.theme };
       });
+
+      renderLegend(legendEl, usedThemes, container);
 
       var layout = d3.layout.cloud()
         .size([width, height])
         .words(wordData.map(function(d) {
-          return { text: d.text, size: d.size, count: d.count, sentiment: d.sentiment };
+          return { text: d.text, size: d.size, count: d.count, color: d.color, opacity: d.opacity, theme: d.theme };
         }))
         .padding(4)
         .rotate(function() { return 0; })
@@ -1161,22 +1268,31 @@
           .enter().append('text')
           .style('font-size', function(d) { return d.size + 'px'; })
           .style('font-family', 'Georgia, serif')
-          .style('fill', function(d) { return sentimentColor(d.sentiment); })
+          .style('fill', function(d) { return d.color; })
+          .style('opacity', function(d) { return d.opacity; })
           .style('cursor', 'pointer')
           .attr('text-anchor', 'middle')
           .attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; })
           .text(function(d) { return d.text; })
           .on('mouseover', function(event, d) {
-            // Scale up word with 200ms transition (Req 9.2)
+            // Dim all words of other themes in this cloud
+            d3.select(this.closest('svg')).selectAll('text')
+              .transition().duration(150)
+              .style('opacity', function(w) {
+                return w.theme === d.theme ? 1 : 0.12;
+              })
+              .style('font-size', function(w) {
+                return w.theme === d.theme ? w.size + 'px' : w.size + 'px';
+              });
+            // Scale up the hovered word
             d3.select(this)
               .transition().duration(200)
-              .style('font-size', (d.size * 1.4) + 'px');
-
-            // Show tooltip: "[word in bold]: according to [x] students" (Req 9.3)
+              .style('font-size', (d.size * 1.4) + 'px')
+              .style('opacity', 1);
             var tooltip = document.getElementById('wc-tooltip');
             if (tooltip) {
               tooltip.querySelector('.wc-tooltip-word').textContent = d.text;
-              tooltip.querySelector('.wc-tooltip-count').textContent = 'according to ' + d.count + ' students';
+              tooltip.querySelector('.wc-tooltip-count').textContent = THEMES[d.theme].label + ' · ' + d.count + ' mentions';
               var tx = event.clientX + 14;
               var ty = event.clientY - 10;
               var tw = tooltip.offsetWidth || 160;
@@ -1188,95 +1304,29 @@
             }
           })
           .on('mouseout', function(event, d) {
-            // Return to original size (Req 9.4)
-            d3.select(this)
+            // Restore all words in this cloud
+            d3.select(this.closest('svg')).selectAll('text')
               .transition().duration(200)
-              .style('font-size', d.size + 'px');
-
-            // Hide tooltip
+              .style('font-size', function(w) { return w.size + 'px'; })
+              .style('opacity', function(w) { return w.opacity; });
             var tooltip = document.getElementById('wc-tooltip');
             if (tooltip) tooltip.classList.remove('visible');
           });
       }
     }
 
-    function renderWordCloud(containerId, fallbackId, list, colorFn) {
-      var container = document.getElementById(containerId);
-      var fallback = document.getElementById(fallbackId);
-      if (!container || !list || list.length === 0) return;
-
-      var pairs = tokenizePhrases(list);
-      if (pairs.length === 0) return;
-
-      var maxW = pairs[0][1];
-      // Default color function: random palette
-      var defaultColorFn = function() {
-        var palette = ['#800000','#b45309','#065f46','#0f766e','#4338ca','#7c3aed','#be185d','#1f2937'];
-        return palette[Math.floor(Math.random() * palette.length)];
-      };
-      var getColor = colorFn || defaultColorFn;
-      var useCanvas = (typeof WordCloud === 'function');
-      if (useCanvas) {
-        try {
-          WordCloud(container, {
-            list: pairs,
-            gridSize: 10,
-            weightFactor: function(size) {
-              // scale so top word ~48px, smallest ~12px
-              return Math.max(12, (size / maxW) * 48);
-            },
-            fontFamily: 'Georgia, serif',
-            color: function(word) {
-              return getColor(word);
-            },
-            backgroundColor: '#fff',
-            rotateRatio: 0.2,
-            minRotation: -Math.PI / 12,
-            maxRotation: Math.PI / 12,
-            shrinkToFit: true,
-            hover: function(item, dimension, event) {
-              if (item) {
-                showWordCloudTooltip(item[0], item[1], event, dimension, container);
-              } else {
-                hideWordCloudTooltip();
-              }
-            }
-          });
-          return;
-        } catch(err) {
-          // Fall through to CSS fallback
-          console.warn('wordcloud2 failed, using CSS fallback', err);
-        }
-      }
-
-      // CSS fallback: render weighted chips
-      container.style.display = 'none';
-      fallback.style.display = 'flex';
-      fallback.innerHTML = '';
-      pairs.forEach(function(p) {
-        var span = document.createElement('span');
-        span.className = 'wc-word';
-        var sizePx = Math.max(12, (p[1] / maxW) * 40);
-        span.style.fontSize = sizePx + 'px';
-        span.style.opacity = String(0.55 + 0.45 * (p[1] / maxW));
-        span.style.color = getColor(p[0]);
-        span.textContent = p[0];
-        fallback.appendChild(span);
-      });
-    }
-
     // Render both clouds once DOM is ready
     document.addEventListener('DOMContentLoaded', function() {
-      // Culture cloud: sentiment-based coloring using wordcloud2.js (Req 11.1–11.4)
-      renderWordCloud('culture-wordcloud', 'culture-wordcloud-fallback', CULTURE_WORDS, function(word) {
-        // Look up the word in the sentiment map; default to neutral (3) for unknown words
-        var score = cultureSentiment[word] || cultureSentiment[word.charAt(0).toUpperCase() + word.slice(1)] || 3;
-        return sentimentColor(score);
-      });
-      // Descriptor cloud: D3-cloud SVG rendering with sentiment coloring (Req 9.1, 9.5, 9.6, 11.5)
+      var cultureContainer = document.getElementById('culture-wordcloud');
+      var cultureLegend = document.getElementById('culture-wc-legend');
+      if (cultureContainer && CULTURE_WORDS.length > 0) {
+        renderD3Cloud(cultureContainer, cultureLegend, CULTURE_WORDS);
+      }
+
       var descriptorContainer = document.getElementById('descriptor-wordcloud');
-      if (descriptorContainer) {
-        renderDescriptorCloud(descriptorContainer, DESCRIPTOR_WORDS);
+      var descriptorLegend = document.getElementById('descriptor-wc-legend');
+      if (descriptorContainer && DESCRIPTOR_WORDS.length > 0) {
+        renderD3Cloud(descriptorContainer, descriptorLegend, DESCRIPTOR_WORDS);
       }
     });
   </script>

@@ -7,9 +7,13 @@
 
                 <!-- Header -->
                 <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem;">
-                    <a href="/map"
-                        style="display:flex; align-items:center; gap:0.4rem; color:var(--text-secondary); font-size:0.9rem; font-weight:500;">
-                        ← Map
+                    <a href="/explore"
+                        style="display:inline-flex; align-items:center; gap:0.4rem; background:rgba(128,0,0,0.85); color:#fff; font-size:0.85rem; font-weight:600; padding:0.5rem 1rem; border-radius:1.1rem; text-decoration:none; border:1px solid rgba(255,255,255,0.2); box-shadow:0 2px 8px rgba(0,0,0,0.15); transition:background 0.2s;"
+                        onmouseenter="this.style.background='rgba(128,0,0,1)'" onmouseleave="this.style.background='rgba(128,0,0,0.85)'">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="rgba(255,255,255,0.95)">
+                            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                        </svg>
+                        Explore Campus
                     </a>
                     <span style="color:var(--border-color);">|</span>
                     <h1 style="margin:0; font-size:1.75rem;">
@@ -65,7 +69,7 @@
                         { key: 'quietness',   icon: '🔇',  label: 'Outside Noise',       note: 'Higher = quieter' },
                         { key: 'sunlight',    icon: '☀️', label: 'Natural Light',       note: 'Higher = brighter' },
                         { key: 'roomSize',    icon: '📦',  label: 'Room Size',           note: 'Higher = bigger' },
-                        { key: 'tempControl', icon: '❄️', label: 'Temperature Control', note: 'Higher = easier to control' }
+                        { key: 'tempControl', icon: '🌡️', label: 'Temperature Control', note: 'Higher = easier to control' }
                     ];
                     %>
 
@@ -106,10 +110,27 @@
                                     }, 0) || 1;
                                     %>
 
+                                    <%
+                                    // Color scale: map score to green/red based on position in sorted list
+                                    // Top = green (#34877A), bottom = red (#AE5436), middle = beige (#EFE6D1)
+                                    const n = sorted.filter(h => h.scores[cat.key] !== null).length;
+                                    function rankBarColor(rank, total) {
+                                        if (total <= 1) return '#EFE6D1';
+                                        const t = rank / (total - 1); // 0 = best, 1 = worst
+                                        if (t <= 0.25) return '#34877A';
+                                        if (t <= 0.45) return '#92B89D';
+                                        if (t <= 0.55) return '#EFE6D1';
+                                        if (t <= 0.75) return '#D69772';
+                                        return '#AE5436';
+                                    }
+                                    let colorRank = 0;
+                                    %>
                                     <% sorted.forEach((h, rank)=> {
                                         const houseIdx = rankings.findIndex(r => r.name === h.name);
                                         const score = h.scores[cat.key];
                                         const pct = score === null ? 0 : Math.max(2, Math.min(100, (Math.abs(score) / maxScore) * 100));
+                                        const barColor = score !== null ? rankBarColor(colorRank, n) : '#e5e7eb';
+                                        if (score !== null) colorRank++;
                                     %>
                                         <div class="rank-row"
                                              id="row-<%= catIdx %>-<%= houseIdx %>"
@@ -141,7 +162,7 @@
                                                 <div style="height:6px; background:#f1f1f4; border-radius:3px; overflow:hidden;">
                                                     <% if (score !== null) { %>
                                                         <div class="rank-bar"
-                                                             style="height:100%; width:<%= pct %>%; background:<%= h.color %>; border-radius:3px; transition:width 0.3s;"></div>
+                                                             style="height:100%; width:<%= pct %>%; background:<%= barColor %>; border-radius:3px; transition:width 0.3s;"></div>
                                                     <% } %>
                                                 </div>
                                             </div>
