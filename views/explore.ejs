@@ -112,7 +112,7 @@
                 <div class="explore-map-3d-header">
                     <span style="font-size:1.35rem;">🏛️</span>
                     <span class="explore-map-3d-title">UChicago Campus — 3D Dorm Map</span>
-                    <span class="explore-map-3d-hint">Click any maroon building to view its rankings · drag to orbit</span>
+                    <span class="explore-map-3d-hint">Click any maroon building to view its rankings · drag to pan · scroll to zoom</span>
                 </div>
                 <div id="campus-3d-canvas-wrap" class="campus-3d-canvas-wrap">
                     <canvas id="campus-3d-canvas" aria-label="3D map of UChicago campus dorms"></canvas>
@@ -213,64 +213,180 @@
         </script>
 
         <script type="module">
-            // ────────────────────────────────────────────────────────────────
-            // 3D UChicago campus map.
-            // Building footprints/positions are derived from real-world
-            // approximate latitude/longitude (UChicago official campus map
-            // and OpenStreetMap), then projected to a local meter grid
-            // centered roughly on the Main Quad.
-            // Sources:
-            //  · UChicago campus map (https://maps.uchicago.edu)
-            //  · OpenStreetMap (© OSM contributors, ODbL)
-            // Coordinates are intentionally simplified — buildings are drawn
-            // as rectangular cuboids with approximate true relative position
-            // and footprint dimensions.
-            // ────────────────────────────────────────────────────────────────
+            // ════════════════════════════════════════════════════════════════
+            // 3D UChicago campus map
+            // ════════════════════════════════════════════════════════════════
+            // Buildings are drawn as simple cuboids placed at their real-world
+            // (lat, lng), then projected to a local meter grid centered on the
+            // Main Quad. Footprint dimensions and heights come from UChicago's
+            // public Archibus campus building footprint dataset
+            // (https://maps.uchicago.edu — see also the ArcGIS web map item
+            //  b76343cfc60843ffab3c6b6c0ffbaf2f) plus the 2024 directory PDF.
+            //
+            // ─────────────────── HOW TO EDIT BUILDINGS ─────────────────────
+            // Two arrays drive the entire 3D map: `DORMS` and `LANDMARKS`,
+            // both defined immediately below this comment. Edit them in place
+            // — no other file needs to change.
+            //
+            //   DORM/LANDMARK fields:
+            //     name   (string)  – MUST match the dorm name in the rooms
+            //                        data exactly (e.g. "Burton Judson",
+            //                        "Snell-Hitchcock"). Used to wire clicks
+            //                        to the side rankings panel and stat-tile
+            //                        jumps. Landmarks can use any name.
+            //     label  (string)  – On-screen display label (free text).
+            //     lat,lng (number) – Real-world WGS-84 coordinates of the
+            //                        building centroid (decimal degrees).
+            //                        Move these to nudge a building N/S/E/W.
+            //     w      (number)  – East-west footprint width (meters).
+            //     d      (number)  – North-south footprint depth (meters).
+            //     h      (number)  – Building height (meters).
+            //                        Tip: ArcGIS stores BLDG_HGT in feet —
+            //                        multiply by 0.3048 to get meters.
+            //     rotY   (number, optional, dorms only) – Y-axis rotation in
+            //                        radians, for buildings that aren't axis-
+            //                        aligned. Defaults to 0.
+            //     parts  (array, optional) – For multi-wing buildings (e.g.
+            //                        Snell-Hitchcock, Max Palevsky), provide
+            //                        an array of `{ lat, lng, w, d, h }`
+            //                        sub-cuboids. When `parts` is set, the
+            //                        top-level lat/lng/w/d/h still control
+            //                        where the label sits and what the click-
+            //                        target's bounding box is, but each
+            //                        listed part is drawn separately for a
+            //                        more accurate shape.
+            //     type   (LANDMARKS only) – "quad" for green grass patches,
+            //                        "building" for gray cuboids.
+            //
+            //   Global scale / projection:
+            //     Adjust ORIGIN_LAT / ORIGIN_LNG below if the camera should
+            //     center somewhere other than the Main Quad. M_PER_DEG_LAT/
+            //     LNG convert degrees → meters using a flat-earth approx
+            //     (accurate to ~0.1% over ~1 km of campus). Don't change the
+            //     sign convention in `latLngToXZ` — it ensures north-on-map
+            //     points to screen-up.
+            // ════════════════════════════════════════════════════════════════
             import * as THREE from 'three';
             import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-            // Origin (Main Quad) → local 0,0
+            // Origin (Main Quad) → local 0,0 in the scene
             const ORIGIN_LAT = 41.7895;
             const ORIGIN_LNG = -87.5995;
             const M_PER_DEG_LAT = 111320;                          // meters per degree latitude
             const M_PER_DEG_LNG = 111320 * Math.cos(ORIGIN_LAT * Math.PI / 180);
 
+            // Project (lat, lng) → scene coords. Convention:
+            //   +x = east, -x = west
+            //   +z = south, -z = north  (so screen-up = north)
+            // Do NOT change these signs — the compass + camera both rely on
+            // -z being north for the static "north-up" orientation to hold.
             function latLngToXZ(lat, lng) {
-                // x = east, z = south (so smaller z is north, matching screen up)
                 return {
                     x: (lng - ORIGIN_LNG) * M_PER_DEG_LNG,
                     z: -(lat - ORIGIN_LAT) * M_PER_DEG_LAT
                 };
             }
 
-            // ── Campus building data (real-world approx coordinates) ────────
-            // dorm names match server-side dormScores entries (Burton-Judson,
-            // Max Palevsky, Snell_Hitchcock, I-House, Renee_Granville-Grossman,
-            // Woodlawn). Width = E-W footprint (m); depth = N-S footprint (m);
-            // height = approximate building height (m). rotY in radians.
+            // ── DORM building data ──────────────────────────────────────────
+            // Sourced from UChicago's Archibus building-footprint feature
+            // service (lat/lon from polygon centroids, w/d from polygon
+            // bounding boxes in meters, h from BLDG_HGT in feet × 0.3048).
+            //
+            // The `name` strings match server-side `dormScores` keys exactly.
+            // If you rename a dorm in the rooms data, update `name` here too.
             const DORMS = [
                 // Burton-Judson Courts — 1005 E 60th St, south of Midway
-                { name: 'Burton-Judson',            lat: 41.7811, lng: -87.5965, w: 110, d: 70,  h: 22, rotY: 0,            label: 'Burton-Judson' },
+                // (ArcGIS fid 139, bd_id H03; BLDG_HGT 80 ft = 24.4 m)
+                { name: 'Burton Judson',
+                  label: 'Burton-Judson',
+                  lat: 41.7855031698, lng: -87.6003483856,
+                  w: 105.6, d: 74.7, h: 24.4, rotY: 0 },
+
                 // International House — 1414 E 59th St
-                { name: 'I-House',                  lat: 41.7833, lng: -87.5926, w: 80,  d: 55,  h: 32, rotY: 0,            label: 'I-House' },
-                // Snell-Hitchcock — Hutchinson Ct, north end of main quad
-                { name: 'Snell_Hitchcock',          lat: 41.7906, lng: -87.5996, w: 55,  d: 70,  h: 18, rotY: 0,            label: 'Snell-Hitchcock' },
-                // Max Palevsky Residential Commons — 1101 E 56th St (three buildings)
-                { name: 'Max Palevsky',             lat: 41.7929, lng: -87.6010, w: 130, d: 50,  h: 24, rotY: 0,            label: 'Max Palevsky' },
-                // Renee Granville-Grossman (North) — 5500 S University
-                { name: 'Renee_Granville-Grossman', lat: 41.7951, lng: -87.5982, w: 95,  d: 75,  h: 50, rotY: 0,            label: 'Renee Granville-Grossman' },
-                // Woodlawn Residential Commons — 6031 S Woodlawn
-                { name: 'Woodlawn',                 lat: 41.7872, lng: -87.5945, w: 80,  d: 75,  h: 38, rotY: 0,            label: 'Woodlawn' }
+                // (fid 118, bd_id E13; BLDG_HGT 148 ft = 45.1 m)
+                { name: 'I-House',
+                  label: 'I-House',
+                  lat: 41.7882362427, lng: -87.5908153883,
+                  w: 83.9, d: 55.5, h: 45.1, rotY: 0 },
+
+                // Snell-Hitchcock — Hutchinson Court, NW corner of Main Quad.
+                // Two wings rendered separately for shape fidelity, but the
+                // whole compound is a single selectable dorm.
+                //   Snell Hall   – fid 230, bd_id D08, 70 ft = 21.3 m
+                //   Hitchcock H. – fid 228, bd_id D07, 75 ft = 22.9 m
+                { name: 'Snell-Hitchcock',
+                  label: 'Snell-Hitchcock',
+                  lat: 41.7911141668, lng: -87.6008801585,
+                  w: 70, d: 50, h: 22, rotY: 0,
+                  parts: [
+                      { lat: 41.7910251215, lng: -87.6010235681, w: 15.4, d: 26.2, h: 21.3 },
+                      { lat: 41.7912032121, lng: -87.6007367489, w: 64.2, d: 22.7, h: 22.9 }
+                  ] },
+
+                // Max Palevsky Residential Commons — three connected dorms
+                // forming the W/Center/E commons on E 56th St. All ~60 ft
+                // (18.3 m); rendered as three cuboids under one click target.
+                //   West   – fid 71, C32, 5625 S Ellis
+                //   Center – fid 72, C33, 1101 E 56th
+                //   East   – fid 73, C34, 5630 S University
+                { name: 'Max Palevsky',
+                  label: 'Max Palevsky',
+                  lat: 41.7929, lng: -87.5998,
+                  w: 230, d: 80, h: 18.3, rotY: 0,
+                  parts: [
+                      { lat: 41.7929163865, lng: -87.6009533996, w: 46.0, d: 53.6, h: 18.3 },
+                      { lat: 41.7930159032, lng: -87.5998314113, w: 102.1, d: 21.0, h: 18.3 },
+                      { lat: 41.7927818164, lng: -87.5986160032, w: 67.0, d: 77.8, h: 18.3 }
+                  ] },
+
+                // Campus North Residential Commons — 5500 S University
+                // (fid 267, bd_id C26; BLDG_HGT 135 ft = 41.1 m)
+                { name: 'Campus North',
+                  label: 'Campus North',
+                  lat: 41.7948207035, lng: -87.5991278838,
+                  w: 79.3, d: 22.8, h: 41.1, rotY: 0 },
+
+                // Renee Granville-Grossman Residential Commons — 6031 S Ellis
+                // (fid 137, bd_id H09; BLDG_HGT 104 ft = 31.7 m). South campus,
+                // not to be confused with Campus North.
+                { name: 'Renee Granville-Grossman',
+                  label: 'Renee Granville-Grossman',
+                  lat: 41.7845934364, lng: -87.6003320148,
+                  w: 105.2, d: 76.6, h: 31.7, rotY: 0 },
+
+                // Woodlawn Residential Commons — 61st & S Woodlawn
+                // (fid 2, bd_id H11; BLDG_HGT 184 ft = 56.1 m)
+                { name: 'Woodlawn',
+                  label: 'Woodlawn',
+                  lat: 41.7846551855, lng: -87.5970075112,
+                  w: 104.3, d: 89.2, h: 56.1, rotY: 0 }
             ];
 
-            // ── Important non-dorm landmarks (kept minimal to avoid clutter) ─
+            // ── Non-dorm landmarks (gray cuboids + green quads) ─────────────
+            // Add or remove freely — these are decorative and not selectable.
             const LANDMARKS = [
-                // The Main Quad (rendered as green ground patch, not a building)
-                { type: 'quad',     name: 'Main Quad',        lat: 41.7895, lng: -87.5995, w: 220, d: 130, h: 0.2 },
-                // The Joe & Rika Mansueto Library + Regenstein Library (the Reg)
-                { type: 'building', name: 'Regenstein Library', lat: 41.7920, lng: -87.6000, w: 95,  d: 75,  h: 28 },
-                // Rockefeller Memorial Chapel
-                { type: 'building', name: 'Rockefeller Chapel', lat: 41.7884, lng: -87.5961, w: 35,  d: 70,  h: 60 }
+                // Main Quad — rendered as a flat green grass patch.
+                { type: 'quad',     name: 'Main Quad',
+                  lat: 41.7895, lng: -87.5995,
+                  w: 220, d: 130, h: 0.2 },
+
+                // Regenstein Library — 1100 E 57th St
+                // (fid 266, bd_id C03; BLDG_HGT 88 ft = 26.8 m)
+                { type: 'building', name: 'Regenstein Library',
+                  lat: 41.7922131882, lng: -87.5999558277,
+                  w: 109.0, d: 126.3, h: 26.8 },
+
+                // Rockefeller Memorial Chapel — 5850 S Woodlawn. Two-part
+                // shape: long nave + tall bell tower.
+                //   Main nave – fid 101, D29, 100 ft = 30.5 m
+                //   Tower     – fid 270, D29, 200 ft = 61.0 m
+                { type: 'building', name: 'Rockefeller Chapel',
+                  lat: 41.7885324798, lng: -87.5970610293,
+                  w: 34.0, d: 80.7, h: 30.5,
+                  parts: [
+                      { lat: 41.7885324798, lng: -87.5970610293, w: 34.0, d: 80.7, h: 30.5 },
+                      { lat: 41.788635494,  lng: -87.5968907489, w: 12.6, d: 15.6, h: 61.0 }
+                  ] }
             ];
 
             // ── Three.js scene setup ────────────────────────────────────────
@@ -282,8 +398,15 @@
             scene.background = new THREE.Color('#e7eee0');
             scene.fog = new THREE.Fog('#e7eee0', 700, 1400);
 
+            // Camera is locked to a fixed oblique angle, looking down and
+            // toward the north-pointing -z axis. We never change `camera.up`
+            // or rotate around the target — only pan (translate target +
+            // camera together) and zoom along the existing view direction.
+            // This keeps north pinned to the top of the screen at all times.
             const camera = new THREE.PerspectiveCamera(45, 1, 1, 3000);
-            camera.position.set(280, 320, 380);
+            const CAMERA_OFFSET = new THREE.Vector3(0, 520, 420);   // looking down + slightly south
+            camera.position.copy(CAMERA_OFFSET);
+            camera.up.set(0, 1, 0);
             camera.lookAt(0, 0, 0);
 
             const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -322,7 +445,9 @@
             grid.material.transparent = true;
             scene.add(grid);
 
-            // North compass arrow (kept very small; scene -z = north)
+            // North compass arrow. Because the camera is locked to a fixed
+            // orientation with -z = north, this arrow always points to the
+            // top of the screen — there is no per-frame rotation logic.
             const compass = new THREE.ArrowHelper(
                 new THREE.Vector3(0, 0, -1), new THREE.Vector3(-450, 1, -450), 60, 0x800000, 18, 12
             );
@@ -352,60 +477,94 @@
 
             // ── Render landmark (non-dorm) buildings: monochrome light gray ─
             const landmarkMeshes = [];
+            const LANDMARK_MAT = new THREE.MeshLambertMaterial({ color: 0xcfcfcf });
             LANDMARKS.filter(l => l.type === 'building').forEach(l => {
-                const pos = latLngToXZ(l.lat, l.lng);
-                const mesh = new THREE.Mesh(
-                    new THREE.BoxGeometry(l.w, l.h, l.d),
-                    new THREE.MeshLambertMaterial({ color: 0xcfcfcf })
-                );
-                mesh.position.set(pos.x, l.h / 2, pos.z);
-                mesh.castShadow = true;
-                mesh.receiveShadow = true;
-                mesh.userData = { kind: 'landmark', name: l.name };
-                scene.add(mesh);
-                landmarkMeshes.push(mesh);
+                const cuboids = (l.parts && l.parts.length) ? l.parts : [{ lat: l.lat, lng: l.lng, w: l.w, d: l.d, h: l.h }];
+                let maxTop = 0;
+                cuboids.forEach(c => {
+                    const pos = latLngToXZ(c.lat, c.lng);
+                    const mesh = new THREE.Mesh(new THREE.BoxGeometry(c.w, c.h, c.d), LANDMARK_MAT);
+                    mesh.position.set(pos.x, c.h / 2, pos.z);
+                    mesh.castShadow = true;
+                    mesh.receiveShadow = true;
+                    mesh.userData = { kind: 'landmark', name: l.name };
+                    scene.add(mesh);
+                    landmarkMeshes.push(mesh);
+                    if (c.h > maxTop) maxTop = c.h;
+                });
 
+                const labelPos = latLngToXZ(l.lat, l.lng);
                 const lbl = makeTextSprite(l.name, { color: '#444', fontSize: 26, weight: 600, bg: 'rgba(255,255,255,0.85)' });
-                lbl.position.set(pos.x, l.h + 14, pos.z);
+                lbl.position.set(labelPos.x, maxTop + 14, labelPos.z);
                 lbl.scale.set(85, 22, 1);
                 scene.add(lbl);
             });
 
             // ── Render dorms: monochrome maroon (UChicago color), selectable ─
+            // For multipart dorms (e.g. Snell-Hitchcock, Max Palevsky) every
+            // part shares the same material so hover/select coloring affects
+            // the entire group at once. All parts of a dorm share the same
+            // userData so any of them can be picked to select the dorm.
             const DORM_BASE_COLOR  = new THREE.Color('#7a1f1f');      // monochrome
             const DORM_HOVER_COLOR = new THREE.Color('#a83434');
             const DORM_SELECT_COLOR= new THREE.Color('#d97a2c');      // distinct selection
             const dormMeshes = [];
-            const dormByName = {};
+            const dormByName = {};                                    // name → array of meshes (one per part)
             DORMS.forEach(d => {
-                const pos = latLngToXZ(d.lat, d.lng);
-                const mesh = new THREE.Mesh(
-                    new THREE.BoxGeometry(d.w, d.h, d.d),
-                    new THREE.MeshLambertMaterial({ color: DORM_BASE_COLOR.clone() })
-                );
-                mesh.position.set(pos.x, d.h / 2, pos.z);
-                mesh.rotation.y = d.rotY || 0;
-                mesh.castShadow = true;
-                mesh.receiveShadow = true;
-                mesh.userData = { kind: 'dorm', name: d.name, label: d.label };
-                scene.add(mesh);
-                dormMeshes.push(mesh);
-                dormByName[d.name] = mesh;
+                const cuboids = (d.parts && d.parts.length) ? d.parts : [{ lat: d.lat, lng: d.lng, w: d.w, d: d.d, h: d.h }];
+                const sharedMat = new THREE.MeshLambertMaterial({ color: DORM_BASE_COLOR.clone() });
+                const meshes = [];
+                let maxTop = 0;
+                cuboids.forEach(c => {
+                    const pos = latLngToXZ(c.lat, c.lng);
+                    const mesh = new THREE.Mesh(new THREE.BoxGeometry(c.w, c.h, c.d), sharedMat);
+                    mesh.position.set(pos.x, c.h / 2, pos.z);
+                    mesh.rotation.y = d.rotY || 0;
+                    mesh.castShadow = true;
+                    mesh.receiveShadow = true;
+                    mesh.userData = { kind: 'dorm', name: d.name, label: d.label };
+                    scene.add(mesh);
+                    dormMeshes.push(mesh);
+                    meshes.push(mesh);
+                    if (c.h > maxTop) maxTop = c.h;
+                });
+                dormByName[d.name] = meshes;
 
+                const labelPos = latLngToXZ(d.lat, d.lng);
                 const lbl = makeTextSprite(d.label, { color: '#fff', fontSize: 28, weight: 700, bg: 'rgba(122,31,31,0.92)' });
-                lbl.position.set(pos.x, d.h + 14, pos.z);
+                lbl.position.set(labelPos.x, maxTop + 14, labelPos.z);
                 lbl.scale.set(95, 22, 1);
                 scene.add(lbl);
             });
 
-            // ── Orbit controls (drag to rotate, wheel to zoom) ──────────────
+            // ── Pan-only camera controls ────────────────────────────────────
+            // OrbitControls is reused with rotation disabled. Only pan + zoom
+            // are allowed, and we re-pin `camera.up` to world-up on every
+            // change so the view can never tilt off the north-up orientation.
             const controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableRotate = false;                  // no orbit / tilt
+            controls.enablePan = true;                      // drag to pan
+            controls.enableZoom = true;                     // wheel to zoom
+            controls.screenSpacePanning = true;             // pan is XY-screen, not world Y
             controls.enableDamping = true;
-            controls.dampingFactor = 0.08;
-            controls.minDistance = 80;
-            controls.maxDistance = 900;
-            controls.maxPolarAngle = Math.PI / 2.05; // can't go below ground
+            controls.dampingFactor = 0.12;
+            controls.minDistance = 120;
+            controls.maxDistance = 1200;
             controls.target.set(0, 0, 0);
+            // Left button = pan (instead of the default rotate). Touch single-
+            // finger likewise pans. Right-click does nothing useful here, so
+            // we leave it default (PAN) — there's no rotate anywhere.
+            controls.mouseButtons = {
+                LEFT:   THREE.MOUSE.PAN,
+                MIDDLE: THREE.MOUSE.DOLLY,
+                RIGHT:  THREE.MOUSE.PAN
+            };
+            controls.touches = { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_PAN };
+            // Defensive: re-assert north-up on every camera change in case
+            // some third-party code or future edit nudges it.
+            controls.addEventListener('change', () => {
+                camera.up.set(0, 1, 0);
+            });
 
             // ── Resize handling ────────────────────────────────────────────
             function resize() {
@@ -423,17 +582,22 @@
             let hovered = null;
             let selectedName = null;
 
+            // Hover/select coloring works at the *dorm group* level: each
+            // dorm's parts share one material, so setting it once recolors
+            // every cuboid in the group.
+            function setDormColor(name, color) {
+                const group = dormByName[name];
+                if (!group || !group.length) return;
+                group[0].material.color.copy(color);
+            }
             function setHover(mesh) {
-                if (hovered && hovered !== mesh) {
-                    if (hovered.userData.name !== selectedName) {
-                        hovered.material.color.copy(DORM_BASE_COLOR);
-                    } else {
-                        hovered.material.color.copy(DORM_SELECT_COLOR);
-                    }
+                if (hovered && (!mesh || hovered.userData.name !== mesh.userData.name)) {
+                    const prevName = hovered.userData.name;
+                    setDormColor(prevName, prevName === selectedName ? DORM_SELECT_COLOR : DORM_BASE_COLOR);
                 }
                 hovered = mesh;
                 if (mesh && mesh.userData.name !== selectedName) {
-                    mesh.material.color.copy(DORM_HOVER_COLOR);
+                    setDormColor(mesh.userData.name, DORM_HOVER_COLOR);
                 }
             }
 
@@ -501,10 +665,10 @@
             function selectDorm(name) {
                 // recolor previous selection
                 if (selectedName && dormByName[selectedName]) {
-                    dormByName[selectedName].material.color.copy(DORM_BASE_COLOR);
+                    setDormColor(selectedName, DORM_BASE_COLOR);
                 }
                 selectedName = name;
-                if (dormByName[name]) dormByName[name].material.color.copy(DORM_SELECT_COLOR);
+                if (dormByName[name]) setDormColor(name, DORM_SELECT_COLOR);
 
                 // Reveal correct dorm card
                 panelEmpty.hidden = true;
@@ -517,7 +681,7 @@
             }
             function clearSelection() {
                 if (selectedName && dormByName[selectedName]) {
-                    dormByName[selectedName].material.color.copy(DORM_BASE_COLOR);
+                    setDormColor(selectedName, DORM_BASE_COLOR);
                 }
                 selectedName = null;
                 panel.classList.remove('dorm-panel--open');
