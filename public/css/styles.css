@@ -2657,3 +2657,158 @@ table tbody tr:hover {
     justify-content: center;
   }
 }
+
+/* ============================================================
+   3D Explore Campus page — summary stats + 3D map + slide-in
+   dorm rankings panel. Rankings card styles are reused from
+   .dorm-rank-card / .dorm-rank-scores defined above.
+   ============================================================ */
+.explore-3d-page { padding-top: 1rem; }
+
+.explore-stats-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+  gap: 0.55rem;
+  margin: 0 0 0.65rem 0;
+}
+.explore-stats-tile {
+  background: #fff;
+  border-radius: 0.7rem;
+  padding: 0.5rem 0.7rem;
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.07));
+  border: 1px solid var(--border-color, #e5e7eb);
+  font-family: inherit;
+  text-align: left;
+  cursor: default;
+}
+.explore-stats-tile--cat {
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.explore-stats-tile--cat:hover,
+.explore-stats-tile--cat:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.10);
+  outline: none;
+}
+.explore-stats-tile-cat-row {
+  display: flex; align-items: center; gap: 0.35rem;
+  font-size: 0.7rem; font-weight: 700; color: var(--text-secondary);
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.explore-stats-tile-icon { font-size: 0.95rem; }
+.explore-stats-tile-label { white-space: nowrap; }
+.explore-stats-tile-dorm {
+  font-size: 0.95rem; font-weight: 800; line-height: 1.15;
+  margin-top: 0.15rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.explore-stats-tile-score {
+  font-size: 0.78rem; font-weight: 700;
+  color: var(--text-primary, #1f2937);
+}
+.explore-stats-tile--meta { text-align: center; }
+.explore-stats-tile--meta .explore-stats-tile-value {
+  font-size: 1.45rem; font-weight: 800; color: var(--primary-color, #800000);
+  line-height: 1;
+}
+.explore-stats-tile--meta .explore-stats-tile-label {
+  font-size: 0.68rem; font-weight: 700;
+  color: var(--text-secondary); text-transform: uppercase;
+  letter-spacing: 0.05em; margin-top: 0.18rem;
+}
+
+/* Map section — sized so the canvas fills the viewport above the fold. */
+.explore-map-3d-section {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: var(--shadow-md, 0 4px 14px rgba(0,0,0,0.08));
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+.explore-map-3d-header {
+  background: linear-gradient(135deg, #1a2a1a 0%, #2d3b2d 100%);
+  color: #e8f5e9;
+  padding: 0.6rem 1rem;
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.explore-map-3d-title { font-weight: 700; font-size: 1rem; }
+.explore-map-3d-hint  { color: #9ec6a4; font-size: 0.78rem; margin-left: auto; }
+
+.campus-3d-canvas-wrap {
+  position: relative;
+  width: 100%;
+  /* Calibrated so the map fills the viewport on initial load:
+     viewport height minus nav (~62px) + stats bar (~84px) + paddings. */
+  height: calc(100vh - 220px);
+  min-height: 420px;
+  background: #e7eee0;
+}
+#campus-3d-canvas { width: 100%; height: 100%; display: block; touch-action: none; }
+.campus-3d-canvas-wrap canvas { cursor: grab; }
+.campus-3d-canvas-wrap canvas:active { cursor: grabbing; }
+
+.campus-3d-legend {
+  position: absolute; left: 12px; bottom: 12px;
+  background: rgba(255,255,255,0.94); border: 1px solid #e0e0d0;
+  border-radius: 0.55rem; padding: 0.5rem 0.7rem;
+  font-size: 0.78rem; color: #333;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  pointer-events: none;
+}
+.campus-3d-legend-row { display: flex; align-items: center; gap: 0.5rem; line-height: 1.6; }
+.campus-3d-swatch {
+  display: inline-block; width: 14px; height: 14px; border-radius: 3px;
+  border: 1px solid rgba(0,0,0,0.15);
+}
+.campus-3d-tooltip {
+  position: absolute; z-index: 10; pointer-events: none;
+  background: rgba(30,30,30,0.92); color: #fff;
+  padding: 0.32rem 0.6rem; border-radius: 0.35rem;
+  font-size: 0.8rem; font-weight: 600;
+  opacity: 0; transition: opacity 0.12s ease;
+  white-space: nowrap;
+}
+
+/* Slide-in panel showing the selected dorm's rankings card. */
+.dorm-panel {
+  position: absolute;
+  top: 12px; right: 12px;
+  width: min(380px, calc(100% - 24px));
+  max-height: calc(100% - 24px);
+  background: rgba(255,255,255,0.97);
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 0.85rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  padding: 0.85rem 0.85rem 0.95rem;
+  overflow-y: auto;
+  transform: translateX(105%);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.dorm-panel--open { transform: translateX(0); }
+.dorm-panel-close {
+  position: absolute; top: 6px; right: 8px;
+  width: 28px; height: 28px;
+  border: none; background: transparent;
+  font-size: 1.5rem; line-height: 1;
+  color: var(--text-secondary); cursor: pointer;
+  border-radius: 50%;
+}
+.dorm-panel-close:hover { background: rgba(0,0,0,0.07); color: #000; }
+.dorm-panel-empty {
+  font-size: 0.85rem; color: var(--text-secondary);
+  text-align: center; padding: 1rem 0.5rem;
+}
+.dorm-panel .dorm-rank-card { margin: 0; }
+
+@media (max-width: 768px) {
+  .campus-3d-canvas-wrap { height: calc(100vh - 260px); min-height: 360px; }
+  .dorm-panel {
+    width: calc(100% - 24px);
+    max-height: 60%;
+    top: auto; bottom: 12px; right: 12px; left: 12px;
+    transform: translateY(110%);
+  }
+  .dorm-panel--open { transform: translateY(0); }
+  .explore-map-3d-hint { display: none; }
+}

@@ -1,0 +1,486 @@
+<%# =============================================================
+   PRESERVED PRE-REDESIGN EXPLORE PAGE
+   This is an archival snapshot of /explore as it existed
+   immediately before the 3D campus map redesign, AFTER the two
+   alignment changes were applied:
+     1. Dorm rankings color bars start closer to the left.
+     2. .dorm-score-value numbers are nudged down ~1px to align
+        visually with the bars.
+   Mounted at the route /explore-legacy. Do not delete — kept
+   for historical reference and design comparison.
+   ============================================================= %>
+<%- include('partials/head', { title: 'Explore Campus (Legacy) | Room for Improvement' }) %>
+
+    <body>
+        <%- include('partials/nav') %>
+
+        <main class="explore-page" style="padding: 2.5rem 1.5rem;">
+
+            <!-- ====== RANKINGS SECTION (above map) ====== -->
+            <section class="explore-rankings-section">
+                <%- include('partials/ratingColors') %>
+
+                <%
+                  // Server-side rating color helpers for EJS template rendering
+                  function ratingColor(val) {
+                    var colors = { 5: '#34877A', 4: '#92B89D', 3: '#D69772', 2: '#C27654', 1: '#AE5436' };
+                    return colors[Math.round(val)] || 'transparent';
+                  }
+                  function ratingTextColor(val) {
+                    return '#fff';
+                  }
+
+                  var categories = [
+                    { key: 'culture',     icon: '🏆', label: 'Culture',
+                      textLabel: function(v) {
+                        if (v >= 4.5) return 'Very Positive';
+                        if (v >= 3.5) return 'Positive';
+                        if (v >= 2.5) return 'Neutral';
+                        if (v >= 1.5) return 'Negative';
+                        return 'Very Negative';
+                      }
+                    },
+                    { key: 'roomSize',    icon: '📦', label: 'Size',
+                      textLabel: function(v) {
+                        if (v >= 4.5) return 'Expansive';
+                        if (v >= 3.5) return 'Spacious';
+                        if (v >= 2.5) return 'Average';
+                        if (v >= 1.5) return 'Tight';
+                        return 'Cramped';
+                      }
+                    },
+                    { key: 'quietness',   icon: '🔇', label: 'Noise',
+                      textLabel: function(v) {
+                        if (v >= 4.5) return 'Silent';
+                        if (v >= 3.5) return 'Quiet';
+                        if (v >= 2.5) return 'Moderate';
+                        if (v >= 1.5) return 'Noisy';
+                        return 'Very Noisy';
+                      }
+                    },
+                    { key: 'tempControl', icon: '🌡️', label: 'Temp',
+                      textLabel: function(v) {
+                        if (v >= 4.5) return 'Very Easy';
+                        if (v >= 3.5) return 'Easy';
+                        if (v >= 2.5) return 'Manageable';
+                        if (v >= 1.5) return 'Difficult';
+                        return 'Very Difficult';
+                      }
+                    },
+                    { key: 'sunlight',    icon: '☀️', label: 'Nat. Light',
+                      textLabel: function(v) {
+                        if (v >= 4.5) return 'Very Bright';
+                        if (v >= 3.5) return 'Bright';
+                        if (v >= 2.5) return 'Moderate';
+                        if (v >= 1.5) return 'Dim';
+                        return 'Very Dark';
+                      }
+                    }
+                  ];
+
+                  // Valid house descriptor checklist options (from the review form)
+                  var VALID_CULTURE_VIBES = [
+                    'Welcoming / inclusive', 'Tight-knit community', 'Quiet / studious',
+                    'Lively / social', 'Party-oriented', 'Friendly but independent',
+                    'Cliquey / exclusive', 'Competitive / high-pressure',
+                    'Disconnected / isolated', 'Diverse mix of people',
+                    'Active house programming', 'Floor rarely interacts'
+                  ];
+                %>
+
+                <% if (!dormScores || dormScores.length === 0) { %>
+                  <div class="dorm-rankings-empty">
+                    <p>No data available</p>
+                  </div>
+                <% } else { %>
+                  <!-- Section header -->
+                  <div class="explore-section-divider" style="margin-top:0; margin-bottom:1.5rem;">
+                    <span>🏆 DORM RANKINGS</span>
+                  </div>
+                  <div class="dorm-rankings-grid">
+                    <% dormScores.forEach(function(dorm) { %>
+                      <a href="/dorm/<%= encodeURIComponent(dorm.name) %>" class="dorm-rank-card">
+
+                        <!-- Card Header -->
+                        <div class="dorm-rank-card-header">
+                          <h2 class="dorm-rank-card-name"><%= dorm.name.replace(/_/g, '-') %></h2>
+                          <span class="dorm-rank-card-badge">
+                            🏠 <%= dorm.houseCount %> house<%= dorm.houseCount !== 1 ? 's' : '' %>
+                          </span>
+                        </div>
+
+                        <!-- Score Grid: emoji | label | bar + descriptor | value -->
+                        <div class="dorm-rank-scores" style="display:grid; grid-template-columns: 1.4rem 4.4rem minmax(0, 1fr) 2.4rem; gap:0.28rem 0.35rem; align-items:end;">
+                          <% categories.forEach(function(cat) {
+                            var score = dorm.scores[cat.key];
+                            var hasScore = score !== null && score !== undefined;
+                            var barColor = hasScore ? ratingColor(score) : 'transparent';
+                            var barPct = hasScore ? Math.max(4, Math.min(100, ((score - 1) / 4) * 100)) : 0;
+                            var barLabel = hasScore ? cat.textLabel(score) : '';
+                          %>
+                            <span class="dorm-score-icon" style="font-size:1.18rem; line-height:1; text-align:center;"><%= cat.icon %></span>
+                            <span class="dorm-score-label" style="font-size:0.88rem; font-weight:700; color:var(--text-secondary); white-space:nowrap; line-height:1; text-align:left; width:auto;"><%= cat.label %></span>
+                            <% if (hasScore) { %>
+                              <div style="display:flex; flex-direction:column; gap:0.12rem;">
+                                <span style="font-size:0.74rem; font-weight:800; color:<%= barColor %>; white-space:nowrap; line-height:1;"><%= barLabel %></span>
+                                <div style="position:relative; height:16px; border-radius:3px; overflow:hidden; background:#f1f1f4; min-width:30px;">
+                                  <div style="position:absolute; left:0; top:0; height:100%; width:<%= barPct %>%; background:<%= barColor %>; border-radius:3px;"></div>
+                                </div>
+                              </div>
+                              <span class="dorm-score-value" style="font-size:0.88rem; font-weight:800; color:var(--text-primary); text-align:right; white-space:nowrap; position:relative; top:1px;">
+                                <%= score.toFixed(1) %>
+                              </span>
+                            <% } else { %>
+                              <div style="height:16px;"></div>
+                              <span class="dorm-score-value null-score" style="text-align:right;">—</span>
+                            <% } %>
+                          <% }); %>
+                        </div>
+
+                        <!-- Top 3 House Descriptors -->
+                        <% if (dorm.topVibes && dorm.topVibes.length > 0) { %>
+                          <div style="margin-top:0.6rem; padding-top:0.5rem; border-top:1px solid var(--border-color);">
+                            <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-secondary); margin-bottom:0.3rem;">Top House Descriptors</div>
+                            <div style="display:flex; flex-wrap:wrap; gap:0.25rem;">
+                              <% dorm.topVibes.forEach(function(vibe) { %>
+                                <span class="explore-vibe-tag" data-vibe-text="<%= vibe.replace(/"/g, '&quot;') %>" style="font-size:0.72rem; padding:0.18em 0.55em; border-radius:2rem; font-weight:600; border:1px solid currentColor; white-space:nowrap; color:#444; cursor:default;"><%= vibe %></span>
+                              <% }); %>
+                            </div>
+                          </div>
+                        <% } %>
+
+                      </a>
+                    <% }); %>
+                  </div>
+                <% } %>
+
+                <p style="text-align:center; color:var(--text-secondary); font-size:0.85rem; margin-top:1.5rem; margin-bottom:2rem;">
+                  💡 Click any card to view house-level rankings within that dorm
+                </p>
+            </section>
+
+            <!-- ====== DIVIDER ====== -->
+            <div class="explore-section-divider">
+                <span>🗺️ Campus Map</span>
+            </div>
+
+            <!-- ====== MAP SECTION ====== -->
+            <section class="explore-map-section">
+                <!-- Campus Map SVG -->
+                <div style="background:#fff; border-radius:1rem; box-shadow:var(--shadow-md); overflow:hidden; position:relative;">
+                    <div style="background: linear-gradient(135deg, #1a2a1a 0%, #2d3b2d 100%); padding:1rem 1.5rem; display:flex; align-items:center; gap:0.75rem;">
+                        <span style="font-size:1.5rem;">🗺️</span>
+                        <span style="color:#e8f5e9; font-weight:600; font-size:1.1rem;">UChicago South Campus — Residential Dorms</span>
+                        <span style="color:#81c784; font-size:0.85rem; margin-left:auto;">Click any building to explore</span>
+                    </div>
+
+                    <svg id="campus-svg" viewBox="0 0 900 560" xmlns="http://www.w3.org/2000/svg"
+                        style="width:100%; height:auto; display:block; background: #eef2e6; cursor:default;"
+                        font-family="Inter, sans-serif">
+
+                        <!-- Background streets / green space -->
+                        <rect x="200" y="60" width="500" height="440" rx="4" fill="#dce8d0" opacity="0.4" />
+
+                        <!-- Street lines -->
+                        <line x1="0" y1="200" x2="900" y2="200" stroke="#c8c8b4" stroke-width="14" opacity="0.5" />
+                        <line x1="0" y1="380" x2="900" y2="380" stroke="#c8c8b4" stroke-width="14" opacity="0.5" />
+                        <line x1="150" y1="0" x2="150" y2="560" stroke="#c8c8b4" stroke-width="14" opacity="0.5" />
+                        <line x1="750" y1="0" x2="750" y2="560" stroke="#c8c8b4" stroke-width="14" opacity="0.5" />
+
+                        <!-- Street labels -->
+                        <text x="450" y="188" text-anchor="middle" fill="#a0a088" font-size="11" font-weight="600">57th Street</text>
+                        <text x="450" y="368" text-anchor="middle" fill="#a0a088" font-size="11" font-weight="600">59th Street</text>
+                        <text x="138" y="290" text-anchor="middle" fill="#a0a088" font-size="11" font-weight="600" transform="rotate(-90,138,290)">Ellis Ave</text>
+                        <text x="762" y="290" text-anchor="middle" fill="#a0a088" font-size="11" font-weight="600" transform="rotate(-90,762,290)">Woodlawn Ave</text>
+
+                        <!-- Compass rose -->
+                        <g transform="translate(852,45)">
+                            <circle cx="0" cy="0" r="20" fill="white" stroke="#ccc" stroke-width="1.5" />
+                            <text x="0" y="-8" text-anchor="middle" fill="#555" font-size="10" font-weight="700">N</text>
+                            <polygon points="0,-15 -4,-2 0,-6 4,-2" fill="#800000" />
+                            <polygon points="0,15 -4,2 0,6 4,2" fill="#ccc" />
+                        </g>
+
+                        <!-- ====== DORM BUILDINGS ====== -->
+
+                        <!-- Burton-Judson -->
+                        <g class="dorm-group" onclick="window.location='/dorm/Burton-Judson'" style="cursor:pointer;">
+                            <rect x="215" y="215" width="160" height="120" rx="6" fill="#800000" stroke="#5a0000" stroke-width="2" class="dorm-shape" data-dorm="Burton-Judson" opacity="0.82" />
+                            <text x="295" y="265" text-anchor="middle" fill="white" font-size="13" font-weight="700">Burton-Judson</text>
+                            <text x="295" y="282" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10">6 Houses</text>
+                            <text x="295" y="298" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="9">Click to explore →</text>
+                            <rect x="282" y="333" width="26" height="5" rx="2" fill="#5a0000" />
+                        </g>
+
+                        <!-- Snell-Hitchcock -->
+                        <g class="dorm-group" onclick="window.location='/dorm/Snell_Hitchcock'" style="cursor:pointer;">
+                            <polygon points="420,215 540,215 545,330 415,330" fill="#4a235a" stroke="#2d1338" stroke-width="2" class="dorm-shape" data-dorm="Snell_Hitchcock" opacity="0.85" />
+                            <text x="480" y="265" text-anchor="middle" fill="white" font-size="13" font-weight="700">Snell-Hitchcock</text>
+                            <text x="480" y="282" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10">2 Houses</text>
+                            <text x="480" y="298" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="9">Click to explore →</text>
+                        </g>
+
+                        <!-- I-House -->
+                        <g class="dorm-group" onclick="window.location='/dorm/I-House'" style="cursor:pointer;">
+                            <rect x="320" y="390" width="175" height="100" rx="6" fill="#1a4a7a" stroke="#0d2e52" stroke-width="2" class="dorm-shape" data-dorm="I-House" opacity="0.85" />
+                            <text x="407" y="430" text-anchor="middle" fill="white" font-size="13" font-weight="700">I-House</text>
+                            <text x="407" y="447" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10">5 Houses</text>
+                            <text x="407" y="463" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="9">Click to explore →</text>
+                        </g>
+
+                        <!-- Max Palevsky -->
+                        <g class="dorm-group" onclick="window.location='/dorm/Max Palevsky'" style="cursor:pointer;">
+                            <rect x="580" y="215" width="155" height="130" rx="6" fill="#1a5a1a" stroke="#0d3b0d" stroke-width="2" class="dorm-shape" data-dorm="Max Palevsky" opacity="0.85" />
+                            <text x="657" y="268" text-anchor="middle" fill="white" font-size="13" font-weight="700">Max Palevsky</text>
+                            <text x="657" y="285" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10">9 Houses</text>
+                            <text x="657" y="301" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="9">Click to explore →</text>
+                        </g>
+
+                        <!-- Renee GRC -->
+                        <g class="dorm-group" onclick="window.location='/dorm/Renee_Granville-Grossman'" style="cursor:pointer;">
+                            <rect x="555" y="80" width="160" height="100" rx="6" fill="#7a4a00" stroke="#4d2d00" stroke-width="2" class="dorm-shape" data-dorm="Renee_Granville-Grossman" opacity="0.85" />
+                            <text x="635" y="120" text-anchor="middle" fill="white" font-size="11" font-weight="700">Renee</text>
+                            <text x="635" y="135" text-anchor="middle" fill="white" font-size="11" font-weight="700">Granville-Grossman</text>
+                            <text x="635" y="152" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10">7 Houses</text>
+                            <text x="635" y="165" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="9">Click to explore →</text>
+                        </g>
+
+                        <!-- Woodlawn -->
+                        <g class="dorm-group" onclick="window.location='/dorm/Woodlawn'" style="cursor:pointer;">
+                            <rect x="780" y="215" width="100" height="160" rx="6" fill="#004d5a" stroke="#003040" stroke-width="2" class="dorm-shape" data-dorm="Woodlawn" opacity="0.85" />
+                            <text x="830" y="278" text-anchor="middle" fill="white" font-size="13" font-weight="700">Woodlawn</text>
+                            <text x="830" y="295" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="10">11 Houses</text>
+                            <text x="830" y="311" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="9">Click to explore →</text>
+                        </g>
+
+                        <!-- Legend -->
+                        <g transform="translate(16, 450)">
+                            <rect x="0" y="0" width="130" height="95" rx="8" fill="white" opacity="0.92" stroke="#e0e0d0" stroke-width="1" />
+                            <text x="10" y="18" fill="#555" font-size="10" font-weight="700">LEGEND</text>
+                            <rect x="10" y="26" width="12" height="12" rx="2" fill="#800000" />
+                            <text x="28" y="37" fill="#444" font-size="10">Burton-Judson</text>
+                            <rect x="10" y="44" width="12" height="12" rx="2" fill="#4a235a" />
+                            <text x="28" y="55" fill="#444" font-size="10">Snell-Hitchcock</text>
+                            <rect x="10" y="62" width="12" height="12" rx="2" fill="#1a4a7a" />
+                            <text x="28" y="73" fill="#444" font-size="10">I-House</text>
+                            <rect x="10" y="80" width="12" height="12" rx="2" fill="#1a5a1a" />
+                            <text x="28" y="91" fill="#444" font-size="10">Max Palevsky</text>
+                        </g>
+                        <g transform="translate(152, 450)">
+                            <rect x="0" y="0" width="130" height="60" rx="8" fill="white" opacity="0.92" stroke="#e0e0d0" stroke-width="1" />
+                            <rect x="10" y="10" width="12" height="12" rx="2" fill="#7a4a00" />
+                            <text x="28" y="21" fill="#444" font-size="10">Renee GRC</text>
+                            <rect x="10" y="28" width="12" height="12" rx="2" fill="#004d5a" />
+                            <text x="28" y="39" fill="#444" font-size="10">Woodlawn</text>
+                        </g>
+                    </svg>
+                </div>
+            </section>
+            <!-- Quick Access section intentionally removed (R6.1) -->
+
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Room for Improvement</p>
+        </footer>
+
+        <!-- Vibe tag tooltip -->
+        <div id="explore-vibe-tooltip" style="position:fixed; z-index:9999; pointer-events:none; background:rgba(30,30,30,0.92); color:#fff; padding:0.45rem 0.75rem; border-radius:0.4rem; font-size:0.82rem; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; white-space:nowrap; box-shadow:0 3px 12px rgba(0,0,0,0.25); opacity:0; transition:opacity 0.15s ease;"></div>
+
+        <!-- Injected house data for map search -->
+        <script id="all-houses-data" type="application/json"><%- allHousesJson %></script>
+        <script id="dorm-scores-data" type="application/json"><%- dormScoresJson %></script>
+
+        <!-- SVG legend repositioning at ≤480px (Requirement 3.5) -->
+        <script>
+            (function () {
+                var svg = document.getElementById('campus-svg');
+                // The two legend <g> elements are the last two children of the SVG
+                // Legend 1: translate(16, 450), Legend 2: translate(152, 450)
+                var legendGroups = svg ? Array.from(svg.querySelectorAll('g[transform^="translate(16, 450)"], g[transform^="translate(152, 450)"]')) : [];
+
+                var ORIGINAL_VIEWBOX = '0 0 900 560';
+                var MOBILE_VIEWBOX   = '0 0 900 680';  // extra 120px below map for legends
+
+                // Original transforms (inside the 900×560 viewBox)
+                var ORIGINAL_TRANSFORMS = ['translate(16, 450)', 'translate(152, 450)'];
+                // Repositioned transforms: side-by-side below the map content area
+                var MOBILE_TRANSFORMS   = ['translate(16, 575)', 'translate(152, 575)'];
+
+                function applyMobile() {
+                    if (!svg || legendGroups.length === 0) return;
+                    svg.setAttribute('viewBox', MOBILE_VIEWBOX);
+                    legendGroups.forEach(function (g, i) {
+                        g.setAttribute('transform', MOBILE_TRANSFORMS[i]);
+                    });
+                }
+
+                function applyDesktop() {
+                    if (!svg || legendGroups.length === 0) return;
+                    svg.setAttribute('viewBox', ORIGINAL_VIEWBOX);
+                    legendGroups.forEach(function (g, i) {
+                        g.setAttribute('transform', ORIGINAL_TRANSFORMS[i]);
+                    });
+                }
+
+                var mq = window.matchMedia('(max-width: 480px)');
+
+                function handleChange(e) {
+                    if (e.matches) {
+                        applyMobile();
+                    } else {
+                        applyDesktop();
+                    }
+                }
+
+                // Apply on load
+                handleChange(mq);
+
+                // Listen for viewport changes
+                if (mq.addEventListener) {
+                    mq.addEventListener('change', handleChange);
+                } else {
+                    // Safari <14 fallback
+                    mq.addListener(handleChange);
+                }
+            })();
+        </script>
+
+        <script>
+            let allHouses = [];
+            try { allHouses = JSON.parse(document.getElementById('all-houses-data').textContent); } catch (e) { }
+
+            // ── Vibe tag theme coloring + tooltip (mirrors housePage.ejs floor summary) ──
+            var EXPLORE_THEMES = {
+              'community':  { label: 'Community',   color: '#2563eb' },
+              'social':     { label: 'Social',       color: '#7c3aed' },
+              'academic':   { label: 'Academic',     color: '#0891b2' },
+              'positive':   { label: 'Positive',     color: '#16a34a' },
+              'negative':   { label: 'Negative',     color: '#dc2626' },
+              'neutral':    { label: 'Neutral',      color: '#78716c' },
+              'physical':   { label: 'Physical',     color: '#d97706' },
+            };
+            var EXPLORE_THEME_KEYWORDS = [
+              { theme: 'community',  words: ['welcoming','inclusive','tight-knit','tight','knit','community','friendly','warm','supportive','diverse','belonging','together','family','close','bond','connected','unity','cohesive','collaborative','welcom'] },
+              { theme: 'social',     words: ['social','fun','lively','party','events','active','spirited','outgoing','vibrant','energetic','loud','noisy','busy','happening','nightlife','gatherings','hangout','chill','laid-back','relaxed','casual'] },
+              { theme: 'academic',   words: ['studious','quiet','independent','focused','academic','study','intellectual','competitive','pressure','serious','hardworking','driven','ambitious','scholarly','research','library','work'] },
+              { theme: 'positive',   words: ['great','good','nice','beautiful','clean','spacious','bright','cozy','comfortable','modern','amazing','love','best','awesome','excellent','wonderful','fantastic','perfect','ideal','pleasant','enjoyable','happy','positive'] },
+              { theme: 'negative',   words: ['bad','dirty','small','dark','cramped','old','broken','worst','terrible','ugly','smelly','gross','cliquey','exclusive','disconnected','toxic','unwelcoming','hostile','isolated','lonely','negative','poor','awful'] },
+              { theme: 'physical',   words: ['big','large','spacious','small','tiny','room','floor','window','light','sunlight','sunny','temperature','hot','cold','drafty','heating','ac','storage','ceiling','view','bathroom','kitchen','furniture','layout'] },
+            ];
+            function exploreAssignTheme(word) {
+              var lower = word.toLowerCase().replace(/[^a-z0-9\-]/g, '');
+              for (var i = 0; i < EXPLORE_THEME_KEYWORDS.length; i++) {
+                var entry = EXPLORE_THEME_KEYWORDS[i];
+                for (var j = 0; j < entry.words.length; j++) {
+                  if (lower.indexOf(entry.words[j]) !== -1 || entry.words[j].indexOf(lower) !== -1) {
+                    return entry.theme;
+                  }
+                }
+              }
+              return 'neutral';
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              var vibeTooltip = document.getElementById('explore-vibe-tooltip');
+
+              // Build a map from vibe text → total mentions across all dorms
+              var dormScoresData = [];
+              try { dormScoresData = JSON.parse(document.getElementById('dorm-scores-data').textContent); } catch(e) {}
+              var globalVibeCounts = {};
+              dormScoresData.forEach(function(dorm) {
+                if (dorm.vibeCounts) {
+                  Object.entries(dorm.vibeCounts).forEach(function([vibe, count]) {
+                    globalVibeCounts[vibe] = (globalVibeCounts[vibe] || 0) + count;
+                  });
+                }
+              });
+
+              // Apply theme colors to vibe tags
+              document.querySelectorAll('.explore-vibe-tag').forEach(function(tagEl) {
+                var text = tagEl.dataset.vibeText || tagEl.textContent.trim();
+                var theme = exploreAssignTheme(text);
+                var color = (EXPLORE_THEMES[theme] || EXPLORE_THEMES['neutral']).color;
+                var r = parseInt(color.slice(1,3),16);
+                var g = parseInt(color.slice(3,5),16);
+                var b = parseInt(color.slice(5,7),16);
+                // Keep text readable while making vibe tag colors a touch lighter.
+                var dr = Math.round(r * 0.62);
+                var dg = Math.round(g * 0.62);
+                var db = Math.round(b * 0.62);
+                tagEl.style.color = 'rgb(' + dr + ',' + dg + ',' + db + ')';
+                tagEl.style.backgroundColor = 'rgba(' + r + ',' + g + ',' + b + ',0.1)';
+                tagEl.style.borderColor = 'rgba(' + r + ',' + g + ',' + b + ',0.35)';
+
+                // Tooltip: theme label + total mention count across all houses
+                tagEl.addEventListener('mouseenter', function(e) {
+                  if (!vibeTooltip) return;
+                  var themeObj = EXPLORE_THEMES[theme] || EXPLORE_THEMES['neutral'];
+                  var totalMentions = globalVibeCounts[text] || 0;
+                  var mentionStr = totalMentions > 0
+                    ? '<span style="color:rgba(255,255,255,0.7); font-weight:400;"> · ' + totalMentions + ' mention' + (totalMentions !== 1 ? 's' : '') + ' across all houses</span>'
+                    : '';
+                  vibeTooltip.innerHTML = '<span style="font-weight:700; color:' + themeObj.color + ';">' + themeObj.label + '</span>' + mentionStr;
+                  var tx = e.clientX + 14;
+                  var ty = e.clientY + 18;
+                  var tw = vibeTooltip.offsetWidth || 120;
+                  var th = vibeTooltip.offsetHeight || 36;
+                  if (tx + tw > window.innerWidth - 8) tx = e.clientX - tw - 10;
+                  if (ty + th > window.innerHeight - 8) ty = e.clientY - th - 10;
+                  if (ty < 8) ty = 8;
+                  vibeTooltip.style.left = tx + 'px';
+                  vibeTooltip.style.top = ty + 'px';
+                  vibeTooltip.style.opacity = '1';
+                });
+                tagEl.addEventListener('mousemove', function(e) {
+                  if (!vibeTooltip) return;
+                  var tx = e.clientX + 14;
+                  var ty = e.clientY + 18;
+                  var tw = vibeTooltip.offsetWidth || 120;
+                  var th = vibeTooltip.offsetHeight || 36;
+                  if (tx + tw > window.innerWidth - 8) tx = e.clientX - tw - 10;
+                  if (ty + th > window.innerHeight - 8) ty = e.clientY - th - 10;
+                  if (ty < 8) ty = 8;
+                  vibeTooltip.style.left = tx + 'px';
+                  vibeTooltip.style.top = ty + 'px';
+                });
+                tagEl.addEventListener('mouseleave', function() {
+                  if (vibeTooltip) vibeTooltip.style.opacity = '0';
+                });
+              });
+            });
+
+            // SVG hover effect
+            document.querySelectorAll('.dorm-group').forEach(g => {
+                const shape = g.querySelector('.dorm-shape');
+                const origOpacity = parseFloat(shape.getAttribute('opacity')) || 0.85;
+                g.addEventListener('mouseenter', () => {
+                    shape.style.opacity = '1';
+                    shape.style.filter = 'brightness(1.15) drop-shadow(0 4px 12px rgba(0,0,0,0.4))';
+                    shape.style.transition = 'all 0.2s';
+                });
+                g.addEventListener('mouseleave', () => {
+                    shape.style.opacity = origOpacity;
+                    shape.style.filter = '';
+                });
+            });
+
+            function onSearch(val) {
+                // Search bar removed — function kept for compatibility
+            }
+
+            function renderDropdown(matches) {
+                // Search bar removed — function kept for compatibility
+            }
+
+            function showDropdown() {
+                // Search bar removed — function kept for compatibility
+            }
+
+            function hideDropdown() {
+                // Search bar removed — function kept for compatibility
+            }
+        </script>
+    </body>
+
+</html>

@@ -562,6 +562,70 @@ app.get('/map', ensureAuthenticated, (req, res) => {
   res.redirect('/explore');
 });
 
+// GET /explore-legacy - preserved pre-redesign Explore page (rankings + 2D SVG map).
+// Mirrors /explore data exactly so the archived view continues to render.
+app.get('/explore-legacy', ensureAuthenticated, (req, res) => {
+  readRooms((err, rooms) => {
+    if (err) return res.status(500).send('Error');
+
+    const dormHousesMap = buildDormHousesMap(rooms);
+    const allHouses = [];
+    Object.entries(dormHousesMap).forEach(([dorm, houses]) => {
+      houses.forEach(house => {
+        allHouses.push({
+          house, dorm, color: getHouseColor(house),
+          initials: house.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2),
+          emblem: getHouseEmblem(house)
+        });
+      });
+    });
+
+    const entries = readRoomEntries();
+    const dorms = [...new Set(rooms.map(r => r.dorm))];
+    const VALID_CULTURE_VIBES = [
+      'Welcoming / inclusive', 'Tight-knit community', 'Quiet / studious',
+      'Lively / social', 'Party-oriented', 'Friendly but independent',
+      'Cliquey / exclusive', 'Competitive / high-pressure',
+      'Disconnected / isolated', 'Diverse mix of people',
+      'Active house programming', 'Floor rarely interacts'
+    ];
+
+    const dormScores = dorms.map(dorm => {
+      const houseRankings = computeDormRankings(dorm, rooms, entries);
+      const categories = ['culture', 'quietness', 'sunlight', 'roomSize', 'tempControl'];
+      const scores = {};
+      categories.forEach(cat => {
+        const vals = houseRankings.map(h => h.scores[cat]).filter(v => v !== null);
+        scores[cat] = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+      });
+      const vibeCounts = {};
+      entries.forEach(e => {
+        const room = rooms.find(r => r.id === e.roomId);
+        if (!room || room.dorm !== dorm) return;
+        if (Array.isArray(e.cultureTags)) {
+          e.cultureTags.forEach(tag => {
+            if (tag && VALID_CULTURE_VIBES.includes(tag)) {
+              vibeCounts[tag] = (vibeCounts[tag] || 0) + 1;
+            }
+          });
+        }
+      });
+      const topVibes = Object.entries(vibeCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([vibe]) => vibe);
+      return { name: dorm, scores, houseCount: houseRankings.length, topVibes, vibeCounts };
+    });
+
+    res.render('explore_legacy', {
+      user: req.user,
+      allHousesJson: JSON.stringify(allHouses),
+      dormScores,
+      dormScoresJson: JSON.stringify(dormScores)
+    });
+  });
+});
+
 // GET /api/houses - JSON for search autocomplete
 app.get('/api/houses', ensureAuthenticated, (req, res) => {
   readRooms((err, rooms) => {
