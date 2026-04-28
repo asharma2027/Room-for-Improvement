@@ -1,54 +1,31 @@
-# Room for Improvement — Instructor Setup Guide
+# Room for Improvement — Instructor Setup
 
-This is a full-stack Node.js web app. Setup takes about **2 minutes**.
+## Starting the App
 
----
+**Mac:** Double-click `Start - Mac.command`
 
-## The Only Prerequisite
+**Windows:** Double-click `Start - Windows.bat`
 
-**Node.js** (v18 or later) — download at https://nodejs.org if you don't have it.
-
-Check if you already have it:
-```
-node -v
-```
-
----
-
-## Running the Site
-
-### Mac / Linux
-Double-click `setup.sh`, or run in terminal from the project root:
-```
-bash instructor_setup/setup.sh
-```
-
-### Windows
-Double-click `setup.bat`.
+That's it. The launcher will:
+- Install Node.js automatically if you don't have it
+- Install all other dependencies
+- Start the server
+- Open the site in your browser
 
 ---
 
-That's it. The script will:
-1. Install all dependencies automatically
-2. Start the server
-3. Open **http://localhost:3000** in your browser
+## Login
+
+| Field    | Value               |
+|----------|---------------------|
+| Email    | `test@uchicago.edu` |
+| Password | `test`              |
 
 ---
 
-## Login Credentials
+## Stopping the App
 
-No registration needed — use this pre-made account:
-
-| Field    | Value                |
-|----------|----------------------|
-| Email    | `test@uchicago.edu`  |
-| Password | `test`               |
-
----
-
-## Stopping the Server
-
-Press `Ctrl + C` in the terminal.
+Close the terminal window that opened. The server stops automatically.
 
 ---
 
@@ -56,6 +33,6 @@ Press `Ctrl + C` in the terminal.
 
 | Problem | Fix |
 |---|---|
-| `node: command not found` | Install Node.js from https://nodejs.org |
-| Port 3000 already in use | Open `.env` and add `PORT=3001`, then visit http://localhost:3001 |
-| Login not working | Password is just `test` (no capitals) |
+| Mac says "cannot be opened because it is from an unidentified developer" | Right-click the file → Open → Open |
+| Port 3000 already in use | Open `.env` in the project root and change `APP_URL=http://localhost:3001`, then relaunch |
+| Node.js install fails | Install manually from [nodejs.org](https://nodejs.org) (LTS version), then relaunch |
