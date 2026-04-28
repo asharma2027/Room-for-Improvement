@@ -2,6 +2,63 @@
 
     <body>
         <%- include('partials/nav') %>
+        <style>
+            .rank-row-inner {
+                flex: 1;
+                min-width: 0;
+            }
+            .rank-row-heading {
+                display: block;
+                margin-bottom: 0.35rem;
+            }
+            .rank-house-name {
+                min-width: 0;
+                font-weight: 800;
+                font-size: 0.98rem;
+                line-height: 1.18;
+                color: var(--text-primary);
+                white-space: normal;
+                overflow: visible;
+                text-overflow: clip;
+                overflow-wrap: normal;
+                word-break: normal;
+            }
+            .rank-review-count {
+                display: block;
+                margin-top: 0.12rem;
+                font-style: italic;
+                font-weight: 600;
+                color: var(--text-secondary);
+                font-size: 0.86rem;
+                line-height: 1.15;
+                white-space: nowrap;
+            }
+            .rank-score-meta {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) 3.25rem;
+                gap: 0.45rem;
+                align-items: start;
+                margin-top: 0.22rem;
+                color: var(--text-secondary);
+                font-size: 0.9rem;
+                font-weight: 800;
+                line-height: 1.12;
+                text-align: right;
+            }
+            .rank-score-word {
+                min-width: 0;
+                white-space: normal;
+                overflow-wrap: normal;
+                word-break: normal;
+                text-align: left;
+            }
+            .rank-score-value {
+                color: var(--text-primary);
+                font-size: 0.94rem;
+                font-variant-numeric: tabular-nums;
+                white-space: nowrap;
+            }
+        </style>
 
             <main style="max-width:1300px; margin:0 auto; padding:2rem 1.5rem;">
 
@@ -28,7 +85,7 @@
                         style="margin:0 0 1rem; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-secondary); font-weight:600;">
                         Hover an emblem to highlight in rankings · Click to visit that house's page
                     </p>
-                    <div id="emblem-strip" style="display:flex; flex-wrap:wrap; gap:1rem; align-items:center;">
+                    <div id="emblem-strip" style="display:flex; flex-wrap:wrap; gap:1rem; align-items:flex-start;">
                         <% rankings.forEach((h, i)=> { %>
                             <div class="emblem"
                                 data-house="<%= i %>"
@@ -49,7 +106,7 @@
                                         <% } %>
                                 </div>
                                 <span
-                                    style="font-size:0.7rem; font-weight:600; color:var(--text-secondary); text-align:center; max-width:64px; line-height:1.2;">
+                                    style="font-size:0.7rem; font-weight:600; color:var(--text-secondary); text-align:center; max-width:64px; min-height:2.4em; line-height:1.2;">
                                     <%= h.name %>
                                 </span>
                             </div>
@@ -59,7 +116,7 @@
 
                 <!-- Rankings Board -->
                 <div id="rankings-board"
-                    style="display:grid; grid-template-columns: repeat(5, 1fr); gap:1rem; align-items:start;">
+                    style="display:grid; grid-template-columns: repeat(5, minmax(220px, 1fr)); gap:1rem; align-items:start;">
 
                 <%
                 // Panel titles/keys aligned with the v2 room review form field labels
@@ -179,10 +236,10 @@
                                            var bColor = bubbleColors[opt.value] || '#bbb';
                                         %>
                                         <div style="display:flex; flex-direction:column; align-items:center; gap:0.18rem; z-index:2; flex:0 0 auto; width:30%;">
-                                            <div style="width:22px; height:22px; border-radius:50%; border:2px solid <%= bColor %>; background:#f9fafb; display:flex; align-items:center; justify-content:center; font-size:0.62rem; font-weight:700; color:<%= bColor %>; flex-shrink:0;">
+                                            <div style="width:22px; height:22px; border-radius:50%; border:2px solid <%= bColor %>; background:#f9fafb; display:flex; align-items:center; justify-content:center; font-size:0.62rem; font-weight:700; color:#000; flex-shrink:0;">
                                                 <%= opt.value %>
                                             </div>
-                                            <span class="dorm-likert-label" data-sublabel="<%= opt.sublabel %>" style="font-size:0.58rem; color:<%= bColor %>; font-weight:600; text-align:center; line-height:1.2; word-break:break-word; cursor:default; width:100%;"><%= opt.label %></span>
+                                            <span class="dorm-likert-label" data-sublabel="<%= opt.sublabel %>" style="font-size:0.58rem; color:#000; font-weight:600; text-align:center; line-height:1.2; word-break:break-word; cursor:default; width:100%;"><%= opt.label %></span>
                                         </div>
                                         <% } %>
                                         <% }); %>
@@ -208,58 +265,44 @@
                                     %>
 
                                     <%
-                                    // Color scale: map score to green/red based on position in sorted list
-                                    // Top = green (#34877A), bottom = red (#AE5436), middle = #D69772
-                                    const n = sorted.filter(h => h.scores[cat.key] !== null).length;
-                                    function rankBarColor(rank, total) {
-                                        if (total <= 1) return '#D69772';
-                                        const t = rank / (total - 1); // 0 = best, 1 = worst
-                                        if (t <= 0.25) return '#34877A';
-                                        if (t <= 0.45) return '#92B89D';
-                                        if (t <= 0.55) return '#D69772';
-                                        if (t <= 0.75) return '#C27654';
-                                        return '#AE5436';
+                                    // Match the numeric score color scale used by the Explore dorm rankings.
+                                    function scoreBarColor(score) {
+                                        const colors = { 5: '#34877A', 4: '#92B89D', 3: '#D69772', 2: '#C27654', 1: '#AE5436' };
+                                        return colors[Math.round(score)] || '#D69772';
                                     }
-                                    let colorRank = 0;
                                     %>
                                     <% sorted.forEach((h, rank)=> {
                                         const houseIdx = rankings.findIndex(r => r.name === h.name);
                                         const score = h.scores[cat.key];
-                                        const pct = score === null ? 0 : Math.max(2, Math.min(100, ((score - 1) / 4) * 100));
-                                        const barColor = score !== null ? rankBarColor(colorRank, n) : '#e5e7eb';
-                                        if (score !== null) colorRank++;
+                                        const pct = score === null ? 0 : Math.max(4, Math.min(100, ((score - 1) / 4) * 100));
+                                        const barColor = score !== null ? scoreBarColor(score) : '#e5e7eb';
                                     %>
                                         <div class="rank-row"
                                              id="row-<%= catIdx %>-<%= houseIdx %>"
                                              data-house-idx="<%= houseIdx %>"
                                              onclick="window.location='/house/<%= encodeURIComponent(dormName) %>/<%= encodeURIComponent(h.name) %>'"
-                                             style="display:flex; align-items:center; gap:0.5rem; padding:0.5rem 0.75rem;
+                                             style="display:flex; align-items:center; gap:0.5rem; padding:0.6rem 0.75rem;
                                                     border-bottom:1px solid #f3f4f6; cursor:pointer; transition:background 0.15s;">
 
-                                            <div style="width:20px; text-align:center; flex-shrink:0;">
-                                                <span style="font-size:0.8rem; font-weight:800; color:#888;">
-                                                    <%= rank + 1 %>
-                                                </span>
-                                            </div>
-
-                                            <div style="flex:1; min-width:0;">
-                                                <div style="display:flex; justify-content:space-between; align-items:baseline; gap:0.5rem; margin-bottom:0.2rem;">
-                                                    <span style="font-weight:600; font-size:0.78rem; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                                                        <%= h.name %><% if (h.reviewCount > 0) { %> <em style="font-weight:400; color:var(--text-secondary); font-size:0.7rem;">(<%= h.reviewCount %>)</em><% } %>
+                                            <div class="rank-row-inner">
+                                                <div class="rank-row-heading">
+                                                    <span class="rank-house-name">
+                                                        <%= h.name %><% if (h.reviewCount > 0) { %><em class="rank-review-count">(<%= h.reviewCount %>)</em><% } %>
                                                     </span>
                                                     <% if (score !== null) { %>
-                                                        <span style="font-size:0.72rem; font-weight:700; color:var(--text-secondary); flex-shrink:0; white-space:nowrap;">
-                                                            <span style="color:<%= barColor %>; font-size:0.68rem; font-weight:600; margin-right:2px;"><%= cat.textLabel(score) %></span> <%= score.toFixed(2) %>
+                                                        <span class="rank-score-meta">
+                                                            <span class="rank-score-word" style="color:<%= barColor %>;"><%= cat.textLabel(score) %></span>
+                                                            <span class="rank-score-value"><%= score.toFixed(2) %></span>
                                                         </span>
                                                     <% } else { %>
                                                         <span style="font-size:0.7rem; color:#ccc; font-style:italic; flex-shrink:0;">--</span>
                                                     <% } %>
                                                 </div>
                                                 <!-- Horizontal score bar -->
-                                                <div style="height:6px; background:#f1f1f4; border-radius:3px; overflow:hidden;">
+                                                <div style="position:relative; height:16px; background:#f1f1f4; border-radius:3px; overflow:hidden;">
                                                     <% if (score !== null) { %>
                                                         <div class="rank-bar"
-                                                             style="height:100%; width:<%= pct %>%; background:<%= barColor %>; border-radius:3px; transition:width 0.3s;"></div>
+                                                             style="position:absolute; left:0; top:0; height:100%; width:<%= pct %>%; background:<%= barColor %>; border-radius:3px; transition:width 0.3s;"></div>
                                                     <% } %>
                                                 </div>
                                             </div>
