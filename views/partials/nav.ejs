@@ -1,4 +1,5 @@
 <nav class="glass">
+  <div class="nav-inner">
   <button class="hamburger-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">
     <span class="hamburger-line"></span>
     <span class="hamburger-line"></span>
@@ -17,14 +18,15 @@
       </li>
       <li><a href="/explore" class="<%= path === '/explore' ? 'active' : '' %>">Explore Campus</a></li>
       <li><a href="/rooms" class="<%= path === '/rooms' ? 'active' : '' %>">All Rooms</a></li>
-      <li><a href="<%= path === '/' ? '#feedback-section' : '/#feedback-section' %>" class="nav-feedback-btn">Leave Feedback</a></li>
+      <li><a href="<%= path === '/' ? '#feedback-section' : '/#feedback-section' %>" class="nav-feedback-btn">Leave Feedback / Submit Room Info</a></li>
       <li><a href="/logout">Logout</a></li>
       <% } else { %>
-        <li><a href="/register" class="<%= path === '/register' ? 'active' : '' %>">Register</a></li>
         <li><a href="/login" class="<%= path === '/login' ? 'active' : '' %>"
             style="background: var(--primary-color); color: white;">Login</a></li>
+        <li><a href="/register" class="<%= path === '/register' ? 'active' : '' %>">Register</a></li>
         <% } %>
   </ul>
+  </div>
 </nav>
 <div class="nav-overlay" id="nav-overlay"></div>
 

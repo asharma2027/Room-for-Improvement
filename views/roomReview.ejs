@@ -6,9 +6,143 @@
       /* Red asterisk for required fields */
       .req-star { color: #dc2626; font-weight: 700; margin-left: 0.15rem; }
       .opt-note { font-weight: normal; color: var(--text-secondary); font-size: 0.82rem; margin-left: 0.25rem; }
+
+      /* Room selector section (integrated from submit-review) */
+      .room-selector-section {
+        max-width: 640px;
+        margin: 0 auto 2rem;
+        padding: 1.5rem;
+        background: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+      }
+      .room-selector-section h2 {
+        margin: 0 0 0.25rem;
+        font-size: 1.3rem;
+      }
+      .room-selector-section p {
+        color: var(--text-secondary);
+        margin: 0 0 1.25rem;
+        font-size: 0.95rem;
+      }
+      .rs-field { margin-bottom: 1rem; }
+      .rs-field label {
+        display: block;
+        font-weight: 600;
+        font-size: 0.88rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.4rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .rs-field select, .rs-field input[type="text"] {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid var(--border-color);
+        border-radius: var(--radius-md);
+        font-size: 0.95rem;
+        background: #fff;
+        color: var(--text-primary);
+        transition: border-color 0.2s;
+        box-sizing: border-box;
+      }
+      .rs-field select:focus, .rs-field input[type="text"]:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(123,0,26,0.1);
+      }
+      .rs-field select:disabled { background: #f9fafb; color: #aaa; cursor: not-allowed; }
+      .rs-room-wrapper { position: relative; }
+      .rs-room-dropdown {
+        display: none;
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0; right: 0;
+        z-index: 200;
+        background: #fff;
+        border: 1.5px solid var(--border-color);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-lg);
+        max-height: 280px;
+        overflow-y: auto;
+      }
+      .rs-room-dropdown.open { display: block; }
+      .rs-room-item {
+        display: flex; align-items: center; gap: 0.75rem;
+        padding: 0.6rem 1rem; cursor: pointer;
+        border-bottom: 1px solid #f3f4f6;
+        font-size: 0.9rem; transition: background 0.12s;
+      }
+      .rs-room-item:last-child { border-bottom: none; }
+      .rs-room-item:hover { background: #fdf2f2; }
+      .rs-room-item .rs-room-num { font-weight: 700; color: var(--text-primary); }
+      .rs-room-item .rs-room-meta { font-size: 0.78rem; color: var(--text-secondary); }
+      .rs-room-item.rs-add-new { color: var(--primary-color); font-weight: 600; font-style: italic; }
+      .rs-room-item.rs-add-new:hover { background: rgba(123,0,26,0.05); }
+      .rs-go-btn {
+        width: 100%; padding: 0.85rem; font-size: 1rem;
+        margin-top: 0.5rem; border-radius: var(--radius-full);
+      }
+      .rs-go-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
     </style>
 
       <main>
+        <!-- Back button — styled like house page back pill -->
+        <% if (room) { %>
+        <div style="margin-bottom: 1.5rem;">
+          <a href="/rooms/<%= room.id %>"
+             style="display:inline-flex; align-items:center; gap:0.4rem; background:rgba(128,0,0,0.85); color:#fff; font-size:0.85rem; font-weight:600; padding:0.5rem 1rem; border-radius:1.1rem; text-decoration:none; border:1px solid rgba(255,255,255,0.2); box-shadow:0 2px 8px rgba(0,0,0,0.15); transition:background 0.2s;"
+             onmouseenter="this.style.background='rgba(128,0,0,1)'" onmouseleave="this.style.background='rgba(128,0,0,0.85)'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="rgba(255,255,255,0.95)">
+              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+            ← Back to Room
+          </a>
+        </div>
+        <% } else { %>
+        <div style="margin-bottom: 1.5rem;">
+          <a href="/"
+             style="display:inline-flex; align-items:center; gap:0.4rem; background:rgba(128,0,0,0.85); color:#fff; font-size:0.85rem; font-weight:600; padding:0.5rem 1rem; border-radius:1.1rem; text-decoration:none; border:1px solid rgba(255,255,255,0.2); box-shadow:0 2px 8px rgba(0,0,0,0.15); transition:background 0.2s;"
+             onmouseenter="this.style.background='rgba(128,0,0,1)'" onmouseleave="this.style.background='rgba(128,0,0,0.85)'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="rgba(255,255,255,0.95)">
+              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+            ← Back to Home
+          </a>
+        </div>
+        <% } %>
+
+        <!-- ── Room Selector (shown when no room pre-selected) ── -->
+        <% if (!room) { %>
+        <div class="room-selector-section" id="room-selector-section">
+          <h2>Submit Your Review</h2>
+          <p>Select your dorm, house, and room to get started.</p>
+
+          <div class="rs-field">
+            <label for="rs-dorm-select">Dorm</label>
+            <select id="rs-dorm-select">
+              <option value="">Select a dorm…</option>
+            </select>
+          </div>
+          <div class="rs-field">
+            <label for="rs-house-select">House</label>
+            <select id="rs-house-select" disabled>
+              <option value="">Select a house…</option>
+            </select>
+          </div>
+          <div class="rs-field">
+            <label for="rs-room-input">Room Number</label>
+            <div class="rs-room-wrapper">
+              <input type="text" id="rs-room-input" placeholder="Type a room number…" autocomplete="off" disabled />
+              <div class="rs-room-dropdown" id="rs-room-dropdown"></div>
+            </div>
+          </div>
+          <button class="rs-go-btn" id="rs-go-btn" disabled>Continue to Review Form →</button>
+        </div>
+        <% } %>
+
+        <% if (room) { %>
         <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
           <div>
             <h1 style="margin-bottom: 0.25rem;">Submit Your Review</h1>
@@ -16,7 +150,6 @@
               <%= room.dorm %> — <%= room.house %> <%= room.roomNumber %>
             </p>
           </div>
-          <a href="/rooms/<%= room.id %>" style="font-weight: 500;">&larr; Back to Room</a>
         </div>
 
         <% if (alreadySubmittedThisYear) { %>
@@ -411,11 +544,164 @@
 
         <% } %>
 
+        <% } %> <%# end if (room) %>
+
       </main>
 
       <footer>
-        <p>&copy; 2025 Room for Improvement</p>
+        <p>&copy; 2026 Room for Improvement</p>
       </footer>
+
+      <!-- Room selector JS (only needed when no room pre-selected) -->
+      <% if (!room) { %>
+      <script>
+      (function() {
+        var allHouses = [];
+        var allRooms = [];
+        var selectedRoomId = null;
+        var selectedRoomNumber = null;
+        var selectedDorm = null;
+        var selectedHouse = null;
+        var isNewRoom = false;
+
+        var dormSel = document.getElementById('rs-dorm-select');
+        var houseSel = document.getElementById('rs-house-select');
+        var roomInput = document.getElementById('rs-room-input');
+        var roomDropdown = document.getElementById('rs-room-dropdown');
+        var goBtn = document.getElementById('rs-go-btn');
+
+        if (!dormSel) return;
+
+        fetch('/api/houses')
+          .then(function(r) { return r.json(); })
+          .then(function(houses) {
+            allHouses = houses;
+            var dorms = [], seen = {};
+            houses.forEach(function(h) {
+              if (!seen[h.dorm]) { seen[h.dorm] = true; dorms.push(h.dorm); }
+            });
+            dorms.sort();
+            dorms.forEach(function(d) {
+              var opt = document.createElement('option');
+              opt.value = d; opt.textContent = d.replace(/_/g, '-');
+              dormSel.appendChild(opt);
+            });
+          });
+
+        dormSel.addEventListener('change', function() {
+          selectedDorm = dormSel.value;
+          selectedHouse = null; selectedRoomId = null; selectedRoomNumber = null; isNewRoom = false;
+          houseSel.innerHTML = '<option value="">Select a house\u2026</option>';
+          houseSel.disabled = !selectedDorm;
+          roomInput.value = ''; roomInput.disabled = true;
+          roomDropdown.classList.remove('open');
+          goBtn.disabled = true;
+          if (!selectedDorm) return;
+          var houses = allHouses.filter(function(h) { return h.dorm === selectedDorm; });
+          houses.sort(function(a, b) { return a.house.localeCompare(b.house); });
+          houses.forEach(function(h) {
+            var opt = document.createElement('option');
+            opt.value = h.house; opt.textContent = h.house;
+            houseSel.appendChild(opt);
+          });
+        });
+
+        houseSel.addEventListener('change', function() {
+          selectedHouse = houseSel.value;
+          selectedRoomId = null; selectedRoomNumber = null; isNewRoom = false;
+          roomInput.value = ''; roomInput.disabled = !selectedHouse;
+          roomDropdown.classList.remove('open');
+          goBtn.disabled = true;
+          allRooms = [];
+          if (!selectedHouse) return;
+          fetch('/api/rooms-by-house?dorm=' + encodeURIComponent(selectedDorm) + '&house=' + encodeURIComponent(selectedHouse))
+            .then(function(r) { return r.json(); })
+            .then(function(rooms) { allRooms = rooms; });
+        });
+
+        roomInput.addEventListener('input', function() {
+          var q = roomInput.value.trim();
+          selectedRoomId = null; selectedRoomNumber = null; isNewRoom = false;
+          goBtn.disabled = true;
+          if (!q) { roomDropdown.classList.remove('open'); return; }
+          showRoomDropdown(q);
+        });
+
+        roomInput.addEventListener('focus', function() {
+          var q = roomInput.value.trim();
+          if (q) showRoomDropdown(q);
+        });
+
+        document.addEventListener('click', function(e) {
+          if (!roomInput.contains(e.target) && !roomDropdown.contains(e.target)) {
+            roomDropdown.classList.remove('open');
+          }
+        });
+
+        function showRoomDropdown(q) {
+          var matches = allRooms.filter(function(r) {
+            return r.roomNumber.toLowerCase().includes(q.toLowerCase());
+          });
+          matches.sort(function(a, b) { return a.roomNumber.localeCompare(b.roomNumber, undefined, { numeric: true }); });
+          roomDropdown.innerHTML = '';
+          matches.slice(0, 12).forEach(function(r) {
+            var item = document.createElement('div');
+            item.className = 'rs-room-item';
+            item.innerHTML = '<span class="rs-room-num">' + esc(r.roomNumber) + '</span>'
+              + '<span class="rs-room-meta">' + esc(r.roomType || '') + (r.floor ? ' \u00b7 Floor ' + esc(r.floor) : '') + '</span>';
+            item.addEventListener('mousedown', function(e) { e.preventDefault(); selectRoom(r); });
+            roomDropdown.appendChild(item);
+          });
+          var exactMatch = allRooms.find(function(r) { return r.roomNumber.toLowerCase() === q.toLowerCase(); });
+          if (!exactMatch) {
+            var addItem = document.createElement('div');
+            addItem.className = 'rs-room-item rs-add-new';
+            addItem.innerHTML = '+ Add "' + esc(q) + '" as a new room';
+            addItem.addEventListener('mousedown', function(e) { e.preventDefault(); selectNewRoom(q); });
+            roomDropdown.appendChild(addItem);
+          }
+          roomDropdown.classList.toggle('open', roomDropdown.children.length > 0);
+        }
+
+        function selectRoom(r) {
+          selectedRoomId = r.id; selectedRoomNumber = r.roomNumber; isNewRoom = false;
+          roomInput.value = r.roomNumber;
+          roomDropdown.classList.remove('open');
+          goBtn.disabled = false;
+        }
+
+        function selectNewRoom(roomNumber) {
+          selectedRoomId = null; selectedRoomNumber = roomNumber; isNewRoom = true;
+          roomInput.value = roomNumber;
+          roomDropdown.classList.remove('open');
+          goBtn.disabled = false;
+        }
+
+        goBtn.addEventListener('click', function() {
+          if (!selectedDorm || !selectedHouse || !selectedRoomNumber) return;
+          if (isNewRoom) {
+            fetch('/api/add-room', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ dorm: selectedDorm, house: selectedHouse, roomNumber: selectedRoomNumber })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+              if (data.id) window.location.href = '/rooms/' + encodeURIComponent(data.id) + '/review';
+              else alert('Error creating room. Please try again.');
+            })
+            .catch(function() { alert('Error creating room. Please try again.'); });
+          } else {
+            window.location.href = '/rooms/' + encodeURIComponent(selectedRoomId) + '/review';
+          }
+        });
+
+        function esc(s) {
+          return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+      })();
+      </script>
+      <% } %>
   </body>
 
   </html>

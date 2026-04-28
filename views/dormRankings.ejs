@@ -61,17 +61,97 @@
                 <div id="rankings-board"
                     style="display:grid; grid-template-columns: repeat(5, 1fr); gap:1rem; align-items:start;">
 
-                    <%
-                    // Panel titles/keys aligned with the v2 room review form field labels
-                    // (House Culture, Outside Noise, Natural Light, Room Size, Temperature Control)
-                    const categories = [
-                        { key: 'culture',     icon: '🏆',  label: 'House Culture',       note: 'Higher = better' },
-                        { key: 'quietness',   icon: '🔇',  label: 'Outside Noise',       note: 'Higher = quieter' },
-                        { key: 'sunlight',    icon: '☀️', label: 'Natural Light',       note: 'Higher = brighter' },
-                        { key: 'roomSize',    icon: '📦',  label: 'Room Size',           note: 'Higher = bigger' },
-                        { key: 'tempControl', icon: '🌡️', label: 'Temperature Control', note: 'Higher = easier to control' }
-                    ];
-                    %>
+                <%
+                // Panel titles/keys aligned with the v2 room review form field labels
+                // Order: House Culture, Room Size, Outside Noise (quietness), Temp Control, Natural Light
+                const categories = [
+                    { key: 'culture',     icon: '🏆',  label: 'House Culture',
+                      note: 'Rated 1–5: 1 = Very Negative, 5 = Very Positive. Higher scores mean residents rate the house culture more positively.',
+                      likert: [
+                        { value: 1, label: 'Very Negative', sublabel: '' },
+                        { value: 2, label: 'Negative',      sublabel: '' },
+                        { value: 3, label: 'Neutral',       sublabel: '' },
+                        { value: 4, label: 'Positive',      sublabel: '' },
+                        { value: 5, label: 'Very Positive', sublabel: '' },
+                      ],
+                      textLabel: (v) => {
+                        if (v >= 4.5) return 'Very Positive';
+                        if (v >= 3.5) return 'Positive';
+                        if (v >= 2.5) return 'Neutral';
+                        if (v >= 1.5) return 'Negative';
+                        return 'Very Negative';
+                      }
+                    },
+                    { key: 'roomSize',    icon: '📦',  label: 'Room Size',
+                      note: 'Rated 1–5: 1 = Cramped, 5 = Expansive. Higher scores mean rooms are larger on average.',
+                      likert: [
+                        { value: 1, label: 'Cramped',   sublabel: '(very tight)' },
+                        { value: 2, label: 'Tight',     sublabel: '(below average)' },
+                        { value: 3, label: 'Average',   sublabel: '(typical UChicago)' },
+                        { value: 4, label: 'Spacious',  sublabel: '(noticeably open)' },
+                        { value: 5, label: 'Expansive', sublabel: '(unusually large)' },
+                      ],
+                      textLabel: (v) => {
+                        if (v >= 4.5) return 'Expansive';
+                        if (v >= 3.5) return 'Spacious';
+                        if (v >= 2.5) return 'Average';
+                        if (v >= 1.5) return 'Tight';
+                        return 'Cramped';
+                      }
+                    },
+                    { key: 'quietness',   icon: '🔇',  label: 'Noise Level',
+                      note: 'Rated 1–5: 1 = Very Noisy, 5 = Silent. Higher scores mean less outside noise.',
+                      likert: [
+                        { value: 1, label: 'Silent',     sublabel: '(essentially no sound)' },
+                        { value: 2, label: 'Quiet',      sublabel: '(faint sounds)' },
+                        { value: 3, label: 'Moderate',   sublabel: '(audible, manageable)' },
+                        { value: 4, label: 'Noisy',      sublabel: '(often disruptive)' },
+                        { value: 5, label: 'Very Noisy', sublabel: '(constantly loud)' },
+                      ],
+                      textLabel: (v) => {
+                        if (v >= 4.5) return 'Silent';
+                        if (v >= 3.5) return 'Quiet';
+                        if (v >= 2.5) return 'Moderate';
+                        if (v >= 1.5) return 'Noisy';
+                        return 'Very Noisy';
+                      }
+                    },
+                    { key: 'tempControl', icon: '🌡️', label: 'Temp Control',
+                      note: 'Rated 1–5: 1 = Very Difficult, 5 = Very Easy. Higher scores mean temperature is easier to manage.',
+                      likert: [
+                        { value: 1, label: 'Very Difficult', sublabel: '(always uncomfortable)' },
+                        { value: 2, label: 'Difficult',      sublabel: '(often hot/cold)' },
+                        { value: 3, label: 'Manageable',     sublabel: '(usually okay)' },
+                        { value: 4, label: 'Easy',           sublabel: '(good control)' },
+                        { value: 5, label: 'Very Easy',      sublabel: '(excellent)' },
+                      ],
+                      textLabel: (v) => {
+                        if (v >= 4.5) return 'Very Easy';
+                        if (v >= 3.5) return 'Easy';
+                        if (v >= 2.5) return 'Manageable';
+                        if (v >= 1.5) return 'Difficult';
+                        return 'Very Difficult';
+                      }
+                    },
+                    { key: 'sunlight',    icon: '☀️', label: 'Natural Light',
+                      note: 'Rated 1–5: 1 = Very Dark, 5 = Very Bright. Higher scores mean rooms get more natural light.',
+                      likert: [
+                        { value: 1, label: 'Very Dark',   sublabel: '(need lights midday)' },
+                        { value: 2, label: 'Dim',         sublabel: '(often gloomy)' },
+                        { value: 3, label: 'Moderate',    sublabel: '(adequate)' },
+                        { value: 4, label: 'Bright',      sublabel: '(well-lit naturally)' },
+                        { value: 5, label: 'Very Bright', sublabel: '(exceptional)' },
+                      ],
+                      textLabel: (v) => {
+                        if (v >= 4.5) return 'Very Bright';
+                        if (v >= 3.5) return 'Bright';
+                        if (v >= 2.5) return 'Moderate';
+                        if (v >= 1.5) return 'Dim';
+                        return 'Very Dark';
+                      }
+                    },
+                ];
+                %>
 
                         <% categories.forEach((cat, catIdx)=> { %>
                             <div class="ranking-column-wrapper">
@@ -84,8 +164,22 @@
                                     <div style="font-weight:700; font-size:0.9rem; color:var(--text-primary);">
                                         <%= cat.label %>
                                     </div>
-                                    <div style="font-size:0.7rem; color:var(--text-secondary); margin-top:0.2rem;">
-                                        <%= cat.note %>
+                                    <!-- Likert scale: show only bubbles 1, 3, 5 with a dashed arrow line behind them -->
+                                    <div style="position:relative; display:flex; justify-content:space-between; align-items:flex-start; margin-top:0.55rem; padding:0 0.15rem;">
+                                        <!-- Dashed line with arrowhead spanning the full width behind the bubbles -->
+                                        <div style="position:absolute; top:11px; left:11px; right:11px; height:0; border-top:2px dashed #ccc; z-index:0;"></div>
+                                        <!-- Arrowhead at right end -->
+                                        <div style="position:absolute; top:5px; right:5px; width:0; height:0; border-top:6px solid transparent; border-bottom:6px solid transparent; border-left:8px solid #ccc; z-index:1;"></div>
+                                        <% cat.likert.forEach(function(opt, oi) { %>
+                                        <% if (oi === 0 || oi === 2 || oi === 4) { %>
+                                        <div style="display:flex; flex-direction:column; align-items:center; gap:0.18rem; z-index:2; flex:0 0 auto; width:30%;">
+                                            <div style="width:22px; height:22px; border-radius:50%; border:2px solid #bbb; background:#f9fafb; display:flex; align-items:center; justify-content:center; font-size:0.62rem; font-weight:700; color:#555; flex-shrink:0;">
+                                                <%= opt.value %>
+                                            </div>
+                                            <span title="<%= opt.sublabel %>" style="font-size:0.58rem; color:#333; font-weight:600; text-align:center; line-height:1.2; word-break:break-word; cursor:default; width:100%;"><%= opt.label %></span>
+                                        </div>
+                                        <% } %>
+                                        <% }); %>
                                     </div>
                                 </div>
 
@@ -103,24 +197,21 @@
                                         return vb - va;
                                     });
 
-                                    // Max absolute score for this column (used to size the bars)
-                                    const maxScore = sorted.reduce((m, h) => {
-                                        const v = h.scores[cat.key];
-                                        return (v !== null && Math.abs(v) > m) ? Math.abs(v) : m;
-                                    }, 0) || 1;
+                                    // Max score is always 5 (1-5 scale)
+                                    const maxScore = 5;
                                     %>
 
                                     <%
                                     // Color scale: map score to green/red based on position in sorted list
-                                    // Top = green (#34877A), bottom = red (#AE5436), middle = beige (#EFE6D1)
+                                    // Top = green (#34877A), bottom = red (#AE5436), middle = #D69772
                                     const n = sorted.filter(h => h.scores[cat.key] !== null).length;
                                     function rankBarColor(rank, total) {
-                                        if (total <= 1) return '#EFE6D1';
+                                        if (total <= 1) return '#D69772';
                                         const t = rank / (total - 1); // 0 = best, 1 = worst
                                         if (t <= 0.25) return '#34877A';
                                         if (t <= 0.45) return '#92B89D';
-                                        if (t <= 0.55) return '#EFE6D1';
-                                        if (t <= 0.75) return '#D69772';
+                                        if (t <= 0.55) return '#D69772';
+                                        if (t <= 0.75) return '#C27654';
                                         return '#AE5436';
                                     }
                                     let colorRank = 0;
@@ -128,7 +219,7 @@
                                     <% sorted.forEach((h, rank)=> {
                                         const houseIdx = rankings.findIndex(r => r.name === h.name);
                                         const score = h.scores[cat.key];
-                                        const pct = score === null ? 0 : Math.max(2, Math.min(100, (Math.abs(score) / maxScore) * 100));
+                                        const pct = score === null ? 0 : Math.max(2, Math.min(100, ((score - 1) / 4) * 100));
                                         const barColor = score !== null ? rankBarColor(colorRank, n) : '#e5e7eb';
                                         if (score !== null) colorRank++;
                                     %>
@@ -148,11 +239,11 @@
                                             <div style="flex:1; min-width:0;">
                                                 <div style="display:flex; justify-content:space-between; align-items:baseline; gap:0.5rem; margin-bottom:0.2rem;">
                                                     <span style="font-weight:600; font-size:0.78rem; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                                                        <%= h.name %>
+                                                        <%= h.name %><% if (h.reviewCount > 0) { %> <em style="font-weight:400; color:var(--text-secondary); font-size:0.7rem;">(<%= h.reviewCount %>)</em><% } %>
                                                     </span>
                                                     <% if (score !== null) { %>
-                                                        <span style="font-size:0.72rem; font-weight:700; color:var(--text-secondary); flex-shrink:0;">
-                                                            <%= score.toFixed(2) %>
+                                                        <span style="font-size:0.72rem; font-weight:700; color:var(--text-secondary); flex-shrink:0; white-space:nowrap;">
+                                                            <span style="color:<%= barColor %>; font-size:0.68rem; font-weight:600; margin-right:2px;"><%= cat.textLabel(score) %></span> <%= score.toFixed(2) %>
                                                         </span>
                                                     <% } else { %>
                                                         <span style="font-size:0.7rem; color:#ccc; font-style:italic; flex-shrink:0;">--</span>
@@ -181,7 +272,7 @@
             </main>
 
             <footer>
-                <p>&copy; 2025 Room for Improvement</p>
+                <p>&copy; 2026 Room for Improvement</p>
             </footer>
 
             <script id="rankings-data" type="application/json"><%- rankingsJson %></script>
@@ -202,17 +293,39 @@
                             embEl.style.transform = '';
                         }
                     }
+
+                    // Dim all other emblems in the strip
+                    for (let i = 0; i < rankings.length; i++) {
+                        if (i === houseIdx) continue;
+                        const otherEmb = document.getElementById('emblem-' + i);
+                        if (otherEmb) {
+                            otherEmb.style.opacity = isHover ? '0.3' : '';
+                        }
+                        // Also dim the emblem label (parent div's span)
+                        const embDiv = otherEmb ? otherEmb.closest('.emblem') : null;
+                        if (embDiv) embDiv.style.opacity = isHover ? '0.3' : '';
+                    }
+
+                    // Highlight the hovered house rows; dim all other rows
                     for (let catIdx = 0; catIdx < NUM_CATS; catIdx++) {
-                        const row = document.getElementById('row-' + catIdx + '-' + houseIdx);
-                        if (!row) continue;
-                        if (isHover) {
-                            row.classList.add('rank-row-highlight');
-                            row.style.background = rankings[houseIdx].color + '22';
-                            row.style.borderLeft = '4px solid ' + rankings[houseIdx].color;
-                        } else {
-                            row.classList.remove('rank-row-highlight');
-                            row.style.background = '';
-                            row.style.borderLeft = '';
+                        for (let i = 0; i < rankings.length; i++) {
+                            const row = document.getElementById('row-' + catIdx + '-' + i);
+                            if (!row) continue;
+                            if (i === houseIdx) {
+                                if (isHover) {
+                                    row.classList.add('rank-row-highlight');
+                                    row.style.background = rankings[houseIdx].color + '22';
+                                    row.style.borderLeft = '4px solid ' + rankings[houseIdx].color;
+                                    row.style.opacity = '';
+                                } else {
+                                    row.classList.remove('rank-row-highlight');
+                                    row.style.background = '';
+                                    row.style.borderLeft = '';
+                                    row.style.opacity = '';
+                                }
+                            } else {
+                                row.style.opacity = isHover ? '0.3' : '';
+                            }
                         }
                     }
                 }

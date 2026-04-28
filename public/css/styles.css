@@ -136,11 +136,24 @@ header {
 }
 
 nav {
-  max-width: 1300px;
-  margin: 0 auto;
-  padding: 0 var(--spacing-lg);
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 0;
   height: 80px;
   /* Slightly taller for breathing room */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Inner content wrapper — constrains nav items to match main content width */
+.nav-inner {
+  max-width: 1300px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -153,6 +166,17 @@ nav ul {
   margin: 0;
   padding: 0;
   align-items: center;
+  width: 100%;
+}
+
+/* Push everything after the search bar to the right edge */
+nav ul li:nth-child(2) {
+  margin-left: 1.5rem;
+}
+
+/* Push the items after the search bar to the right */
+nav ul li:nth-child(3) {
+  margin-left: auto;
 }
 
 nav a {
@@ -191,7 +215,7 @@ main {
   width: 100%;
   max-width: 1300px;
   margin: 0 auto;
-  padding: var(--spacing-xl) var(--spacing-lg);
+  padding: var(--spacing-xl) 1.5rem;
 }
 
 footer {
@@ -410,6 +434,14 @@ table tbody tr:hover {
   color: #6b3a1a;
   border-color: rgba(214, 151, 114, 0.55);
 }
+.tag[data-tag-sentiment="neutral"] {
+  color: #000;
+  border-color: #000;
+}
+.tag[data-tag-sentiment="neutral"]:hover {
+  color: #000;
+  border-color: #000;
+}
 
 /* Landing Page Specific */
 @keyframes gradientAnimation {
@@ -525,6 +557,33 @@ table tbody tr:hover {
 @media (min-width: 1024px) {
   .features-grid {
     grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* 3-panel variant — fills full width with 3 equal columns */
+.features-grid--3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+@media (max-width: 768px) {
+  .features-grid--3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Below-panels row: same width/padding as main content, two equal columns */
+.below-panels-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+  margin-top: 0;
+  align-items: start;
+}
+.below-panels-col {
+  min-width: 0;
+}
+@media (max-width: 768px) {
+  .below-panels-row {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1029,8 +1088,8 @@ table tbody tr:hover {
    Maps 1–5 ratings to background + text colors for readability.
    ============================================================ */
 .rating-bg-1 { background-color: #AE5436; color: #fff; }
-.rating-bg-2 { background-color: #D69772; color: #fff; }
-.rating-bg-3 { background-color: #EFE6D1; color: #333; }
+.rating-bg-2 { background-color: #C27654; color: #fff; }
+.rating-bg-3 { background-color: #D69772; color: #fff; }
 .rating-bg-4 { background-color: #92B89D; color: #fff; }
 .rating-bg-5 { background-color: #34877A; color: #fff; }
 
@@ -1712,14 +1771,8 @@ table tbody tr:hover {
 }
 
 /* ============================================================
-   House Board Search Bar Widening (R10)
-   On the house board page, the nav search bar is widened by
-   ~50% so users can type longer search queries comfortably.
-   The body.page-houseboard class is applied in houseBoard.ejs.
+   House Board Search Bar — use same width as other pages (200px default)
    ============================================================ */
-body.page-houseboard .nav-search-input {
-  width: 400px;
-}
 
 /* ============================================================
    Task 1.2 — Global Mobile Spacing and Typography

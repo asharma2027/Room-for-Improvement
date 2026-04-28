@@ -4,9 +4,7 @@
         <%- include('partials/nav') %>
 
         <!-- Word cloud hover tooltip -->
-        <div class="wc-tooltip" id="wc-tooltip">
-            <span class="wc-tooltip-word"></span> — <span class="wc-tooltip-count"></span>
-        </div>
+        <div class="wc-tooltip" id="wc-tooltip"></div>
         <!-- Word cloud hover highlight overlay -->
         <span class="wc-hover-highlight" id="wc-hover-highlight"></span>
         <style>
@@ -461,11 +459,10 @@
             #room-table th[data-sort-key="naturalLight"],
             #room-table th[data-sort-key="roomSize"],
             #room-table th[data-sort-key="noise"],
-            #room-table th[data-sort-key="culture"],
             #room-table th[data-sort-key="tempControl"] {
-                width: 80px;
-                min-width: 72px;
-                max-width: 84px;
+                width: 108px;
+                min-width: 96px;
+                max-width: 116px;
             }
             #room-table th[data-sort-key="tags"] {
                 width: 160px;
@@ -549,6 +546,39 @@
                 opacity: 0.25;
             }
 
+            /* ── Legend item tooltip (breakdown on hover) ── */
+            .wc-legend-tooltip {
+                display: none;
+                position: absolute;
+                top: calc(100% + 8px);
+                left: 50%;
+                transform: translateX(-50%);
+                min-width: 180px;
+                max-width: 260px;
+                padding: 0.5rem 0.75rem;
+                background: rgba(30, 30, 30, 0.95);
+                color: #fff;
+                font-size: 0.75rem;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                border-radius: 0.4rem;
+                box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+                z-index: 10000;
+                pointer-events: none;
+                white-space: nowrap;
+            }
+            .wc-legend-tooltip::before {
+                content: '';
+                position: absolute;
+                bottom: 100%;
+                left: 50%;
+                transform: translateX(-50%);
+                border: 5px solid transparent;
+                border-bottom-color: rgba(30, 30, 30, 0.95);
+            }
+            .wc-legend-item:hover .wc-legend-tooltip {
+                display: block;
+            }
+
             /* ── Tag color coding by sentiment (same scale as rating columns) ── */
             .tag[data-tag-sentiment="positive"] {
                 background-color: rgba(52, 135, 122, 0.15);
@@ -565,7 +595,106 @@
                 color: #8a4e28;
                 border-color: rgba(214, 151, 114, 0.35);
             }
-            /* neutral tags keep the default .tag styling */
+            /* neutral = "Unusually shaped room" — softened black outline + font */
+            .tag[data-tag-sentiment="neutral"] {
+                color: #444;
+                border-color: #444;
+            }
+
+            /* ── Floor Summary Section ── */
+            .floor-summary-section {
+                margin-top: 1.5rem;
+                margin-bottom: 0.5rem;
+                padding: 1rem 1.25rem;
+                background: #fdfdfd;
+                border: 1px solid var(--border-color);
+                border-radius: 0.6rem;
+            }
+            .floor-summary-title {
+                font-size: 1rem;
+                font-weight: 700;
+                color: var(--text-primary);
+                margin-bottom: 0.2rem;
+            }
+            .floor-summary-subtitle {
+                font-size: 0.78rem;
+                color: var(--text-secondary);
+                margin-bottom: 0.75rem;
+            }
+            .floor-summary-table-wrap {
+                overflow-x: auto;
+            }
+            .floor-summary-table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 0.85rem;
+            }
+            .floor-summary-table th {
+                text-align: left;
+                padding: 0.35rem 0.6rem;
+                font-size: 0.72rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                color: var(--text-secondary);
+                border-bottom: 1px solid var(--border-color);
+                white-space: nowrap;
+            }
+            .floor-summary-row {
+                cursor: pointer;
+                transition: background 0.12s;
+            }
+            .floor-summary-row:hover {
+                background: rgba(128,0,0,0.04);
+            }
+            .floor-summary-row.active-floor-filter {
+                background: rgba(128,0,0,0.08);
+            }
+            .floor-summary-row td {
+                padding: 0.4rem 0.6rem;
+                border-bottom: 1px solid var(--border-color);
+                vertical-align: middle;
+            }
+            .floor-summary-floor-cell {
+                font-weight: 700;
+            }
+            .fs-val {
+                display: inline-block;
+                font-size: 0.95rem;
+                font-weight: 700;
+            }
+            .fs-na {
+                color: #ccc;
+                font-size: 0.85rem;
+            }
+            .floor-summary-tags-cell {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.2rem;
+                align-items: center;
+                padding: 0.4rem 0.6rem;
+            }
+            .fs-tag {
+                font-size: 0.72rem;
+                padding: 0.1em 0.45em;
+                cursor: default;
+            }
+            .fs-vibe-tag {
+                display: inline-block;
+                padding: 0.18em 0.55em;
+                border-radius: var(--radius-full);
+                font-size: 0.72rem;
+                font-weight: 600;
+                border: 1px solid currentColor;
+                cursor: default;
+                white-space: nowrap;
+                /* background and border set by JS via assignTheme; font color always #444 */
+                color: #444 !important;
+            }
+            /* Prevent the generic .tag hover from overriding theme colors */
+            .fs-vibe-tag:hover {
+                opacity: 0.85;
+            }
         </style>
 
             <main style="max-width:1300px; margin:0 auto; padding:2rem 1.5rem;">
@@ -692,11 +821,11 @@
                                     style="border-left:1px solid var(--border-color); padding:0.25rem 1.5rem; flex-direction:column; align-items:flex-start;">
                                     <%
                                         var avgCultureRounded = Math.round(parseFloat(avgCulture));
-                                        var avgCultureColors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
+                                        var avgCultureColors = { 5: '#34877A', 4: '#92B89D', 3: '#D69772', 2: '#C27654', 1: '#AE5436' };
                                         var avgCultureBg = avgCultureColors[avgCultureRounded] || '#92B89D';
-                                        var avgCultureTxt = avgCultureRounded === 3 ? '#333' : '#fff';
+                                        var avgCultureTxt = '#fff';
                                     %>
-                                    <span class="house-stat-val" style="color:<%= avgCultureBg %>; font-size:2.4rem; line-height:1; text-shadow: -1px -1px 0 rgba(0,0,0,0.35), 1px -1px 0 rgba(0,0,0,0.35), -1px 1px 0 rgba(0,0,0,0.35), 1px 1px 0 rgba(0,0,0,0.35);">
+                                    <span class="house-stat-val" style="color:<%= avgCultureBg %>; font-size:2.4rem; line-height:1;">
                                         <%= avgCulture %>/5
                                     </span>
                                     <span class="house-stat-lbl" style="font-size:0.72rem; margin-top:0.2rem;">House Culture</span>
@@ -707,14 +836,14 @@
                                             style="border-left:1px solid var(--border-color); padding:0.25rem 1.5rem; flex-direction:column; align-items:flex-start;">
                                             <%
                                                 var avgNoiseRounded = Math.round(parseFloat(avgNoise));
-                                                var avgNoiseColors = { 1: '#34877A', 2: '#92B89D', 3: '#EFE6D1', 4: '#D69772', 5: '#AE5436' };
-                                                var avgNoiseBg = avgNoiseColors[avgNoiseRounded] || '#EFE6D1';
-                                                var avgNoiseTxt = (avgNoiseRounded === 1 || avgNoiseRounded === 5) ? '#fff' : '#1a1a1a';
+                                                var avgNoiseColors = { 1: '#34877A', 2: '#92B89D', 3: '#D69772', 4: '#C27654', 5: '#AE5436' };
+                                                var avgNoiseBg = avgNoiseColors[avgNoiseRounded] || '#D69772';
+                                                var avgNoiseTxt = '#fff';
                                             %>
-                                            <span class="house-stat-val" style="color:<%= avgNoiseBg %>; font-size:2.4rem; line-height:1; text-shadow: -1px -1px 0 rgba(0,0,0,0.35), 1px -1px 0 rgba(0,0,0,0.35), -1px 1px 0 rgba(0,0,0,0.35), 1px 1px 0 rgba(0,0,0,0.35);">
+                                            <span class="house-stat-val" style="color:<%= avgNoiseBg %>; font-size:2.4rem; line-height:1;">
                                                 <%= avgNoise %>/5
                                             </span>
-                                            <span class="house-stat-lbl" style="font-size:0.72rem; margin-top:0.2rem;">Outside Noise</span>
+                                            <span class="house-stat-lbl" style="font-size:0.72rem; margin-top:0.2rem;">Noise Level</span>
                                         </div>
                                         <% } %>
                         </div>
@@ -722,24 +851,33 @@
                         <!-- House Rankings Display -->
                         <% if (typeof houseRanks !== 'undefined' && houseRanks) {
                             const categoryIcons = {
-                                culture: { icon: '🏆', label: 'Culture' },
-                                quietness: { icon: '🔇', label: 'Outside Noise' },
-                                sunlight: { icon: '☀️', label: 'Nat. Light' },
-                                roomSize: { icon: '📦', label: 'Room Size' },
-                                tempControl: { icon: '🌡️', label: 'Temp Control' }
+                                culture: { icon: '🏆', label: 'House<br>Culture' },
+                                quietness: { icon: '🔇', label: 'Noise<br>Level' },
+                                sunlight: { icon: '☀️', label: 'Nat.<br>Light' },
+                                roomSize: { icon: '📦', label: 'Room<br>Size' },
+                                tempControl: { icon: '🌡️', label: 'Temp<br>Control' }
                             };
-                            const activeRanks = Object.entries(houseRanks).filter(([k,v]) => v !== null);
+                            // Display order: culture, roomSize, quietness, tempControl, sunlight
+                            const displayOrder = ['culture', 'roomSize', 'quietness', 'tempControl', 'sunlight'];
+                            const activeRanks = displayOrder
+                                .filter(k => houseRanks[k] !== null && houseRanks[k] !== undefined)
+                                .map(k => [k, houseRanks[k]]);
+                            const totalHouses = typeof totalHousesInDorm !== 'undefined' ? totalHousesInDorm : 14;
                             if (activeRanks.length > 0) {
                         %>
                             <div style="display:flex; gap:0; flex-wrap:nowrap; align-items:center; border-left:1px solid var(--border-color); margin-left:auto;">
-                                <% activeRanks.sort((a,b) => a[1] - b[1]).forEach(([cat, rank], idx) => {
-                                    const isTop3 = rank <= 3;
+                                <% activeRanks.forEach(([cat, rank], idx) => {
+                                    // Color scale: rank 1 = most green (#34877A), rank totalHouses = most red (#AE5436)
+                                    const rankColors = ['#34877A','#92B89D','#D69772','#C27654','#AE5436'];
+                                    const t = totalHouses <= 1 ? 0 : (rank - 1) / (totalHouses - 1);
+                                    const colorIdx = Math.round(t * (rankColors.length - 1));
+                                    const rankColor = rankColors[colorIdx];
                                 %>
                                     <div class="house-stat-mini" style="flex-direction:column; align-items:flex-start; padding:0.25rem 1.25rem; <%= idx > 0 ? 'border-left:1px solid var(--border-color);' : '' %>">
-                                        <span class="house-stat-val" style="font-size:2rem; line-height:1; color:<%= isTop3 ? 'var(--primary-color)' : 'var(--text-primary)' %>;">
-                                            <span style="font-size:1.6rem; margin-right:3px; vertical-align:middle;"><%= categoryIcons[cat].icon %></span><span style="vertical-align:middle;">#<%= rank %></span>
+                                        <span class="house-stat-val" style="font-size:2rem; line-height:1; color:var(--text-primary);">
+                                            <span style="font-size:1.6rem; margin-right:3px; vertical-align:middle;"><%= categoryIcons[cat].icon %></span><span style="vertical-align:middle; color:<%= rankColor %>">#<%= rank %></span>
                                         </span>
-                                        <span class="house-stat-lbl" style="font-size:0.72rem; margin-top:0.2rem;"><%= categoryIcons[cat].label %></span>
+                                        <span class="house-stat-lbl" style="font-size:0.72rem; margin-top:0.2rem; line-height:1.3;"><%- categoryIcons[cat].label %></span>
                                     </div>
                                 <% }); %>
                             </div>
@@ -774,6 +912,112 @@
                     </div>
                     <% } %>
                 </div>
+
+                <!-- ── Floor Summary Section ── -->
+                <%
+                    // Compute per-floor averages and culture/descriptor vibes
+                    var floorSummaryMap = {};
+                    (typeof floors !== 'undefined' ? floors : []).forEach(function(f) {
+                        floorSummaryMap[f] = { noise: [], roomSize: [], naturalLight: [], tempControl: [], culture: [], tags: {}, vibes: {} };
+                    });
+                    (typeof rooms !== 'undefined' ? rooms : []).forEach(function(r) {
+                        if (!r.floor || !floorSummaryMap[r.floor]) return;
+                        var fs = floorSummaryMap[r.floor];
+                        if (r.outsideNoiseVal) fs.noise.push(parseFloat(r.outsideNoiseVal));
+                        if (r.roomSizeVal) fs.roomSize.push(parseFloat(r.roomSizeVal));
+                        if (r.naturalLightVal) fs.naturalLight.push(parseFloat(r.naturalLightVal));
+                        if (r.tempControlVal) fs.tempControl.push(parseFloat(r.tempControlVal));
+                        if (r.houseCultureVal) fs.culture.push(parseFloat(r.houseCultureVal));
+                        if (r.tags) {
+                            r.tags.split(', ').forEach(function(t) {
+                                if (t) fs.tags[t] = (fs.tags[t] || 0) + 1;
+                            });
+                        }
+                        // Culture vibes (cultureTags + culture notes) and house descriptors
+                        if (Array.isArray(r.cultureTags)) {
+                            r.cultureTags.forEach(function(v) {
+                                if (v) fs.vibes[v] = (fs.vibes[v] || 0) + 1;
+                            });
+                        }
+                        if (Array.isArray(r.houseDescriptors)) {
+                            r.houseDescriptors.forEach(function(v) {
+                                if (v) fs.vibes[v] = (fs.vibes[v] || 0) + 1;
+                            });
+                        }
+                    });
+                    function fsAvg(arr) { return arr.length ? (arr.reduce(function(a,b){return a+b;},0)/arr.length).toFixed(1) : null; }
+                    function fsColorMap(val, inverted) {
+                        if (!val) return 'transparent';
+                        var r = Math.round(parseFloat(val));
+                        var colors = inverted
+                            ? { 1: '#34877A', 2: '#92B89D', 3: '#D69772', 4: '#C27654', 5: '#AE5436' }
+                            : { 5: '#34877A', 4: '#92B89D', 3: '#D69772', 2: '#C27654', 1: '#AE5436' };
+                        return colors[r] || '#92B89D';
+                    }
+                    var floorSummaryFloors = (typeof floors !== 'undefined' ? floors : []).filter(function(f) {
+                        var fs = floorSummaryMap[f];
+                        return fs && (fs.noise.length || fs.roomSize.length || fs.naturalLight.length || fs.tempControl.length || fs.culture.length);
+                    });
+                %>
+                <% if (floorSummaryFloors.length > 0) { %>
+                <div class="floor-summary-section" id="floor-summary-section">
+                    <div class="floor-summary-title">Floor Summary</div>
+                    <div class="floor-summary-subtitle">Click a floor row to filter the table below to that floor's rooms</div>
+                    <div class="floor-summary-table-wrap">
+                        <table class="floor-summary-table">
+                            <thead>
+                                <tr>
+                                    <th>Floor</th>
+                                    <th>Size</th>
+                                    <th>Noise</th>
+                                    <th>Temp</th>
+                                    <th>Nat. Light</th>
+                                    <th>Culture</th>
+                                    <th>Top Culture Vibes &amp; Descriptors</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% floorSummaryFloors.forEach(function(f) {
+                                    var fs = floorSummaryMap[f];
+                                    var avgNoise = fsAvg(fs.noise);
+                                    var avgSize = fsAvg(fs.roomSize);
+                                    var avgLight = fsAvg(fs.naturalLight);
+                                    var avgTemp = fsAvg(fs.tempControl);
+                                    var avgCulture = fsAvg(fs.culture);
+                                    // Top 5 culture vibes / descriptors for this floor
+                                    var allVibesSorted = Object.keys(fs.vibes).sort(function(a,b){return fs.vibes[b]-fs.vibes[a];});
+                                    // Only show >=2 mentions unless all are 1
+                                    var hasMultiMention = allVibesSorted.some(function(v){ return fs.vibes[v] >= 2; });
+                                    var filteredVibes = hasMultiMention
+                                        ? allVibesSorted.filter(function(v){ return fs.vibes[v] >= 2; })
+                                        : allVibesSorted;
+                                    var topVibes = filteredVibes.slice(0,5);
+                                %>
+                                <tr class="floor-summary-row" data-floor="<%= f %>" title="Click to filter table to floor <%= f %>">
+                                    <td class="floor-summary-floor-cell">
+                                        <span style="font-weight:700; color:var(--text-primary);"><%= f %></span>
+                                    </td>
+                                    <td><% if (avgSize) { %><span class="fs-val" style="color:<%= fsColorMap(avgSize, false) %>"><%= avgSize %></span><% } else { %><span class="fs-na">—</span><% } %></td>
+                                    <td><% if (avgNoise) { %><span class="fs-val" style="color:<%= fsColorMap(avgNoise, true) %>"><%= avgNoise %></span><% } else { %><span class="fs-na">—</span><% } %></td>
+                                    <td><% if (avgTemp) { %><span class="fs-val" style="color:<%= fsColorMap(avgTemp, false) %>"><%= avgTemp %></span><% } else { %><span class="fs-na">—</span><% } %></td>
+                                    <td><% if (avgLight) { %><span class="fs-val" style="color:<%= fsColorMap(avgLight, false) %>"><%= avgLight %></span><% } else { %><span class="fs-na">—</span><% } %></td>
+                                    <td><% if (avgCulture) { %><span class="fs-val" style="color:<%= fsColorMap(avgCulture, false) %>"><%= avgCulture %></span><% } else { %><span class="fs-na">—</span><% } %></td>
+                                    <td class="floor-summary-tags-cell">
+                                        <% if (topVibes.length > 0) { %>
+                                            <% topVibes.forEach(function(vibe) { %>
+                                                <span class="fs-vibe-tag" data-vibe-count="<%= fs.vibes[vibe] %>" data-vibe-text="<%= vibe.replace(/"/g, '&quot;') %>"><%= vibe %></span>
+                                            <% }); %>
+                                        <% } else { %>
+                                            <span class="fs-na">—</span>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <% } %>
 
                 <!-- ── Filters ── -->
                 <div class="room-filters" id="room-filters">
@@ -870,14 +1114,13 @@
                         <thead>
                             <tr>
                                 <th class="sortable" data-sort-key="name" style="width:200px;">Room <span class="sort-indicator"></span></th>
-                                <th class="sortable" data-sort-key="floor">Floor <span class="sort-indicator"></span></th>
-                                <th class="sortable" data-sort-key="roomType" style="width:55px; min-width:45px; max-width:60px;">Type <span class="sort-indicator"></span></th>
-                                <th class="sortable" data-sort-key="tags" style="width:175px; min-width:155px; max-width:195px;">Tags <span class="sort-indicator"></span></th>
-                                <th class="sortable" data-sort-key="culture">Culture <span class="sort-indicator"></span></th>
-                                <th class="sortable" data-sort-key="noise">Noise <span class="sort-indicator"></span></th>
-                                <th class="sortable" data-sort-key="roomSize">Room Size <span class="sort-indicator"></span></th>
-                                <th class="sortable" data-sort-key="naturalLight">Nat. Light <span class="sort-indicator"></span></th>
-                                <th class="sortable" data-sort-key="tempControl">Temp Control <span class="sort-indicator"></span></th>
+                                <th class="sortable" data-sort-key="floor" style="width:52px; min-width:52px; max-width:60px; white-space:nowrap;">Floor <span class="sort-indicator"></span></th>
+                                <th class="sortable" data-sort-key="roomType" style="width:28px; min-width:22px; max-width:34px;">Type <span class="sort-indicator"></span></th>
+                                <th class="sortable" data-sort-key="tags" style="width:185px; min-width:165px; max-width:205px;">Tags <span class="sort-indicator"></span></th>
+                                <th class="sortable" data-sort-key="roomSize">ROOM<br>SIZE <span class="sort-indicator"></span></th>
+                                <th class="sortable" data-sort-key="noise">NOISE<br>LEVEL <span class="sort-indicator"></span></th>
+                                <th class="sortable" data-sort-key="tempControl">TEMP<br>CONTROL <span class="sort-indicator"></span></th>
+                                <th class="sortable" data-sort-key="naturalLight">NATURAL<br>LIGHT <span class="sort-indicator"></span></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -936,7 +1179,7 @@
                                                 <% } %>
                                     </td>
                                     <td data-label="Floor">
-                                        <%= room.floor || '—' %>
+                                        <strong style="color:#000;"><%= room.floor || '—' %></strong>
                                     </td>
                                     <td data-label="Type">
                                         <span
@@ -957,9 +1200,9 @@
                                                     // Strong negative tags (red)
                                                     else if (tl === 'limited storage / closet space' || tl === 'gets poor sunlight' || tl === 'notable hallway noise' || tl === 'noise from adjacent rooms' || tl === 'noise from above or below' || tl === 'ac/heating issues' || tl === 'poor ventilation') tagSentiment = 'negative';
                                                     // Mild negative tags (orange)
-                                                    else if (tl === 'particularly small windows' || tl === 'drafty windows' || tl === 'gets very hot' || tl === 'gets very cold' || tl === 'significant radiator noise') tagSentiment = 'mild-negative';
+                                                    else if (tl === 'particularly small windows' || tl === 'particularly low ceiling' || tl === 'drafty windows' || tl === 'gets very hot' || tl === 'gets very cold' || tl === 'significant radiator noise') tagSentiment = 'mild-negative';
                                                     // Neutral/ambiguous
-                                                    // else: 'neutral' (particularly low ceiling, unusually shaped room)
+                                                    // else: 'neutral' (unusually shaped room)
                                                 %>
                       <span class="tag" data-tag-sentiment="<%= tagSentiment %>" onclick="event.stopPropagation(); addTagFilter('<%= t.replace(/'/g, "&#39;") %>')" title="Filter by this tag"><%= t %></span>
                     <% }) %>
@@ -968,43 +1211,43 @@
                   <span style="color:#ccc; font-size:0.85rem;">—</span>
                 <% } %>
               </td>
-              <td data-label="Culture">
-                <% if (room.houseCultureVal) { %>
-                  <%
-                    var cultureRounded = Math.round(parseFloat(room.houseCultureVal));
-                    var cultureColors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
-                    var cultureBg = cultureColors[cultureRounded] || 'transparent';
-                  %>
-                  <div style="display:flex; align-items:center; gap:0.4rem;">
-                    <span style="display:inline-block; width:2.2em; text-align:center; padding:0.15em 0; border-radius:0.3rem; font-size:1.15rem; font-weight:600; background-color:<%= cultureBg %>; color:#fff; text-shadow:-1px -1px 0 rgba(0,0,0,0.5),1px -1px 0 rgba(0,0,0,0.5),-1px 1px 0 rgba(0,0,0,0.5),1px 1px 0 rgba(0,0,0,0.5);"><%= room.houseCultureVal %></span>
-                  </div>
-                <% } else { %>
-                  <span style="color:#ccc;">—</span>
-                <% } %>
-              </td>
-              <td data-label="Noise">
-                <% if (room.outsideNoiseVal) { %>
-                  <%
-                    var noiseRounded = Math.round(parseFloat(room.outsideNoiseVal));
-                    var noiseColors = { 1: '#34877A', 2: '#92B89D', 3: '#EFE6D1', 4: '#D69772', 5: '#AE5436' };
-                    var noiseBg = noiseColors[noiseRounded] || 'transparent';
-                  %>
-                  <div style="display:flex; align-items:center; gap:0.4rem;">
-                    <span style="display:inline-block; width:2.2em; text-align:center; padding:0.15em 0; border-radius:0.3rem; font-size:1.15rem; font-weight:600; background-color:<%= noiseBg %>; color:#fff; text-shadow:-1px -1px 0 rgba(0,0,0,0.5),1px -1px 0 rgba(0,0,0,0.5),-1px 1px 0 rgba(0,0,0,0.5),1px 1px 0 rgba(0,0,0,0.5);"><%= room.outsideNoiseVal %></span>
-                  </div>
-                <% } else { %>
-                  <span style="color:#ccc;">—</span>
-                <% } %>
-              </td>
               <td data-label="Room Size">
                 <% if (room.roomSizeVal) { %>
                   <%
                     var sizeRounded = Math.round(parseFloat(room.roomSizeVal));
-                    var sizeColors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
+                    var sizeColors = { 5: '#34877A', 4: '#92B89D', 3: '#D69772', 2: '#C27654', 1: '#AE5436' };
                     var sizeBg = sizeColors[sizeRounded] || 'transparent';
                   %>
                   <div style="display:flex; align-items:center; gap:0.4rem;">
-                    <span style="display:inline-block; width:2.2em; text-align:center; padding:0.15em 0; border-radius:0.3rem; font-size:1.15rem; font-weight:600; background-color:<%= sizeBg %>; color:#fff; text-shadow:-1px -1px 0 rgba(0,0,0,0.5),1px -1px 0 rgba(0,0,0,0.5),-1px 1px 0 rgba(0,0,0,0.5),1px 1px 0 rgba(0,0,0,0.5);"><%= room.roomSizeVal %></span>
+                    <span style="display:inline-block; width:1.8em; text-align:center; padding:0.15em 0.15em; border-radius:0.3rem; font-size:1.15rem; font-weight:600; background-color:<%= sizeBg %>; color:#fff;"><%= room.roomSizeVal %></span>
+                  </div>
+                <% } else { %>
+                  <span style="color:#ccc; font-size:0.8rem;">N/A</span>
+                <% } %>
+              </td>
+              <td data-label="Noise Level">
+                <% if (room.outsideNoiseVal) { %>
+                  <%
+                    var noiseRounded = Math.round(parseFloat(room.outsideNoiseVal));
+                    var noiseColors = { 1: '#34877A', 2: '#92B89D', 3: '#D69772', 4: '#C27654', 5: '#AE5436' };
+                    var noiseBg = noiseColors[noiseRounded] || 'transparent';
+                  %>
+                  <div style="display:flex; align-items:center; gap:0.4rem;">
+                    <span style="display:inline-block; width:1.8em; text-align:center; padding:0.15em 0.15em; border-radius:0.3rem; font-size:1.15rem; font-weight:600; background-color:<%= noiseBg %>; color:#fff;"><%= room.outsideNoiseVal %></span>
+                  </div>
+                <% } else { %>
+                  <span style="color:#ccc;">—</span>
+                <% } %>
+              </td>
+              <td data-label="Temp Control">
+                <% if (room.tempControlVal) { %>
+                  <%
+                    var tempRounded = Math.round(parseFloat(room.tempControlVal));
+                    var tempColors = { 5: '#34877A', 4: '#92B89D', 3: '#D69772', 2: '#C27654', 1: '#AE5436' };
+                    var tempBg = tempColors[tempRounded] || 'transparent';
+                  %>
+                  <div style="display:flex; align-items:center; gap:0.4rem;">
+                    <span style="display:inline-block; width:1.8em; text-align:center; padding:0.15em 0.15em; border-radius:0.3rem; font-size:1.15rem; font-weight:600; background-color:<%= tempBg %>; color:#fff;"><%= room.tempControlVal %></span>
                   </div>
                 <% } else { %>
                   <span style="color:#ccc; font-size:0.8rem;">N/A</span>
@@ -1014,25 +1257,11 @@
                 <% if (room.naturalLightVal) { %>
                   <%
                     var lightRounded = Math.round(parseFloat(room.naturalLightVal));
-                    var lightColors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
+                    var lightColors = { 5: '#34877A', 4: '#92B89D', 3: '#D69772', 2: '#C27654', 1: '#AE5436' };
                     var lightBg = lightColors[lightRounded] || 'transparent';
                   %>
                   <div style="display:flex; align-items:center; gap:0.4rem;">
-                    <span style="display:inline-block; width:2.2em; text-align:center; padding:0.15em 0; border-radius:0.3rem; font-size:1.15rem; font-weight:600; background-color:<%= lightBg %>; color:#fff; text-shadow:-1px -1px 0 rgba(0,0,0,0.5),1px -1px 0 rgba(0,0,0,0.5),-1px 1px 0 rgba(0,0,0,0.5),1px 1px 0 rgba(0,0,0,0.5);"><%= room.naturalLightVal %></span>
-                  </div>
-                <% } else { %>
-                  <span style="color:#ccc; font-size:0.8rem;">N/A</span>
-                <% } %>
-              </td>
-              <td data-label="Temp Control">
-                <% if (room.tempControlVal) { %>
-                  <%
-                    var tempRounded = Math.round(parseFloat(room.tempControlVal));
-                    var tempColors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
-                    var tempBg = tempColors[tempRounded] || 'transparent';
-                  %>
-                  <div style="display:flex; align-items:center; gap:0.4rem;">
-                    <span style="display:inline-block; width:2.2em; text-align:center; padding:0.15em 0; border-radius:0.3rem; font-size:1.15rem; font-weight:600; background-color:<%= tempBg %>; color:#fff; text-shadow:-1px -1px 0 rgba(0,0,0,0.5),1px -1px 0 rgba(0,0,0,0.5),-1px 1px 0 rgba(0,0,0,0.5),1px 1px 0 rgba(0,0,0,0.5);"><%= room.tempControlVal %></span>
+                    <span style="display:inline-block; width:1.8em; text-align:center; padding:0.15em 0.15em; border-radius:0.3rem; font-size:1.15rem; font-weight:600; background-color:<%= lightBg %>; color:#fff;"><%= room.naturalLightVal %></span>
                   </div>
                 <% } else { %>
                   <span style="color:#ccc; font-size:0.8rem;">N/A</span>
@@ -1106,22 +1335,53 @@
     }
 
     // Turn raw phrase strings into [word, weight] pairs.
+    // Used for house descriptors (free text) — tokenizes into words + phrases.
+    // Words that already appear as part of a counted multi-word phrase are NOT
+    // counted again individually to prevent double-counting.
     function tokenizePhrases(rawList) {
       var counts = {};
+      // First pass: collect multi-word phrases (≤4 words, ≤40 chars)
+      var phrasesAdded = new Set();
       rawList.forEach(function(raw) {
         if (!raw) return;
         var phrase = String(raw).trim();
         if (!phrase) return;
         var wordCount = phrase.split(/\s+/).length;
-        if (wordCount <= 4 && phrase.length <= 40) {
+        if (wordCount > 1 && wordCount <= 4 && phrase.length <= 40) {
           var key = phrase.replace(/\s+/g,' ');
           counts[key] = (counts[key] || 0) + 2;
+          phrasesAdded.add(key.toLowerCase());
         }
+      });
+      // Second pass: add individual word tokens, but skip words already covered
+      // by a phrase that was counted above
+      rawList.forEach(function(raw) {
+        if (!raw) return;
+        var phrase = String(raw).trim();
+        if (!phrase) return;
+        var wordCount = phrase.split(/\s+/).length;
+        // If this whole phrase was already counted as a multi-word phrase, skip tokenizing it
+        if (wordCount > 1 && phrasesAdded.has(phrase.toLowerCase().replace(/\s+/g,' '))) return;
         phrase.toLowerCase().split(/[^a-z0-9'-]+/).forEach(function(w) {
           if (!w || w.length < 3) return;
           if (STOP.has(w)) return;
           counts[w] = (counts[w] || 0) + 1;
         });
+      });
+      return Object.keys(counts).map(function(k) { return [k, counts[k]]; })
+                                .sort(function(a,b) { return b[1] - a[1]; })
+                                .slice(0, 80);
+    }
+
+    // Count exact phrases — used for culture vibes (fixed checklist items).
+    function countExactPhrases(rawList) {
+      var counts = {};
+      rawList.forEach(function(raw) {
+        if (!raw) return;
+        var phrase = String(raw).trim();
+        if (!phrase) return;
+        var key = phrase.replace(/\s+/g,' ');
+        counts[key] = (counts[key] || 0) + 1;
       });
       return Object.keys(counts).map(function(k) { return [k, counts[k]]; })
                                 .sort(function(a,b) { return b[1] - a[1]; })
@@ -1179,21 +1439,63 @@
     }
 
     // ── Render a legend for the word cloud ──────────────────────────────────
-    function renderLegend(legendEl, usedThemes, svgContainer) {
+    function renderLegend(legendEl, usedThemes, svgContainer, themeCounts, wordData) {
       if (!legendEl) return;
       legendEl.innerHTML = '';
+      // Find max count for scaling
+      var maxCount = 0;
+      if (themeCounts) {
+        Object.values(themeCounts).forEach(function(c) { if (c > maxCount) maxCount = c; });
+      }
       var themesInOrder = ['community','social','academic','positive','negative','physical','neutral'];
-      themesInOrder.forEach(function(key) {
-        if (!usedThemes.has(key)) return;
+
+      // Build sorted list: only used themes, sorted by count descending (largest dot first)
+      var sortedThemes = themesInOrder.filter(function(key) { return usedThemes.has(key); });
+      sortedThemes.sort(function(a, b) {
+        var ca = (themeCounts && themeCounts[a]) ? themeCounts[a] : 0;
+        var cb = (themeCounts && themeCounts[b]) ? themeCounts[b] : 0;
+        return cb - ca;
+      });
+
+      // Build per-theme word breakdown for tooltip
+      var themeWordBreakdown = {};
+      if (wordData) {
+        wordData.forEach(function(d) {
+          if (!themeWordBreakdown[d.theme]) themeWordBreakdown[d.theme] = [];
+          themeWordBreakdown[d.theme].push({ text: d.text, count: d.count });
+        });
+        // Sort each theme's words by count desc
+        Object.keys(themeWordBreakdown).forEach(function(theme) {
+          themeWordBreakdown[theme].sort(function(a, b) { return b.count - a.count; });
+        });
+      }
+
+      sortedThemes.forEach(function(key) {
         var item = document.createElement('div');
         item.className = 'wc-legend-item';
         item.dataset.theme = key;
-        item.style.cssText = 'display:inline-flex; align-items:center; gap:0.3rem; margin-right:0.75rem; margin-bottom:0.25rem; cursor:default;';
+        item.style.cssText = 'display:inline-flex; align-items:center; gap:0.3rem; margin-right:0.75rem; margin-bottom:0.25rem; cursor:default; position:relative;';
         var dot = document.createElement('span');
-        dot.style.cssText = 'display:inline-block; width:9px; height:9px; border-radius:50%; background:' + THEMES[key].color + '; flex-shrink:0;';
+        // Size dot based on count relative to max (min 6px, max 16px)
+        var count = (themeCounts && themeCounts[key]) ? themeCounts[key] : 0;
+        var dotSize = maxCount > 0 ? Math.round(6 + (count / maxCount) * 10) : 9;
+        dot.style.cssText = 'display:inline-block; width:' + dotSize + 'px; height:' + dotSize + 'px; border-radius:50%; background:' + THEMES[key].color + '; flex-shrink:0;';
         var label = document.createElement('span');
         label.style.cssText = 'font-size:0.7rem; color:var(--text-secondary); font-weight:500;';
         label.textContent = THEMES[key].label;
+
+        // Legend tooltip element (different from word hover tooltip)
+        var legendTooltip = document.createElement('div');
+        legendTooltip.className = 'wc-legend-tooltip';
+        var words = themeWordBreakdown[key] || [];
+        var breakdownHtml = '<div style="font-weight:700; margin-bottom:0.3rem; font-size:0.8rem;"><span style="color:#fff;">' + count + ' total mentions</span><span style="color:rgba(255,255,255,0.6);">: </span><span style="color:' + THEMES[key].color + ';">' + THEMES[key].label + '</span></div>';
+        breakdownHtml += '<div style="border-top:1px solid rgba(255,255,255,0.2); margin-bottom:0.3rem;"></div>';
+        words.forEach(function(w) {
+          breakdownHtml += '<div style="display:flex; justify-content:space-between; gap:1rem; font-size:0.75rem;"><span style="color:rgba(255,255,255,0.9);">' + w.text + '</span><span style="color:rgba(255,255,255,0.6); font-weight:600;">' + w.count + '</span></div>';
+        });
+        legendTooltip.innerHTML = breakdownHtml;
+        item.appendChild(legendTooltip);
+
         item.appendChild(dot);
         item.appendChild(label);
         // Hover: dim all other legend items AND dim non-matching words in the cloud
@@ -1220,10 +1522,10 @@
     }
 
     // ── Core D3-cloud renderer (used for both clouds) ────────────────────────
-    function renderD3Cloud(container, legendEl, rawList) {
+    function renderD3Cloud(container, legendEl, rawList, useExactPhrases) {
       if (!container || !rawList || rawList.length === 0) return;
 
-      var pairs = tokenizePhrases(rawList);
+      var pairs = useExactPhrases ? countExactPhrases(rawList) : tokenizePhrases(rawList);
       if (pairs.length === 0) return;
 
       var maxW = pairs[0][1];
@@ -1238,7 +1540,13 @@
         return { text: p[0], size: sz, count: p[1], color: tc.color, opacity: tc.opacity, theme: tc.theme };
       });
 
-      renderLegend(legendEl, usedThemes, container);
+      // Compute per-theme total response counts for legend sizing
+      var themeCounts = {};
+      wordData.forEach(function(d) {
+        themeCounts[d.theme] = (themeCounts[d.theme] || 0) + d.count;
+      });
+
+      renderLegend(legendEl, usedThemes, container, themeCounts, wordData);
 
       var layout = d3.layout.cloud()
         .size([width, height])
@@ -1291,16 +1599,30 @@
               .style('opacity', 1);
             var tooltip = document.getElementById('wc-tooltip');
             if (tooltip) {
-              tooltip.querySelector('.wc-tooltip-word').textContent = d.text;
-              tooltip.querySelector('.wc-tooltip-count').textContent = THEMES[d.theme].label + ' · ' + d.count + ' mentions';
+              // Build: "N mentions: Theme" with theme colored
+              tooltip.innerHTML = '<span style="font-weight:600; color:#fff;">' + d.count + ' mentions</span><span style="color:rgba(255,255,255,0.6);">: </span><span style="font-weight:700; color:' + THEMES[d.theme].color + ';">' + THEMES[d.theme].label + '</span>';
               var tx = event.clientX + 14;
-              var ty = event.clientY - 10;
+              var ty = event.clientY + 18;
               var tw = tooltip.offsetWidth || 160;
+              var th = tooltip.offsetHeight || 36;
               if (tx + tw > window.innerWidth - 8) tx = event.clientX - tw - 10;
+              if (ty + th > window.innerHeight - 8) ty = event.clientY - th - 10;
               if (ty < 8) ty = 8;
               tooltip.style.left = tx + 'px';
               tooltip.style.top = ty + 'px';
               tooltip.classList.add('visible');
+            }
+            // Dim legend items that don't match this theme
+            var legendEl = this.closest('.word-cloud-section') ? this.closest('.word-cloud-section').querySelector('[id$="-wc-legend"]') : null;
+            if (legendEl) {
+              legendEl.classList.add('has-hover');
+              legendEl.querySelectorAll('.wc-legend-item').forEach(function(item) {
+                if (item.dataset.theme === d.theme) {
+                  item.classList.add('hovered');
+                } else {
+                  item.classList.remove('hovered');
+                }
+              });
             }
           })
           .on('mouseout', function(event, d) {
@@ -1311,6 +1633,14 @@
               .style('opacity', function(w) { return w.opacity; });
             var tooltip = document.getElementById('wc-tooltip');
             if (tooltip) tooltip.classList.remove('visible');
+            // Restore legend
+            var legendEl = this.closest('.word-cloud-section') ? this.closest('.word-cloud-section').querySelector('[id$="-wc-legend"]') : null;
+            if (legendEl) {
+              legendEl.classList.remove('has-hover');
+              legendEl.querySelectorAll('.wc-legend-item').forEach(function(item) {
+                item.classList.remove('hovered');
+              });
+            }
           });
       }
     }
@@ -1320,14 +1650,69 @@
       var cultureContainer = document.getElementById('culture-wordcloud');
       var cultureLegend = document.getElementById('culture-wc-legend');
       if (cultureContainer && CULTURE_WORDS.length > 0) {
-        renderD3Cloud(cultureContainer, cultureLegend, CULTURE_WORDS);
+        renderD3Cloud(cultureContainer, cultureLegend, CULTURE_WORDS, true); // exact phrases for fixed checklist
       }
 
       var descriptorContainer = document.getElementById('descriptor-wordcloud');
       var descriptorLegend = document.getElementById('descriptor-wc-legend');
       if (descriptorContainer && DESCRIPTOR_WORDS.length > 0) {
-        renderD3Cloud(descriptorContainer, descriptorLegend, DESCRIPTOR_WORDS);
+        renderD3Cloud(descriptorContainer, descriptorLegend, DESCRIPTOR_WORDS, false); // tokenize free text
       }
+
+      // ── Apply theme colors to floor summary vibe tags ──
+      document.querySelectorAll('.fs-vibe-tag').forEach(function(tagEl) {
+        var text = tagEl.dataset.vibeText || tagEl.textContent.trim();
+        var theme = (typeof assignTheme === 'function') ? assignTheme(text) : 'neutral';
+        var color = (typeof THEMES !== 'undefined' && THEMES[theme]) ? THEMES[theme].color : '#78716c';
+        // Parse hex color to apply as semi-transparent background
+        var r = parseInt(color.slice(1,3),16);
+        var g = parseInt(color.slice(3,5),16);
+        var b = parseInt(color.slice(5,7),16);
+        // Font color always matches the "neutral" tag (#444), background/border use theme color
+        tagEl.style.color = '#444';
+        tagEl.style.backgroundColor = 'rgba(' + r + ',' + g + ',' + b + ',0.1)';
+        tagEl.style.borderColor = 'rgba(' + r + ',' + g + ',' + b + ',0.35)';
+      });
+
+      // ── Floor summary tag tooltips — identical to word cloud word hover ──
+      var tooltip = document.getElementById('wc-tooltip');
+      document.querySelectorAll('.fs-tag, .fs-vibe-tag').forEach(function(tagEl) {
+        tagEl.addEventListener('mouseenter', function(e) {
+          if (!tooltip) return;
+          var count = parseInt(tagEl.dataset.tagCount || tagEl.dataset.vibeCount || '0');
+          var tagText = tagEl.textContent.trim();
+          // Determine theme using the same assignTheme function as the word cloud
+          var theme = (typeof assignTheme === 'function') ? assignTheme(tagText) : 'neutral';
+          var themeColor = (typeof THEMES !== 'undefined' && THEMES[theme]) ? THEMES[theme].color : '#78716c';
+          var themeLabel = (typeof THEMES !== 'undefined' && THEMES[theme]) ? THEMES[theme].label : 'Neutral';
+          tooltip.innerHTML = '<span style="font-weight:600; color:#fff;">' + count + ' mention' + (count !== 1 ? 's' : '') + '</span><span style="color:rgba(255,255,255,0.6);">: </span><span style="font-weight:700; color:' + themeColor + ';">' + themeLabel + '</span>';
+          var tx = e.clientX + 14;
+          var ty = e.clientY + 18;
+          var tw = tooltip.offsetWidth || 160;
+          var th = tooltip.offsetHeight || 36;
+          if (tx + tw > window.innerWidth - 8) tx = e.clientX - tw - 10;
+          if (ty + th > window.innerHeight - 8) ty = e.clientY - th - 10;
+          if (ty < 8) ty = 8;
+          tooltip.style.left = tx + 'px';
+          tooltip.style.top = ty + 'px';
+          tooltip.classList.add('visible');
+        });
+        tagEl.addEventListener('mousemove', function(e) {
+          if (!tooltip) return;
+          var tx = e.clientX + 14;
+          var ty = e.clientY + 18;
+          var tw = tooltip.offsetWidth || 160;
+          var th = tooltip.offsetHeight || 36;
+          if (tx + tw > window.innerWidth - 8) tx = e.clientX - tw - 10;
+          if (ty + th > window.innerHeight - 8) ty = e.clientY - th - 10;
+          if (ty < 8) ty = 8;
+          tooltip.style.left = tx + 'px';
+          tooltip.style.top = ty + 'px';
+        });
+        tagEl.addEventListener('mouseleave', function() {
+          if (tooltip) tooltip.classList.remove('visible');
+        });
+      });
     });
   </script>
 
@@ -1645,6 +2030,10 @@
         }
         row.style.display = show ? '' : 'none';
       });
+      // Sync floor summary active state
+      document.querySelectorAll('.floor-summary-row').forEach(function(summaryRow) {
+        summaryRow.classList.toggle('active-floor-filter', summaryRow.dataset.floor === f && f !== '');
+      });
     }
     if (floorSel)  floorSel.addEventListener('change', applyFilters);
     if (reviewChk) reviewChk.addEventListener('change', applyFilters);
@@ -1660,9 +2049,29 @@
         document.querySelectorAll('.filter-tags-dropdown-item').forEach(function(item) {
           item.classList.remove('selected');
         });
+        // Reset floor summary active state
+        document.querySelectorAll('.floor-summary-row').forEach(function(r) { r.classList.remove('active-floor-filter'); });
         applyFilters();
       });
     }
+
+    // ── Floor Summary Row Click-to-Filter ──────────────────────────────────
+    document.querySelectorAll('.floor-summary-row').forEach(function(row) {
+      row.addEventListener('click', function() {
+        var floor = row.dataset.floor;
+        if (!floor || !floorSel) return;
+        // Toggle: if already filtering this floor, clear it
+        if (floorSel.value === floor) {
+          floorSel.value = '';
+          row.classList.remove('active-floor-filter');
+        } else {
+          floorSel.value = floor;
+          document.querySelectorAll('.floor-summary-row').forEach(function(r) { r.classList.remove('active-floor-filter'); });
+          row.classList.add('active-floor-filter');
+        }
+        applyFilters();
+      });
+    });
 
     // ── Filter-by-Tags Dropdown ──────────────────────────────
     var tagsToggleBtn = document.getElementById('filter-tags-toggle-btn');

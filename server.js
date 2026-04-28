@@ -395,7 +395,8 @@ function computeDormRankings(dormName, rooms, entries) {
         initials: r.house.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2),
         emblem: getHouseEmblem(r.house),
         culture: [], noise: [], sunlight: [], roomSize: [], tempControl: [],
-        roomCount: 0
+        roomCount: 0,
+        reviewCount: 0
       };
     }
     houses[r.house].roomCount++;
@@ -410,19 +411,16 @@ function computeDormRankings(dormName, rooms, entries) {
     if (e.scalars) {
       const c = parseFloat(e.scalars['my house has a good culture']);
       const n = parseFloat(e.scalars['my room gets a lot of outside noise']);
+      const rs = parseFloat(e.scalars['room size']);
+      const nl = parseFloat(e.scalars['natural light']);
+      const tc = parseFloat(e.scalars['temperature control']);
       if (!isNaN(c)) h.culture.push(c);
       if (!isNaN(n)) h.noise.push(n);
+      if (!isNaN(rs)) h.roomSize.push(rs);
+      if (!isNaN(nl)) h.sunlight.push(nl);
+      if (!isNaN(tc)) h.tempControl.push(tc);
     }
-    if (e.tags && Array.isArray(e.tags)) {
-      const tags = e.tags.map(t => t.toLowerCase());
-      if (tags.some(t => t.includes('sunlight') || t.includes('sunny') || t.includes('bright'))) h.sunlight.push(1);
-      else h.sunlight.push(0);
-      if (tags.some(t => t.includes('big') || t.includes('large') || t.includes('spacious'))) h.roomSize.push(1);
-      else if (tags.some(t => t.includes('small') || t.includes('tiny') || t.includes('cramped'))) h.roomSize.push(-1);
-      else h.roomSize.push(0);
-      if (tags.some(t => t.includes('ac') || t.includes('temperature') || t.includes('drafty') || t.includes('heating'))) h.tempControl.push(0);
-      else h.tempControl.push(1);
-    }
+    h.reviewCount++;
   });
 
   const avg = arr => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : null;
@@ -433,9 +431,10 @@ function computeDormRankings(dormName, rooms, entries) {
     initials: h.initials,
     emblem: h.emblem,
     roomCount: h.roomCount,
+    reviewCount: h.reviewCount,
     scores: {
       culture: avg(h.culture),
-      quietness: h.noise.length ? (6 - avg(h.noise)) : null, // invert noise
+      quietness: h.noise.length ? (6 - avg(h.noise)) : null, // invert: lower noise = higher quietness
       sunlight: avg(h.sunlight),
       roomSize: avg(h.roomSize),
       tempControl: avg(h.tempControl)
@@ -509,6 +508,16 @@ app.get('/explore', ensureAuthenticated, (req, res) => {
     // Rankings data
     const entries = readRoomEntries();
     const dorms = [...new Set(rooms.map(r => r.dorm))];
+
+    // Valid culture vibe checklist options
+    const VALID_CULTURE_VIBES = [
+      'Welcoming / inclusive', 'Tight-knit community', 'Quiet / studious',
+      'Lively / social', 'Party-oriented', 'Friendly but independent',
+      'Cliquey / exclusive', 'Competitive / high-pressure',
+      'Disconnected / isolated', 'Diverse mix of people',
+      'Active house programming', 'Floor rarely interacts'
+    ];
+
     const dormScores = dorms.map(dorm => {
       const houseRankings = computeDormRankings(dorm, rooms, entries);
       const categories = ['culture', 'quietness', 'sunlight', 'roomSize', 'tempControl'];
@@ -517,7 +526,26 @@ app.get('/explore', ensureAuthenticated, (req, res) => {
         const vals = houseRankings.map(h => h.scores[cat]).filter(v => v !== null);
         scores[cat] = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
       });
-      return { name: dorm, scores, houseCount: houseRankings.length };
+
+      // Compute top 3 culture vibes across all houses in this dorm (checklist only)
+      const vibeCounts = {};
+      entries.forEach(e => {
+        const room = rooms.find(r => r.id === e.roomId);
+        if (!room || room.dorm !== dorm) return;
+        if (Array.isArray(e.cultureTags)) {
+          e.cultureTags.forEach(tag => {
+            if (tag && VALID_CULTURE_VIBES.includes(tag)) {
+              vibeCounts[tag] = (vibeCounts[tag] || 0) + 1;
+            }
+          });
+        }
+      });
+      const topVibes = Object.entries(vibeCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([vibe]) => vibe);
+
+      return { name: dorm, scores, houseCount: houseRankings.length, topVibes, vibeCounts };
     });
 
     res.render('explore', {
@@ -584,9 +612,18 @@ app.get('/dorm-rankings', ensureAuthenticated, (req, res) => {
   res.redirect('/explore');
 });
 
-// GET /submit-review - room selection page before review form
+// GET /submit-review - redirect to /review (room selector now integrated into review form)
 app.get('/submit-review', ensureAuthenticated, (req, res) => {
-  res.render('submitReview', { user: req.user });
+  res.redirect('/review');
+});
+
+// GET /review - review form with integrated room selector
+app.get('/review', ensureAuthenticated, (req, res) => {
+  res.render('roomReview', {
+    user: req.user,
+    room: null,
+    alreadySubmittedThisYear: null
+  });
 });
 
 // GET /api/rooms-by-house?dorm=&house= - rooms for a specific dorm/house
@@ -668,10 +705,10 @@ app.get('/house/:dorm/:house', ensureAuthenticated, (req, res) => {
     if (houseRankObj) {
       houseRanks = {};
       const categoryKeys = [
-        { key: 'culture', ejsKey: 'culture', asc: false },
-        { key: 'noise', ejsKey: 'quietness', asc: true },
-        { key: 'sunlight', ejsKey: 'sunlight', asc: false },
-        { key: 'roomSize', ejsKey: 'roomSize', asc: false },
+        { key: 'culture',     ejsKey: 'culture',     asc: false },
+        { key: 'quietness',   ejsKey: 'quietness',   asc: false },
+        { key: 'sunlight',    ejsKey: 'sunlight',    asc: false },
+        { key: 'roomSize',    ejsKey: 'roomSize',    asc: false },
         { key: 'tempControl', ejsKey: 'tempControl', asc: false }
       ];
       categoryKeys.forEach(cat => {
@@ -700,8 +737,9 @@ app.get('/house/:dorm/:house', ensureAuthenticated, (req, res) => {
       if (Array.isArray(e.cultureTags)) {
         e.cultureTags.forEach(c => { if (c) cultureWords.push(String(c)); });
       }
+      // culture note is free text — goes to house descriptor word cloud
       if (e.scalars && e.scalars["culture note"]) {
-        cultureWords.push(String(e.scalars["culture note"]));
+        houseDescriptorWords.push(String(e.scalars["culture note"]));
       }
       if (e.scalars && e.scalars["house descriptor"]) {
         houseDescriptorWords.push(String(e.scalars["house descriptor"]));
@@ -711,6 +749,7 @@ app.get('/house/:dorm/:house', ensureAuthenticated, (req, res) => {
     houseRooms.forEach(r => {
       r.tags = ''; r.houseCultureVal = ''; r.outsideNoiseVal = ''; r.customName = null;
       r.roomSizeVal = ''; r.naturalLightVal = ''; r.tempControlVal = '';
+      r.cultureTags = []; r.houseDescriptors = [];
       const matching = allEntries.filter(e => e.roomId === r.id);
       if (matching.length > 0) {
         matching.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
@@ -721,6 +760,17 @@ app.get('/house/:dorm/:house', ensureAuthenticated, (req, res) => {
           r.outsideNoiseVal = latest.scalars['my room gets a lot of outside noise'] || '';
         }
         if (latest.customName) r.customName = latest.customName;
+
+        // Collect all culture tags and house descriptors across all entries for this room
+        matching.forEach(e => {
+          if (Array.isArray(e.cultureTags)) {
+            e.cultureTags.forEach(c => { if (c) r.cultureTags.push(String(c)); });
+          }
+          // culture note is free text — do NOT mix into cultureTags (checklist only)
+          if (e.scalars && e.scalars["house descriptor"]) {
+            r.houseDescriptors.push(String(e.scalars["house descriptor"]));
+          }
+        });
 
         // Most recent v2 scalars (walk from newest backward to find first v2 entry for each).
         for (let i = matching.length - 1; i >= 0; i--) {
@@ -753,6 +803,7 @@ app.get('/house/:dorm/:house', ensureAuthenticated, (req, res) => {
       dormBackground: getDormBackground(dormName),
       rooms: houseRooms,
       houseRanks,
+      totalHousesInDorm: rankings.length,
       cultureWords,
       houseDescriptorWords,
       floors,

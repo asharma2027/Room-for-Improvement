@@ -412,7 +412,7 @@
                             var tl = t.toLowerCase();
                             if (tl === 'particularly high ceiling' || tl === 'extra storage / closet space' || tl === 'good furniture layout flexibility' || tl === 'particularly big windows' || tl === 'gets good sunlight' || tl === 'notably quiet' || tl === 'good ventilation') tagSentiment = 'positive';
                             else if (tl === 'limited storage / closet space' || tl === 'gets poor sunlight' || tl === 'notable hallway noise' || tl === 'noise from adjacent rooms' || tl === 'noise from above or below' || tl === 'ac/heating issues' || tl === 'poor ventilation') tagSentiment = 'negative';
-                            else if (tl === 'particularly small windows' || tl === 'drafty windows' || tl === 'gets very hot' || tl === 'gets very cold' || tl === 'significant radiator noise') tagSentiment = 'mild-negative';
+                            else if (tl === 'particularly small windows' || tl === 'particularly low ceiling' || tl === 'drafty windows' || tl === 'gets very hot' || tl === 'gets very cold' || tl === 'significant radiator noise') tagSentiment = 'mild-negative';
                         %>
                           <span class="tag" data-tag-sentiment="<%= tagSentiment %>" title="<%= t %>" onclick="event.stopPropagation(); addRoomsTagFilter('<%= t.replace(/'/g, "&#39;") %>')">
                             <%= getTagEmojiR(t) %> <%= t %>
@@ -428,11 +428,11 @@
                     <% if (room.houseCultureVal) { %>
                       <%
                         var cultureRounded = Math.round(parseFloat(room.houseCultureVal));
-                        var cultureColors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
+                        var cultureColors = { 5: '#34877A', 4: '#92B89D', 3: '#D69772', 2: '#C27654', 1: '#AE5436' };
                         var cultureBg = cultureColors[cultureRounded] || 'transparent';
                       %>
                       <div style="display:flex; align-items:center; gap:0.4rem;">
-                        <span style="display:inline-block; width:2.2em; text-align:center; padding:0.15em 0; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= cultureBg %>; color:#fff; text-shadow:-1px -1px 0 rgba(0,0,0,0.5),1px -1px 0 rgba(0,0,0,0.5),-1px 1px 0 rgba(0,0,0,0.5),1px 1px 0 rgba(0,0,0,0.5);"><%= room.houseCultureVal %></span>
+                        <span style="display:inline-block; width:2.2em; text-align:center; padding:0.15em 0; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= cultureBg %>; color:#fff;"><%= room.houseCultureVal %></span>
                       </div>
                     <% } else { %><span style="color:#ccc;">&mdash;</span><% } %>
                   </td>
@@ -441,11 +441,11 @@
                     <% if (room.outsideNoiseVal) { %>
                       <%
                         var noiseRounded = Math.round(parseFloat(room.outsideNoiseVal));
-                        var noiseColors = { 1: '#34877A', 2: '#92B89D', 3: '#EFE6D1', 4: '#D69772', 5: '#AE5436' };
+                        var noiseColors = { 1: '#34877A', 2: '#92B89D', 3: '#D69772', 4: '#C27654', 5: '#AE5436' };
                         var noiseBg = noiseColors[noiseRounded] || 'transparent';
                       %>
                       <div style="display:flex; align-items:center; gap:0.4rem;">
-                        <span style="display:inline-block; width:2.2em; text-align:center; padding:0.15em 0; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= noiseBg %>; color:#fff; text-shadow:-1px -1px 0 rgba(0,0,0,0.5),1px -1px 0 rgba(0,0,0,0.5),-1px 1px 0 rgba(0,0,0,0.5),1px 1px 0 rgba(0,0,0,0.5);"><%= room.outsideNoiseVal %></span>
+                        <span style="display:inline-block; width:2.2em; text-align:center; padding:0.15em 0; border-radius:0.3rem; font-size:0.85rem; font-weight:600; background-color:<%= noiseBg %>; color:#fff;"><%= room.outsideNoiseVal %></span>
                       </div>
                     <% } else { %><span style="color:#ccc;">&mdash;</span><% } %>
                   </td>

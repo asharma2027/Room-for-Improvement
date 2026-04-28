@@ -137,20 +137,18 @@
               const cultureLabels  = ["","Very Poor","Poor","Average","Good","Excellent"];
 
               function ratingColor(val) {
-                const colors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
+                const colors = { 5: '#34877A', 4: '#92B89D', 3: '#D69772', 2: '#C27654', 1: '#AE5436' };
                 return colors[Math.round(val)] || 'transparent';
               }
               function ratingTextColor(val) {
-                var r = Math.round(val);
-                return (r === 1 || r === 5) ? '#fff' : '#1a1a1a';
+                return '#fff';
               }
               function noiseColor(val) {
-                var colors = { 1: '#34877A', 2: '#92B89D', 3: '#EFE6D1', 4: '#D69772', 5: '#AE5436' };
+                var colors = { 1: '#34877A', 2: '#92B89D', 3: '#D69772', 4: '#C27654', 5: '#AE5436' };
                 return colors[Math.round(val)] || 'transparent';
               }
               function noiseTextColor(val) {
-                var r = Math.round(val);
-                return (r === 1 || r === 5) ? '#fff' : '#1a1a1a';
+                return '#fff';
               }
             %>
             <div style="background: #f9f9f9; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">

@@ -22,48 +22,42 @@
                 Only <strong>@uchicago.edu</strong> emails can register.
               </p>
               <div class="landing-buttons">
-                <a href="/register" class="btn-secondary"
-                  style="padding: 0.875rem 1.75rem; text-decoration: none; border-radius: var(--radius-full); font-weight: 600;">Register</a>
                 <a href="/login" class="btn-secondary"
                   style="padding: 0.875rem 1.75rem; text-decoration: none; border-radius: var(--radius-full); font-weight: 600; background: white; color: var(--primary-color);">Login</a>
+                <a href="/register" class="btn-secondary"
+                  style="padding: 0.875rem 1.75rem; text-decoration: none; border-radius: var(--radius-full); font-weight: 600;">Register</a>
               </div>
               <% } %>
         </div>
 
         <% if (user) { %>
-        <div class="features-grid">
-          <!-- Explore Campus panel (replaces separate Dorm Rankings + Campus Map) -->
+        <div class="features-grid features-grid--3">
+          <!-- Explore Campus panel -->
           <a href="/explore" class="feature-item" style="text-decoration: none; color: inherit; cursor: pointer;">
             <span class="feature-icon">🗺️</span>
             <h3>Explore Campus</h3>
             <p>Browse the interactive campus map and compare dorm rankings all in one place.</p>
           </a>
-          <!-- Search Rooms panel -->
+          <!-- All Rooms panel -->
           <a href="/rooms" class="feature-item" style="text-decoration: none; color: inherit; cursor: pointer;">
             <span class="feature-icon">🔍</span>
-            <h3>Search Rooms</h3>
-            <p>Browse and filter all rooms by dorm, house, and room attributes.</p>
+            <h3>All Rooms</h3>
+            <p>Browse and filter every room by dorm, house, floor, and attributes.</p>
           </a>
-          <!-- Submit Room Info panel -->
-          <a href="/submit-review" class="feature-item" style="text-decoration: none; color: inherit; cursor: pointer;">
-            <span class="feature-icon">📝</span>
-            <h3>Submit Room Info</h3>
-            <p>Select your dorm, house, and room to leave a review.</p>
-          </a>
-          <!-- Leave Feedback panel -->
+          <!-- Submit Room Info / Leave Feedback panel -->
           <div class="feature-item" style="cursor: pointer;" onclick="document.getElementById('feedback-section').scrollIntoView({ behavior: 'smooth' });">
-            <span class="feature-icon">💬</span>
-            <h3>Leave Feedback</h3>
-            <p>Share your thoughts, report room issues, or suggest improvements to the site.</p>
+            <span class="feature-icon">📝</span>
+            <h3>Submit Room Info / Leave Feedback</h3>
+            <p>Rate your room or share suggestions and report issues with the site.</p>
           </div>
         </div>
 
         <% } else { %>
-        <div class="features-grid">
+        <div class="features-grid features-grid--3">
           <div class="feature-item">
             <span class="feature-icon">📝</span>
             <h3>Real Feedback</h3>
-            <p>Submit and view real data regarding room conditions, noise levels, and house culture.</p>
+            <p>Submit and view real data from actual UChicago students about room conditions, noise levels, natural light, temperature control, and house culture — not just hearsay.</p>
           </div>
           <div class="feature-item">
             <span class="feature-icon">🔍</span>
@@ -73,31 +67,55 @@
           <div class="feature-item">
             <span class="feature-icon">📊</span>
             <h3>Data Driven</h3>
-            <p>See aggregated statistics for house culture and noise levels to make informed decisions.</p>
+            <p>See aggregated statistics for room size, noise levels, natural light, temperature control, and house culture — ranked by house and dorm so you can compare at a glance.</p>
           </div>
         </div>
         <% } %>
 
         <hr style="margin: 2rem 0; border: 0; border-top: 1px solid #eee;">
 
-        <div id="feedback-section" style="max-width: 800px; margin: 0 auto; text-align: center;">
-          <h2>Submit Feedback or Room Issues</h2>
-          <p style="margin-bottom: 2rem; color: var(--text-secondary);">
-            Help us improve! Let us know about common problems with rooms or give suggestions for the website.
-          </p>
+        <!-- Below-panels section: same max-width as features-grid so edges align -->
+        <% if (user) { %>
+        <div id="feedback-section" class="below-panels-row">
 
-          <form method="POST" action="/feedback" class="form-container" style="text-align: left;">
-            <label for="feedbackText">Your Feedback:</label>
-            <textarea name="feedbackText" id="feedbackText" rows="4"
-              placeholder="Describe any room problems or website ideas here..." required></textarea>
-            <button type="submit" style="width: 100%; margin-top: 1rem;">Submit Feedback</button>
-          </form>
+          <!-- LEFT: Website Feedback -->
+          <div class="below-panels-col">
+            <h2>Submit Website Feedback or Housing Issues</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">
+              Let us know about problems with rooms or share suggestions for the site.
+            </p>
+            <form method="POST" action="/feedback" class="form-container" style="text-align: left;">
+              <label for="feedbackText">Your Feedback:</label>
+              <textarea name="feedbackText" id="feedbackText" rows="4"
+                placeholder="Describe any room problems or website ideas here..." required></textarea>
+              <button type="submit" style="width: 100%; margin-top: 1rem;">Submit Feedback</button>
+            </form>
+          </div>
+
+          <!-- RIGHT: Submit Room Info -->
+          <div class="below-panels-col">
+            <h2>Submit Room Info</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">
+              Rate your room and help future residents make informed housing decisions.
+            </p>
+            <a href="/review"
+               style="display:block; width:100%; padding:1.1rem; font-size:1.1rem; font-weight:700; text-align:center; background:#800000; color:#fff; border-radius:var(--radius-full); text-decoration:none; box-shadow:0 4px 14px rgba(128,0,0,0.3); transition:background 0.2s, transform 0.15s, box-shadow 0.15s; box-sizing:border-box;"
+               onmouseenter="this.style.background='#660000'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(128,0,0,0.4)';"
+               onmouseleave="this.style.background='#800000'; this.style.transform=''; this.style.boxShadow='0 4px 14px rgba(128,0,0,0.3)';">
+              Go to Review Form &nbsp;→
+            </a>
+          </div>
+
         </div>
+        <% } %>
       </main>
 
       <footer style="text-align:center; margin-top:2rem;">
-        <p>&copy; 2025 Room for Improvement</p>
+        <p>&copy; 2026 Room for Improvement</p>
       </footer>
+
+      <% if (user) { %>
+      <% } %>
   </body>
 
   </html>

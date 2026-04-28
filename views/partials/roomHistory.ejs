@@ -2,11 +2,11 @@
 
 <%
   function ratingColor(val) {
-    const colors = { 5: '#34877A', 4: '#92B89D', 3: '#EFE6D1', 2: '#D69772', 1: '#AE5436' };
+    const colors = { 5: '#34877A', 4: '#92B89D', 3: '#D69772', 2: '#C27654', 1: '#AE5436' };
     return colors[Math.round(val)] || 'transparent';
   }
   function ratingTextColor(val) {
-    return Math.round(val) === 3 ? '#333' : '#fff';
+    return '#fff';
   }
 %>
 
