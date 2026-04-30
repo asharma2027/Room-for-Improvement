@@ -627,6 +627,8 @@
                 applyCameraPose();
             }
 
+            let selectedName = null;
+
             // ── Resize handling ────────────────────────────────────────────
             // On resize we recompute the overview fit so the map keeps every
             // dorm visible regardless of viewport/aspect changes.
@@ -654,7 +656,6 @@
             const raycaster = new THREE.Raycaster();
             const mouse = new THREE.Vector2();
             let hovered = null;
-            let selectedName = null;
 
             // Hover/select coloring works at the *dorm group* level: each
             // dorm's parts share one material, so setting it once recolors
