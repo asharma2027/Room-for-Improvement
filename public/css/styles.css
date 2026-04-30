@@ -2812,3 +2812,41 @@ table tbody tr:hover {
   .dorm-panel--open { transform: translateY(0); }
   .explore-map-3d-hint { display: none; }
 }
+
+/* ============================================================
+   Full-screen Explore map: the map fills the viewport below the
+   navbar (80px tall). User pan/zoom/orbit is disabled — the
+   canvas only receives clicks for selection — so the wrap takes
+   the entire available space and the canvas blocks touch panning.
+   ============================================================ */
+.explore-fullscreen {
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.explore-map-3d-section--full {
+  border-radius: 0;
+  margin: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.campus-3d-canvas-wrap--full {
+  /* Map fills everything below the 80px navbar. min-height kept
+     so very short viewports still get a usable map area. */
+  height: calc(100vh - 80px);
+  min-height: 420px;
+  border-radius: 0;
+}
+.campus-3d-canvas-wrap--full #campus-3d-canvas,
+.campus-3d-canvas-wrap--full #campus-3d-canvas:active {
+  /* Pointer cursor by default; we flip to pointer on dorm hover
+     in JS. No grab/grabbing — there's no panning. */
+  cursor: default;
+  touch-action: none;
+}
+@media (max-width: 768px) {
+  .campus-3d-canvas-wrap--full {
+    height: calc(100vh - 80px);
+    min-height: 360px;
+  }
+}

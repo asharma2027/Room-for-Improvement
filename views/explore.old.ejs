@@ -59,36 +59,73 @@
             }
           ];
 
-          // ── Overall ranking helpers (on-map rank badges) ─────────────────
-          // Compute an "overall" score per dorm by averaging the available
-          // category scores, then rank dorms 1..N by that overall. Used for
-          // the on-map rank badges so users can compare dorms at a glance
-          // without a separate legend or stats bar cluttering the screen.
-          var dormOverall = (dormScores || []).map(function(d) {
-            var vals = categories.map(function(c) { return d.scores[c.key]; })
-                                 .filter(function(v) { return v != null; });
-            var overall = vals.length ? vals.reduce(function(a, b) { return a + b; }, 0) / vals.length : null;
-            return { name: d.name, overall: overall };
+          // ── Summary stat helpers (compact bar above the map) ───────────────
+          // For each scoring category, find the dorm whose average score is the
+          // highest. These power the small "Top dorm by category" stat tiles.
+          var topByCategory = {};
+          categories.forEach(function(cat) {
+            var best = null;
+            (dormScores || []).forEach(function(d) {
+              var v = d.scores[cat.key];
+              if (v == null) return;
+              if (!best || v > best.value) best = { dorm: d.name, value: v };
+            });
+            topByCategory[cat.key] = best;
           });
-          var ranked = dormOverall.slice().filter(function(d) { return d.overall != null; })
-                                  .sort(function(a, b) { return b.overall - a.overall; });
-          var dormRankByName = {};
-          ranked.forEach(function(d, i) { dormRankByName[d.name] = i + 1; });
-          var dormOverallByName = {};
-          dormOverall.forEach(function(d) { dormOverallByName[d.name] = d.overall; });
+
+          var totalDorms = (dormScores || []).length;
+          var totalHouses = (dormScores || []).reduce(function(s, d) { return s + (d.houseCount || 0); }, 0);
         %>
 
         <%- include('partials/ratingColors') %>
 
-        <main class="explore-page explore-3d-page explore-fullscreen">
+        <main class="explore-page explore-3d-page" style="padding: 1rem 1.25rem 0; max-width:1500px; margin:0 auto;">
 
-            <!-- ====== 3D CAMPUS MAP (full screen below navbar) ====== -->
-            <section class="explore-map-3d-section explore-map-3d-section--full">
-                <div id="campus-3d-canvas-wrap" class="campus-3d-canvas-wrap campus-3d-canvas-wrap--full" data-testid="explore-map">
+            <!-- ====== COMPACT SUMMARY STATS (above map) ====== -->
+            <section class="explore-stats-bar" aria-label="Campus summary statistics">
+                <div class="explore-stats-tile explore-stats-tile--meta">
+                    <div class="explore-stats-tile-value"><%= totalDorms %></div>
+                    <div class="explore-stats-tile-label">Dorms</div>
+                </div>
+                <div class="explore-stats-tile explore-stats-tile--meta">
+                    <div class="explore-stats-tile-value"><%= totalHouses %></div>
+                    <div class="explore-stats-tile-label">Houses</div>
+                </div>
+                <% categories.forEach(function(cat) {
+                     var top = topByCategory[cat.key];
+                     if (!top) return;
+                     var barColor = ratingColor(top.value);
+                %>
+                    <button type="button" class="explore-stats-tile explore-stats-tile--cat" data-jump-dorm="<%= top.dorm %>" title="Top <%= cat.label %>: <%= top.dorm.replace(/_/g,'-') %> (<%= top.value.toFixed(1) %>)">
+                        <div class="explore-stats-tile-cat-row">
+                            <span class="explore-stats-tile-icon"><%= cat.icon %></span>
+                            <span class="explore-stats-tile-label">Top <%= cat.label %></span>
+                        </div>
+                        <div class="explore-stats-tile-dorm" style="color:<%= barColor %>;"><%= top.dorm.replace(/_/g,'-') %></div>
+                        <div class="explore-stats-tile-score"><%= top.value.toFixed(1) %></div>
+                    </button>
+                <% }); %>
+            </section>
+
+            <!-- ====== 3D CAMPUS MAP (majority of screen) ====== -->
+            <section class="explore-map-3d-section">
+                <div class="explore-map-3d-header">
+                    <span style="font-size:1.35rem;">🏛️</span>
+                    <span class="explore-map-3d-title">UChicago Campus — 3D Dorm Map</span>
+                    <span class="explore-map-3d-hint">Click any maroon building to view its rankings · drag to pan · scroll to zoom</span>
+                </div>
+                <div id="campus-3d-canvas-wrap" class="campus-3d-canvas-wrap">
                     <canvas id="campus-3d-canvas" aria-label="3D map of UChicago campus dorms"></canvas>
 
+                    <!-- Floating legend -->
+                    <div class="campus-3d-legend" aria-hidden="true">
+                        <div class="campus-3d-legend-row"><span class="campus-3d-swatch" style="background:#7a1f1f;"></span>Dorm (clickable)</div>
+                        <div class="campus-3d-legend-row"><span class="campus-3d-swatch" style="background:#cfcfcf;"></span>Landmark</div>
+                        <div class="campus-3d-legend-row"><span class="campus-3d-swatch" style="background:#7fb37f;"></span>Quad / green space</div>
+                    </div>
+
                     <!-- Slide-in panel for selected dorm rankings -->
-                    <aside id="dorm-panel" class="dorm-panel" aria-hidden="true" data-testid="dorm-rank-card">
+                    <aside id="dorm-panel" class="dorm-panel" aria-hidden="true">
                         <button type="button" class="dorm-panel-close" id="dorm-panel-close" aria-label="Close dorm rankings">×</button>
                         <div class="dorm-panel-empty" id="dorm-panel-empty">
                             Select a building to view its dorm rankings.
@@ -156,9 +193,7 @@
 
         </main>
 
-        <!-- Footer hidden on the full-screen Explore page so the map can
-             fill the viewport below the navbar without producing scroll. -->
-        <footer style="display:none;">
+        <footer style="margin-top:1rem;">
             <p>&copy; 2026 Room for Improvement</p>
         </footer>
 
@@ -168,7 +203,6 @@
         <!-- Injected JSON for client scripts -->
         <script id="all-houses-data" type="application/json"><%- allHousesJson %></script>
         <script id="dorm-scores-data" type="application/json"><%- dormScoresJson %></script>
-        <script id="dorm-ranks-data" type="application/json"><%- JSON.stringify({ rankByName: dormRankByName, overallByName: dormOverallByName, total: ranked.length }) %></script>
 
         <!-- Three.js (lightweight 3D, loaded via ES module CDN) -->
         <script type="importmap">
@@ -233,18 +267,7 @@
             //     points to screen-up.
             // ════════════════════════════════════════════════════════════════
             import * as THREE from 'three';
-
-            // Read server-computed dorm ranks for on-map ranking badges.
-            var DORM_RANKS = { rankByName: {}, overallByName: {}, total: 0 };
-            try { DORM_RANKS = JSON.parse(document.getElementById('dorm-ranks-data').textContent); } catch (e) {}
-
-            // Respect prefers-reduced-motion: skip continuous orbit animation
-            // for users who have requested less motion. They still get the
-            // programmatic focus pan/zoom on selection, just without spinning.
-            var REDUCED_MOTION = (function() {
-                try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
-                catch (e) { return false; }
-            })();
+            import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
             // Origin (Main Quad) → local 0,0 in the scene
             const ORIGIN_LAT = 41.7895;
@@ -375,53 +398,16 @@
             scene.background = new THREE.Color('#e7eee0');
             scene.fog = new THREE.Fog('#e7eee0', 700, 1400);
 
-            // Camera is fully locked: the user cannot pan, zoom, orbit, or
-            // tilt. The initial view is computed to fit ALL dorms on screen
-            // at the maximum zoom that still includes every dorm, recomputed
-            // on resize so it adapts to viewport/aspect. On dorm selection
-            // we programmatically orbit/focus that dorm; otherwise the
-            // camera holds the overview pose.
-            const CAMERA_FOV = 45;
-            const camera = new THREE.PerspectiveCamera(CAMERA_FOV, 1, 1, 4000);
+            // Camera is locked to a fixed oblique angle, looking down and
+            // toward the north-pointing -z axis. We never change `camera.up`
+            // or rotate around the target — only pan (translate target +
+            // camera together) and zoom along the existing view direction.
+            // This keeps north pinned to the top of the screen at all times.
+            const camera = new THREE.PerspectiveCamera(45, 1, 1, 3000);
+            const CAMERA_OFFSET = new THREE.Vector3(0, 520, 420);   // looking down + slightly south
+            camera.position.copy(CAMERA_OFFSET);
             camera.up.set(0, 1, 0);
-
-            // Camera "pose" — we drive position/lookAt programmatically.
-            // overviewTarget is the look-at point that fits all dorms; it is
-            // recomputed on resize. orbit state is used during selection.
-            const overviewTarget = new THREE.Vector3(0, 0, 0);
-            let overviewDistance = 700;       // dist from target along view dir
-            const VIEW_PITCH = Math.PI * 0.32; // angle below horizontal (~58° down)
-            // Initial yaw: -z = north, view comes from south-ish so north is up.
-            const OVERVIEW_YAW = 0;
-            let cameraTarget = new THREE.Vector3(0, 0, 0);
-            let cameraDistance = 700;
-            let cameraYaw = OVERVIEW_YAW;
-            let cameraPitch = VIEW_PITCH;
-            let orbitYaw = 0;                  // additional yaw applied while orbiting selected dorm
-            let orbiting = false;
-            // Smooth interpolation state for selection focus
-            let focusTargetVec = new THREE.Vector3();
-            let focusDistance = overviewDistance;
-            let focusing = false;
-
-            function applyCameraPose() {
-                // Compute camera position from spherical (yaw, pitch, distance)
-                // around cameraTarget. Yaw=0 places camera south of target so
-                // north points toward the top of the screen.
-                const yaw = cameraYaw + orbitYaw;
-                const cosP = Math.cos(cameraPitch);
-                const sinP = Math.sin(cameraPitch);
-                const dx = Math.sin(yaw) * cosP * cameraDistance;
-                const dz = Math.cos(yaw) * cosP * cameraDistance;
-                const dy = sinP * cameraDistance;
-                camera.position.set(
-                    cameraTarget.x + dx,
-                    cameraTarget.y + dy,
-                    cameraTarget.z + dz
-                );
-                camera.up.set(0, 1, 0);
-                camera.lookAt(cameraTarget);
-            }
+            camera.lookAt(0, 0, 0);
 
             const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -549,106 +535,46 @@
                 lbl.position.set(labelPos.x, maxTop + 14, labelPos.z);
                 lbl.scale.set(95, 22, 1);
                 scene.add(lbl);
-
-                // Rank badge floats above the dorm label, color-coded by rank.
-                // This is the at-a-glance comparison cue (no separate legend).
-                const rank = DORM_RANKS.rankByName[d.name];
-                const overall = DORM_RANKS.overallByName[d.name];
-                if (rank) {
-                    const badge = makeRankBadge(rank, DORM_RANKS.total || 0, overall);
-                    badge.position.set(labelPos.x + 38, maxTop + 38, labelPos.z);
-                    badge.scale.set(34, 34, 1);
-                    scene.add(badge);
-                }
             });
 
-            // ── Camera is fully locked — no user-driven controls. ───────────
-            // We deliberately do NOT instantiate OrbitControls. Pointer events
-            // on the canvas are used only for hover/click selection. Touch
-            // gestures are likewise blocked (touch-action: none on the canvas)
-            // so users cannot pan/pinch the camera themselves.
-
-            // ── Compute the overview camera pose so every dorm fits on screen
-            // ── at the maximum zoom that still includes all dorms. ──────────
-            // We collect XZ extents from every dorm cuboid (centers ± half
-            // dimensions), center the look-at on that bounding box, and pick
-            // a distance based on the larger of width/depth and the camera
-            // FOV adjusted for current aspect ratio.
-            function computeOverviewPose() {
-                let minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
-                DORMS.forEach(d => {
-                    const cuboids = (d.parts && d.parts.length) ? d.parts : [{ lat: d.lat, lng: d.lng, w: d.w, d: d.d }];
-                    cuboids.forEach(c => {
-                        const pos = latLngToXZ(c.lat, c.lng);
-                        const halfW = c.w / 2;
-                        const halfD = c.d / 2;
-                        if (pos.x - halfW < minX) minX = pos.x - halfW;
-                        if (pos.x + halfW > maxX) maxX = pos.x + halfW;
-                        if (pos.z - halfD < minZ) minZ = pos.z - halfD;
-                        if (pos.z + halfD > maxZ) maxZ = pos.z + halfD;
-                    });
-                });
-                const cx = (minX + maxX) / 2;
-                const cz = (minZ + maxZ) / 2;
-                const spanX = Math.max(maxX - minX, 1);
-                const spanZ = Math.max(maxZ - minZ, 1);
-
-                const r = wrap.getBoundingClientRect();
-                const aspect = r.width / Math.max(r.height, 1);
-
-                // Distance needed so the bounding box fits vertically AND
-                // horizontally given the camera pitch (which compresses the
-                // ground plane vertically on screen). Add a small padding so
-                // labels/badges aren't clipped at the edges.
-                const padding = 1.18;
-                const vFovRad = CAMERA_FOV * Math.PI / 180;
-                const hFovRad = 2 * Math.atan(Math.tan(vFovRad / 2) * aspect);
-                // Vertical extent on the ground plane that must fit in the
-                // camera frustum is roughly spanZ * sin(pitch) + spanX * 0    ?
-                // Simpler & robust: project the diagonal radius and divide by
-                // each fov. The ground projection foreshortens by sin(pitch).
-                const groundY = Math.sin(cameraPitch);
-                const distV = (spanZ * groundY * 0.5 * padding) / Math.tan(vFovRad / 2);
-                const distH = (spanX * 0.5 * padding) / Math.tan(hFovRad / 2);
-                const dist = Math.max(distV, distH, 220);
-
-                overviewTarget.set(cx, 0, cz);
-                overviewDistance = dist;
-            }
-
-            function setOverviewPose() {
-                cameraTarget.copy(overviewTarget);
-                cameraDistance = overviewDistance;
-                cameraYaw = OVERVIEW_YAW;
-                cameraPitch = VIEW_PITCH;
-                orbitYaw = 0;
-                orbiting = false;
-                focusing = false;
-                applyCameraPose();
-            }
+            // ── Pan-only camera controls ────────────────────────────────────
+            // OrbitControls is reused with rotation disabled. Only pan + zoom
+            // are allowed, and we re-pin `camera.up` to world-up on every
+            // change so the view can never tilt off the north-up orientation.
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableRotate = false;                  // no orbit / tilt
+            controls.enablePan = true;                      // drag to pan
+            controls.enableZoom = true;                     // wheel to zoom
+            controls.screenSpacePanning = true;             // pan is XY-screen, not world Y
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.12;
+            controls.minDistance = 120;
+            controls.maxDistance = 1200;
+            controls.target.set(0, 0, 0);
+            // Left button = pan (instead of the default rotate). Touch single-
+            // finger likewise pans. Right-click does nothing useful here, so
+            // we leave it default (PAN) — there's no rotate anywhere.
+            controls.mouseButtons = {
+                LEFT:   THREE.MOUSE.PAN,
+                MIDDLE: THREE.MOUSE.DOLLY,
+                RIGHT:  THREE.MOUSE.PAN
+            };
+            controls.touches = { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_PAN };
+            // Defensive: re-assert north-up on every camera change in case
+            // some third-party code or future edit nudges it.
+            controls.addEventListener('change', () => {
+                camera.up.set(0, 1, 0);
+            });
 
             // ── Resize handling ────────────────────────────────────────────
-            // On resize we recompute the overview fit so the map keeps every
-            // dorm visible regardless of viewport/aspect changes.
             function resize() {
                 const r = wrap.getBoundingClientRect();
                 renderer.setSize(r.width, r.height, false);
                 camera.aspect = r.width / Math.max(r.height, 1);
                 camera.updateProjectionMatrix();
-                computeOverviewPose();
-                if (!selectedName) {
-                    setOverviewPose();
-                } else {
-                    // While focused on a dorm, keep its target but rescale
-                    // distance proportionally to the new overview distance so
-                    // zoom level remains consistent across resizes.
-                    cameraDistance = Math.max(180, overviewDistance * 0.42);
-                    applyCameraPose();
-                }
             }
             window.addEventListener('resize', resize);
             resize();
-            setOverviewPose();
 
             // ── Picking (hover + click) ────────────────────────────────────
             const raycaster = new THREE.Raycaster();
@@ -695,7 +621,7 @@
                     tooltip.style.top = (ev.clientY - wrap.getBoundingClientRect().top + 14) + 'px';
                 } else {
                     if (hovered) setHover(null);
-                    canvas.style.cursor = 'default';
+                    canvas.style.cursor = 'grab';
                     tooltip.style.opacity = '0';
                 }
             });
@@ -704,10 +630,15 @@
                 tooltip.style.opacity = '0';
             });
 
-            // Click to select a dorm and reveal its rankings panel. Camera is
-            // locked so there is no drag-vs-click ambiguity — any pointerup
-            // on a dorm is a select. Touch taps work the same way.
-            canvas.addEventListener('click', (ev) => {
+            // Click to select a dorm and reveal its rankings panel
+            let mouseDownPos = null;
+            canvas.addEventListener('pointerdown', (ev) => { mouseDownPos = { x: ev.clientX, y: ev.clientY }; });
+            canvas.addEventListener('pointerup', (ev) => {
+                if (!mouseDownPos) return;
+                const dx = Math.abs(ev.clientX - mouseDownPos.x);
+                const dy = Math.abs(ev.clientY - mouseDownPos.y);
+                mouseDownPos = null;
+                if (dx > 5 || dy > 5) return;        // ignore drags
                 const hit = pickAt(ev.clientX, ev.clientY);
                 if (hit) selectDorm(hit.userData.name);
             });
@@ -731,13 +662,6 @@
             const panelCards  = document.getElementById('dorm-panel-cards');
             const panelClose  = document.getElementById('dorm-panel-close');
 
-            // Find dorm world position by name (centroid of its first part).
-            function dormCenter(name) {
-                const d = DORMS.find(x => x.name === name);
-                if (!d) return null;
-                return latLngToXZ(d.lat, d.lng);
-            }
-
             function selectDorm(name) {
                 // recolor previous selection
                 if (selectedName && dormByName[selectedName]) {
@@ -754,20 +678,6 @@
                 panelCards.querySelectorAll('[data-dorm-card]').forEach(card => {
                     card.hidden = (card.getAttribute('data-dorm-card') !== name);
                 });
-
-                // Programmatic camera focus + orbit on the selected dorm.
-                // The user cannot drive the camera, so this is the only way
-                // the view changes. We move the look-at to the dorm and
-                // tighten the zoom; the orbit yaw is driven in the animation
-                // loop unless prefers-reduced-motion is set.
-                const c = dormCenter(name);
-                if (c) {
-                    focusTargetVec.set(c.x, 0, c.z);
-                    focusDistance = Math.max(180, overviewDistance * 0.42);
-                    focusing = true;
-                    orbiting = !REDUCED_MOTION;
-                    orbitYaw = 0;
-                }
             }
             function clearSelection() {
                 if (selectedName && dormByName[selectedName]) {
@@ -779,45 +689,21 @@
                 panelEmpty.hidden = false;
                 panelCards.hidden = true;
                 panelCards.querySelectorAll('[data-dorm-card]').forEach(card => { card.hidden = true; });
-
-                // Programmatically pull back to the overview pose.
-                focusTargetVec.copy(overviewTarget);
-                focusDistance = overviewDistance;
-                focusing = true;
-                orbiting = false;
-                orbitYaw = 0;
             }
             panelClose.addEventListener('click', clearSelection);
 
+            // Stat tile click → select that dorm on the map
+            document.querySelectorAll('[data-jump-dorm]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const name = btn.getAttribute('data-jump-dorm');
+                    if (dormByName[name]) selectDorm(name);
+                });
+            });
+
             // ── Animation loop ──────────────────────────────────────────────
-            // Drives smooth camera focus on selection and (optionally) the
-            // continuous orbit around the selected dorm. No user input
-            // affects the camera here — it's fully programmatic.
-            const ORBIT_SPEED = 0.0035;     // rad/frame, gentle rotation
-            const FOCUS_LERP  = 0.08;       // 0..1 per-frame blend toward target
-            let lastTime = performance.now();
             function animate() {
                 requestAnimationFrame(animate);
-                const now = performance.now();
-                const dt = Math.min(50, now - lastTime); // clamp dt for tab-switch
-                lastTime = now;
-
-                if (focusing) {
-                    cameraTarget.lerp(focusTargetVec, FOCUS_LERP);
-                    cameraDistance += (focusDistance - cameraDistance) * FOCUS_LERP;
-                    if (cameraTarget.distanceToSquared(focusTargetVec) < 0.5 &&
-                        Math.abs(cameraDistance - focusDistance) < 0.5) {
-                        focusing = false;
-                        cameraTarget.copy(focusTargetVec);
-                        cameraDistance = focusDistance;
-                    }
-                }
-                if (orbiting) {
-                    // Only orbit while a dorm is selected. dt-normalized so
-                    // speed feels consistent regardless of frame rate.
-                    orbitYaw += ORBIT_SPEED * (dt / 16.6667);
-                }
-                applyCameraPose();
+                controls.update();
                 renderer.render(scene, camera);
             }
             animate();
@@ -848,49 +734,6 @@
                 const sprite = new THREE.Sprite(mat);
                 return sprite;
             }
-            // Color-coded rank badge: top tier gets a deep green, middle
-            // tiers stay neutral, bottom tier gets a warm copper. This gives
-            // direct on-map ranking without a legend. The number is the
-            // dorm's overall rank (1 = best); the optional overall score is
-            // tucked under it as a smaller label.
-            function rankColor(rank, total) {
-                if (!rank || !total) return '#6b6b6b';
-                const pct = (rank - 1) / Math.max(total - 1, 1);
-                if (pct <= 0.20) return '#1f7a4d';      // top dorm(s) — green
-                if (pct <= 0.45) return '#2f7a3a';      // upper-mid
-                if (pct <= 0.65) return '#7a6a1f';      // middle — olive
-                if (pct <= 0.85) return '#a3621f';      // lower-mid — amber
-                return '#a83434';                        // bottom — red
-            }
-            function makeRankBadge(rank, total, overall) {
-                const size = 96;
-                const c = document.createElement('canvas');
-                c.width = size; c.height = size;
-                const ctx = c.getContext('2d');
-                const color = rankColor(rank, total);
-                ctx.beginPath();
-                ctx.arc(size/2, size/2, size/2 - 4, 0, Math.PI * 2);
-                ctx.fillStyle = color;
-                ctx.fill();
-                ctx.lineWidth = 4;
-                ctx.strokeStyle = 'rgba(255,255,255,0.95)';
-                ctx.stroke();
-                ctx.fillStyle = '#fff';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.font = '800 44px Inter, sans-serif';
-                ctx.fillText('#' + rank, size/2, size/2 - 6);
-                if (overall != null) {
-                    ctx.font = '700 16px Inter, sans-serif';
-                    ctx.fillStyle = 'rgba(255,255,255,0.9)';
-                    ctx.fillText(overall.toFixed(1), size/2, size/2 + 24);
-                }
-                const tex = new THREE.CanvasTexture(c);
-                tex.minFilter = THREE.LinearFilter;
-                const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
-                return new THREE.Sprite(mat);
-            }
-
             function roundRect(ctx, x, y, w, h, r) {
                 ctx.beginPath();
                 ctx.moveTo(x + r, y);
