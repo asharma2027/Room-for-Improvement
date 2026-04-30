@@ -4,8 +4,7 @@
         <%- include('partials/nav') %>
 
         <%
-          // ── Server-side rating color helpers (kept identical to legacy page so
-          //    the same dorm rankings panel logic/styles render here too).
+          // ── Server-side rating color helpers ──────────────────────────────
           function ratingColor(val) {
             var colors = { 5: '#34877A', 4: '#92B89D', 3: '#D69772', 2: '#C27654', 1: '#AE5436' };
             return colors[Math.round(val)] || 'transparent';
@@ -59,11 +58,9 @@
             }
           ];
 
-          // ── Overall ranking helpers (on-map rank badges) ─────────────────
-          // Compute an "overall" score per dorm by averaging the available
-          // category scores, then rank dorms 1..N by that overall. Used for
-          // the on-map rank badges so users can compare dorms at a glance
-          // without a separate legend or stats bar cluttering the screen.
+          // ── Overall ranking (per-dorm). Dorms with no scores are still
+          //    given a slot but flagged unranked so each building still gets
+          //    a visible bubble on the map (the user's explicit request).
           var dormOverall = (dormScores || []).map(function(d) {
             var vals = categories.map(function(c) { return d.scores[c.key]; })
                                  .filter(function(v) { return v != null; });
@@ -87,70 +84,32 @@
                 <div id="campus-3d-canvas-wrap" class="campus-3d-canvas-wrap campus-3d-canvas-wrap--full" data-testid="explore-map">
                     <canvas id="campus-3d-canvas" aria-label="3D map of UChicago campus dorms"></canvas>
 
-                    <!-- Slide-in panel for selected dorm rankings -->
-                    <aside id="dorm-panel" class="dorm-panel" aria-hidden="true" data-testid="dorm-rank-card">
-                        <button type="button" class="dorm-panel-close" id="dorm-panel-close" aria-label="Close dorm rankings">×</button>
-                        <div class="dorm-panel-empty" id="dorm-panel-empty">
-                            Select a building to view its dorm rankings.
+                    <!-- SVG overlay for the hover-card connector line + dot.
+                         Sits between the 3D canvas and the floating card so
+                         the geometric link reads as a guide annotation. -->
+                    <svg id="dorm-connector" class="dorm-connector" aria-hidden="true">
+                      <line id="dorm-connector-line" x1="0" y1="0" x2="0" y2="0"></line>
+                      <circle id="dorm-connector-dot" cx="0" cy="0" r="9"></circle>
+                      <circle id="dorm-connector-dot-inner" cx="0" cy="0" r="3"></circle>
+                    </svg>
+
+                    <!-- Hover guide card: a single focused card that follows
+                         the hovered dorm. Built once, populated on hover. -->
+                    <aside id="dorm-hover-card" class="dorm-hover-card" aria-hidden="true" data-testid="dorm-rank-card">
+                      <header class="dorm-hover-card__header">
+                        <div>
+                          <div class="dorm-hover-card__rank" id="dorm-hover-rank">—</div>
+                          <div class="dorm-hover-card__rank-sub" id="dorm-hover-rank-sub">Unranked</div>
                         </div>
-                        <div class="dorm-panel-cards" id="dorm-panel-cards" hidden>
-                            <% (dormScores || []).forEach(function(dorm) { %>
-                                <a href="/dorm/<%= encodeURIComponent(dorm.name) %>" class="dorm-rank-card dorm-panel-card" data-dorm-card="<%= dorm.name %>" hidden>
-
-                                    <!-- Card Header (identical structure to legacy explore page) -->
-                                    <div class="dorm-rank-card-header">
-                                        <h2 class="dorm-rank-card-name"><%= dorm.name.replace(/_/g, '-') %></h2>
-                                        <span class="dorm-rank-card-badge">
-                                            🏠 <%= dorm.houseCount %> house<%= dorm.houseCount !== 1 ? 's' : '' %>
-                                        </span>
-                                    </div>
-
-                                    <!-- Score Grid: same layout as updated rankings section -->
-                                    <div class="dorm-rank-scores" style="display:grid; grid-template-columns: 1.4rem 4.4rem minmax(0, 1fr) 2.4rem; gap:0.28rem 0.35rem; align-items:end;">
-                                        <% categories.forEach(function(cat) {
-                                            var score = dorm.scores[cat.key];
-                                            var hasScore = score !== null && score !== undefined;
-                                            var barColor = hasScore ? ratingColor(score) : 'transparent';
-                                            var barPct = hasScore ? Math.max(4, Math.min(100, ((score - 1) / 4) * 100)) : 0;
-                                            var barLabel = hasScore ? cat.textLabel(score) : '';
-                                        %>
-                                            <span class="dorm-score-icon" style="font-size:1.18rem; line-height:1; text-align:center;"><%= cat.icon %></span>
-                                            <span class="dorm-score-label" style="font-size:0.88rem; font-weight:700; color:var(--text-secondary); white-space:nowrap; line-height:1; text-align:left; width:auto;"><%= cat.label %></span>
-                                            <% if (hasScore) { %>
-                                                <div style="display:flex; flex-direction:column; gap:0.12rem;">
-                                                    <span style="font-size:0.74rem; font-weight:800; color:<%= barColor %>; white-space:nowrap; line-height:1;"><%= barLabel %></span>
-                                                    <div style="position:relative; height:16px; border-radius:3px; overflow:hidden; background:#f1f1f4; min-width:30px;">
-                                                        <div style="position:absolute; left:0; top:0; height:100%; width:<%= barPct %>%; background:<%= barColor %>; border-radius:3px;"></div>
-                                                    </div>
-                                                </div>
-                                                <span class="dorm-score-value" style="font-size:0.88rem; font-weight:800; color:var(--text-primary); text-align:right; white-space:nowrap; position:relative; top:1px;">
-                                                    <%= score.toFixed(1) %>
-                                                </span>
-                                            <% } else { %>
-                                                <div style="height:16px;"></div>
-                                                <span class="dorm-score-value null-score" style="text-align:right;">—</span>
-                                            <% } %>
-                                        <% }); %>
-                                    </div>
-
-                                    <!-- Top 3 House Descriptors -->
-                                    <% if (dorm.topVibes && dorm.topVibes.length > 0) { %>
-                                        <div style="margin-top:0.6rem; padding-top:0.5rem; border-top:1px solid var(--border-color);">
-                                            <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-secondary); margin-bottom:0.3rem;">Top House Descriptors</div>
-                                            <div style="display:flex; flex-wrap:wrap; gap:0.25rem;">
-                                                <% dorm.topVibes.forEach(function(vibe) { %>
-                                                    <span class="explore-vibe-tag" data-vibe-text="<%= vibe.replace(/"/g, '&quot;') %>" style="font-size:0.72rem; padding:0.18em 0.55em; border-radius:2rem; font-weight:600; border:1px solid currentColor; white-space:nowrap; color:#444; cursor:default;"><%= vibe %></span>
-                                                <% }); %>
-                                            </div>
-                                        </div>
-                                    <% } %>
-                                </a>
-                            <% }); %>
+                        <div class="dorm-hover-card__title-wrap">
+                          <h2 class="dorm-hover-card__title" id="dorm-hover-title"></h2>
+                          <div class="dorm-hover-card__meta" id="dorm-hover-meta"></div>
                         </div>
+                      </header>
+                      <div class="dorm-hover-card__scores" id="dorm-hover-scores"></div>
+                      <footer class="dorm-hover-card__footer" id="dorm-hover-footer"></footer>
+                      <div class="dorm-hover-card__hint">Click to zoom in · Open dorm page →</div>
                     </aside>
-
-                    <!-- Selected building label tooltip -->
-                    <div id="campus-3d-tooltip" class="campus-3d-tooltip" aria-hidden="true"></div>
                 </div>
             </section>
 
@@ -161,9 +120,6 @@
         <footer style="display:none;">
             <p>&copy; 2026 Room for Improvement</p>
         </footer>
-
-        <!-- Vibe tag tooltip (reused from legacy page) -->
-        <div id="explore-vibe-tooltip" style="position:fixed; z-index:9999; pointer-events:none; background:rgba(30,30,30,0.92); color:#fff; padding:0.45rem 0.75rem; border-radius:0.4rem; font-size:0.82rem; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; white-space:nowrap; box-shadow:0 3px 12px rgba(0,0,0,0.25); opacity:0; transition:opacity 0.15s ease;"></div>
 
         <!-- Injected JSON for client scripts -->
         <script id="all-houses-data" type="application/json"><%- allHousesJson %></script>
@@ -184,53 +140,8 @@
             // ════════════════════════════════════════════════════════════════
             // Buildings are drawn as simple cuboids placed at their real-world
             // (lat, lng), then projected to a local meter grid centered on the
-            // Main Quad. Footprint dimensions and heights come from UChicago's
-            // public Archibus campus building footprint dataset
-            // (https://maps.uchicago.edu — see also the ArcGIS web map item
-            //  b76343cfc60843ffab3c6b6c0ffbaf2f) plus the 2024 directory PDF.
-            //
-            // ─────────────────── HOW TO EDIT BUILDINGS ─────────────────────
-            // Two arrays drive the entire 3D map: `DORMS` and `LANDMARKS`,
-            // both defined immediately below this comment. Edit them in place
-            // — no other file needs to change.
-            //
-            //   DORM/LANDMARK fields:
-            //     name   (string)  – MUST match the dorm name in the rooms
-            //                        data exactly (e.g. "Burton Judson",
-            //                        "Snell-Hitchcock"). Used to wire clicks
-            //                        to the side rankings panel and stat-tile
-            //                        jumps. Landmarks can use any name.
-            //     label  (string)  – On-screen display label (free text).
-            //     lat,lng (number) – Real-world WGS-84 coordinates of the
-            //                        building centroid (decimal degrees).
-            //                        Move these to nudge a building N/S/E/W.
-            //     w      (number)  – East-west footprint width (meters).
-            //     d      (number)  – North-south footprint depth (meters).
-            //     h      (number)  – Building height (meters).
-            //                        Tip: ArcGIS stores BLDG_HGT in feet —
-            //                        multiply by 0.3048 to get meters.
-            //     rotY   (number, optional, dorms only) – Y-axis rotation in
-            //                        radians, for buildings that aren't axis-
-            //                        aligned. Defaults to 0.
-            //     parts  (array, optional) – For multi-wing buildings (e.g.
-            //                        Snell-Hitchcock, Max Palevsky), provide
-            //                        an array of `{ lat, lng, w, d, h }`
-            //                        sub-cuboids. When `parts` is set, the
-            //                        top-level lat/lng/w/d/h still control
-            //                        where the label sits and what the click-
-            //                        target's bounding box is, but each
-            //                        listed part is drawn separately for a
-            //                        more accurate shape.
-            //     type   (LANDMARKS only) – "quad" for green grass patches,
-            //                        "building" for gray cuboids.
-            //
-            //   Global scale / projection:
-            //     Adjust ORIGIN_LAT / ORIGIN_LNG below if the camera should
-            //     center somewhere other than the Main Quad. M_PER_DEG_LAT/
-            //     LNG convert degrees → meters using a flat-earth approx
-            //     (accurate to ~0.1% over ~1 km of campus). Don't change the
-            //     sign convention in `latLngToXZ` — it ensures north-on-map
-            //     points to screen-up.
+            // Main Quad. See DORMS / LANDMARKS arrays below to add or edit
+            // buildings — every other detail is derived from there.
             // ════════════════════════════════════════════════════════════════
             import * as THREE from 'three';
 
@@ -238,25 +149,18 @@
             var DORM_RANKS = { rankByName: {}, overallByName: {}, total: 0 };
             try { DORM_RANKS = JSON.parse(document.getElementById('dorm-ranks-data').textContent); } catch (e) {}
 
-            // Respect prefers-reduced-motion: skip continuous orbit animation
-            // for users who have requested less motion. They still get the
-            // programmatic focus pan/zoom on selection, just without spinning.
-            var REDUCED_MOTION = (function() {
-                try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
-                catch (e) { return false; }
-            })();
+            // Server-rendered dorm score detail (for hover card).
+            var DORM_SCORES = [];
+            try { DORM_SCORES = JSON.parse(document.getElementById('dorm-scores-data').textContent); } catch (e) {}
+            const DORM_SCORE_BY_NAME = {};
+            DORM_SCORES.forEach(function(d) { DORM_SCORE_BY_NAME[d.name] = d; });
 
             // Origin (Main Quad) → local 0,0 in the scene
             const ORIGIN_LAT = 41.7895;
             const ORIGIN_LNG = -87.5995;
-            const M_PER_DEG_LAT = 111320;                          // meters per degree latitude
+            const M_PER_DEG_LAT = 111320;
             const M_PER_DEG_LNG = 111320 * Math.cos(ORIGIN_LAT * Math.PI / 180);
 
-            // Project (lat, lng) → scene coords. Convention:
-            //   +x = east, -x = west
-            //   +z = south, -z = north  (so screen-up = north)
-            // Do NOT change these signs — the compass + camera both rely on
-            // -z being north for the static "north-up" orientation to hold.
             function latLngToXZ(lat, lng) {
                 return {
                     x: (lng - ORIGIN_LNG) * M_PER_DEG_LNG,
@@ -265,32 +169,17 @@
             }
 
             // ── DORM building data ──────────────────────────────────────────
-            // Sourced from UChicago's Archibus building-footprint feature
-            // service (lat/lon from polygon centroids, w/d from polygon
-            // bounding boxes in meters, h from BLDG_HGT in feet × 0.3048).
-            //
-            // The `name` strings match server-side `dormScores` keys exactly.
-            // If you rename a dorm in the rooms data, update `name` here too.
             const DORMS = [
-                // Burton-Judson Courts — 1005 E 60th St, south of Midway
-                // (ArcGIS fid 139, bd_id H03; BLDG_HGT 80 ft = 24.4 m)
                 { name: 'Burton Judson',
                   label: 'Burton-Judson',
                   lat: 41.7855031698, lng: -87.6003483856,
                   w: 105.6, d: 74.7, h: 24.4, rotY: 0 },
 
-                // International House — 1414 E 59th St
-                // (fid 118, bd_id E13; BLDG_HGT 148 ft = 45.1 m)
                 { name: 'I-House',
                   label: 'I-House',
                   lat: 41.7882362427, lng: -87.5908153883,
                   w: 83.9, d: 55.5, h: 45.1, rotY: 0 },
 
-                // Snell-Hitchcock — Hutchinson Court, NW corner of Main Quad.
-                // Two wings rendered separately for shape fidelity, but the
-                // whole compound is a single selectable dorm.
-                //   Snell Hall   – fid 230, bd_id D08, 70 ft = 21.3 m
-                //   Hitchcock H. – fid 228, bd_id D07, 75 ft = 22.9 m
                 { name: 'Snell-Hitchcock',
                   label: 'Snell-Hitchcock',
                   lat: 41.7911141668, lng: -87.6008801585,
@@ -300,12 +189,6 @@
                       { lat: 41.7912032121, lng: -87.6007367489, w: 64.2, d: 22.7, h: 22.9 }
                   ] },
 
-                // Max Palevsky Residential Commons — three connected dorms
-                // forming the W/Center/E commons on E 56th St. All ~60 ft
-                // (18.3 m); rendered as three cuboids under one click target.
-                //   West   – fid 71, C32, 5625 S Ellis
-                //   Center – fid 72, C33, 1101 E 56th
-                //   East   – fid 73, C34, 5630 S University
                 { name: 'Max Palevsky',
                   label: 'Max Palevsky',
                   lat: 41.7929, lng: -87.5998,
@@ -316,23 +199,16 @@
                       { lat: 41.7927818164, lng: -87.5986160032, w: 67.0, d: 77.8, h: 18.3 }
                   ] },
 
-                // Campus North Residential Commons — 5500 S University
-                // (fid 267, bd_id C26; BLDG_HGT 135 ft = 41.1 m)
                 { name: 'Campus North',
                   label: 'Campus North',
                   lat: 41.7948207035, lng: -87.5991278838,
                   w: 79.3, d: 22.8, h: 41.1, rotY: 0 },
 
-                // Renee Granville-Grossman Residential Commons — 6031 S Ellis
-                // (fid 137, bd_id H09; BLDG_HGT 104 ft = 31.7 m). South campus,
-                // not to be confused with Campus North.
                 { name: 'Renee Granville-Grossman',
                   label: 'Renee Granville-Grossman',
                   lat: 41.7845934364, lng: -87.6003320148,
                   w: 105.2, d: 76.6, h: 31.7, rotY: 0 },
 
-                // Woodlawn Residential Commons — 61st & S Woodlawn
-                // (fid 2, bd_id H11; BLDG_HGT 184 ft = 56.1 m)
                 { name: 'Woodlawn',
                   label: 'Woodlawn',
                   lat: 41.7846551855, lng: -87.5970075112,
@@ -340,23 +216,15 @@
             ];
 
             // ── Non-dorm landmarks (gray cuboids + green quads) ─────────────
-            // Add or remove freely — these are decorative and not selectable.
             const LANDMARKS = [
-                // Main Quad — rendered as a flat green grass patch.
                 { type: 'quad',     name: 'Main Quad',
                   lat: 41.7895, lng: -87.5995,
                   w: 220, d: 130, h: 0.2 },
 
-                // Regenstein Library — 1100 E 57th St
-                // (fid 266, bd_id C03; BLDG_HGT 88 ft = 26.8 m)
                 { type: 'building', name: 'Regenstein Library',
                   lat: 41.7922131882, lng: -87.5999558277,
                   w: 109.0, d: 126.3, h: 26.8 },
 
-                // Rockefeller Memorial Chapel — 5850 S Woodlawn. Two-part
-                // shape: long nave + tall bell tower.
-                //   Main nave – fid 101, D29, 100 ft = 30.5 m
-                //   Tower     – fid 270, D29, 200 ft = 61.0 m
                 { type: 'building', name: 'Rockefeller Chapel',
                   lat: 41.7885324798, lng: -87.5970610293,
                   w: 34.0, d: 80.7, h: 30.5,
@@ -369,46 +237,32 @@
             // ── Three.js scene setup ────────────────────────────────────────
             const wrap = document.getElementById('campus-3d-canvas-wrap');
             const canvas = document.getElementById('campus-3d-canvas');
-            const tooltip = document.getElementById('campus-3d-tooltip');
 
             const scene = new THREE.Scene();
             scene.background = new THREE.Color('#e7eee0');
-            scene.fog = new THREE.Fog('#e7eee0', 700, 1400);
+            // No fog: the user requested everything stay clearly visible.
 
-            // Camera is fully locked: the user cannot pan, zoom, orbit, or
-            // tilt. The initial view is computed to fit ALL dorms on screen
-            // at the maximum zoom that still includes every dorm, recomputed
-            // on resize so it adapts to viewport/aspect. On dorm selection
-            // we programmatically orbit/focus that dorm; otherwise the
-            // camera holds the overview pose.
+            // Camera is fully locked: no user-driven pan/zoom/orbit. The
+            // initial pose fits all dorms, recomputed on resize. Selecting
+            // a dorm smoothly zooms in (no orbiting around the building).
             const CAMERA_FOV = 45;
             const camera = new THREE.PerspectiveCamera(CAMERA_FOV, 1, 1, 4000);
             camera.up.set(0, 1, 0);
 
-            // Camera "pose" — we drive position/lookAt programmatically.
-            // overviewTarget is the look-at point that fits all dorms; it is
-            // recomputed on resize. orbit state is used during selection.
             const overviewTarget = new THREE.Vector3(0, 0, 0);
-            let overviewDistance = 700;       // dist from target along view dir
-            const VIEW_PITCH = Math.PI * 0.32; // angle below horizontal (~58° down)
-            // Initial yaw: -z = north, view comes from south-ish so north is up.
+            let overviewDistance = 700;
+            const VIEW_PITCH = Math.PI * 0.32;
             const OVERVIEW_YAW = 0;
             let cameraTarget = new THREE.Vector3(0, 0, 0);
             let cameraDistance = 700;
             let cameraYaw = OVERVIEW_YAW;
             let cameraPitch = VIEW_PITCH;
-            let orbitYaw = 0;                  // additional yaw applied while orbiting selected dorm
-            let orbiting = false;
-            // Smooth interpolation state for selection focus
             let focusTargetVec = new THREE.Vector3();
             let focusDistance = overviewDistance;
             let focusing = false;
 
             function applyCameraPose() {
-                // Compute camera position from spherical (yaw, pitch, distance)
-                // around cameraTarget. Yaw=0 places camera south of target so
-                // north points toward the top of the screen.
-                const yaw = cameraYaw + orbitYaw;
+                const yaw = cameraYaw;
                 const cosP = Math.cos(cameraPitch);
                 const sinP = Math.sin(cameraPitch);
                 const dx = Math.sin(yaw) * cosP * cameraDistance;
@@ -428,8 +282,7 @@
             renderer.shadowMap.enabled = true;
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-            // Lighting — soft sunlight + ambient
-            const ambient = new THREE.AmbientLight(0xffffff, 0.55);
+            const ambient = new THREE.AmbientLight(0xffffff, 0.6);
             scene.add(ambient);
             const sun = new THREE.DirectionalLight(0xffffff, 0.95);
             sun.position.set(220, 380, 160);
@@ -443,7 +296,6 @@
             sun.shadow.camera.far = 1500;
             scene.add(sun);
 
-            // Ground plane (campus ground)
             const ground = new THREE.Mesh(
                 new THREE.PlaneGeometry(2000, 2000),
                 new THREE.MeshLambertMaterial({ color: 0xdfe6d6 })
@@ -452,16 +304,12 @@
             ground.receiveShadow = true;
             scene.add(ground);
 
-            // Subtle grid for visual orientation
             const grid = new THREE.GridHelper(1600, 32, 0xc4cfb6, 0xd6decc);
             grid.position.y = 0.05;
             grid.material.opacity = 0.45;
             grid.material.transparent = true;
             scene.add(grid);
 
-            // North compass arrow. Because the camera is locked to a fixed
-            // orientation with -z = north, this arrow always points to the
-            // top of the screen — there is no per-frame rotation logic.
             const compass = new THREE.ArrowHelper(
                 new THREE.Vector3(0, 0, -1), new THREE.Vector3(-450, 1, -450), 60, 0x800000, 18, 12
             );
@@ -489,8 +337,7 @@
                 scene.add(lbl);
             })();
 
-            // ── Render landmark (non-dorm) buildings: monochrome light gray ─
-            const landmarkMeshes = [];
+            // ── Render landmark (non-dorm) buildings ────────────────────────
             const LANDMARK_MAT = new THREE.MeshLambertMaterial({ color: 0xcfcfcf });
             LANDMARKS.filter(l => l.type === 'building').forEach(l => {
                 const cuboids = (l.parts && l.parts.length) ? l.parts : [{ lat: l.lat, lng: l.lng, w: l.w, d: l.d, h: l.h }];
@@ -503,7 +350,6 @@
                     mesh.receiveShadow = true;
                     mesh.userData = { kind: 'landmark', name: l.name };
                     scene.add(mesh);
-                    landmarkMeshes.push(mesh);
                     if (c.h > maxTop) maxTop = c.h;
                 });
 
@@ -514,16 +360,18 @@
                 scene.add(lbl);
             });
 
-            // ── Render dorms: monochrome maroon (UChicago color), selectable ─
-            // For multipart dorms (e.g. Snell-Hitchcock, Max Palevsky) every
-            // part shares the same material so hover/select coloring affects
-            // the entire group at once. All parts of a dorm share the same
-            // userData so any of them can be picked to select the dorm.
-            const DORM_BASE_COLOR  = new THREE.Color('#7a1f1f');      // monochrome
+            // ── Render dorms ────────────────────────────────────────────────
+            // Each dorm has its own ranking bubble — even if it lacks scores
+            // we still place a neutral "?" bubble so every building is
+            // annotated (per the user's explicit request).
+            const DORM_BASE_COLOR  = new THREE.Color('#7a1f1f');
             const DORM_HOVER_COLOR = new THREE.Color('#a83434');
-            const DORM_SELECT_COLOR= new THREE.Color('#d97a2c');      // distinct selection
+            const DORM_SELECT_COLOR= new THREE.Color('#d97a2c');
             const dormMeshes = [];
-            const dormByName = {};                                    // name → array of meshes (one per part)
+            const dormByName = {};
+            // Per-dorm "anchor" world position used by the SVG connector to
+            // determine the on-screen point a hover card should point at.
+            const dormAnchor = {};
             DORMS.forEach(d => {
                 const cuboids = (d.parts && d.parts.length) ? d.parts : [{ lat: d.lat, lng: d.lng, w: d.w, d: d.d, h: d.h }];
                 const sharedMat = new THREE.MeshLambertMaterial({ color: DORM_BASE_COLOR.clone() });
@@ -550,30 +398,22 @@
                 lbl.scale.set(95, 22, 1);
                 scene.add(lbl);
 
-                // Rank badge floats above the dorm label, color-coded by rank.
-                // This is the at-a-glance comparison cue (no separate legend).
+                // Anchor point used by the HTML hover card connector (top
+                // of the dorm's silhouette).
+                dormAnchor[d.name] = new THREE.Vector3(labelPos.x, maxTop + 14, labelPos.z);
+
+                // Every dorm gets a bubble. If the dorm has no overall score
+                // yet we still draw a neutral bubble so the building isn't
+                // unannotated on the map.
                 const rank = DORM_RANKS.rankByName[d.name];
                 const overall = DORM_RANKS.overallByName[d.name];
-                if (rank) {
-                    const badge = makeRankBadge(rank, DORM_RANKS.total || 0, overall);
-                    badge.position.set(labelPos.x + 38, maxTop + 38, labelPos.z);
-                    badge.scale.set(34, 34, 1);
-                    scene.add(badge);
-                }
+                const badge = makeRankBadge(rank, DORM_RANKS.total || 0, overall);
+                badge.position.set(labelPos.x + 38, maxTop + 38, labelPos.z);
+                badge.scale.set(34, 34, 1);
+                scene.add(badge);
             });
 
-            // ── Camera is fully locked — no user-driven controls. ───────────
-            // We deliberately do NOT instantiate OrbitControls. Pointer events
-            // on the canvas are used only for hover/click selection. Touch
-            // gestures are likewise blocked (touch-action: none on the canvas)
-            // so users cannot pan/pinch the camera themselves.
-
-            // ── Compute the overview camera pose so every dorm fits on screen
-            // ── at the maximum zoom that still includes all dorms. ──────────
-            // We collect XZ extents from every dorm cuboid (centers ± half
-            // dimensions), center the look-at on that bounding box, and pick
-            // a distance based on the larger of width/depth and the camera
-            // FOV adjusted for current aspect ratio.
+            // ── Compute the overview camera pose ────────────────────────────
             function computeOverviewPose() {
                 let minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
                 DORMS.forEach(d => {
@@ -596,17 +436,9 @@
                 const r = wrap.getBoundingClientRect();
                 const aspect = r.width / Math.max(r.height, 1);
 
-                // Distance needed so the bounding box fits vertically AND
-                // horizontally given the camera pitch (which compresses the
-                // ground plane vertically on screen). Add a small padding so
-                // labels/badges aren't clipped at the edges.
                 const padding = 1.18;
                 const vFovRad = CAMERA_FOV * Math.PI / 180;
                 const hFovRad = 2 * Math.atan(Math.tan(vFovRad / 2) * aspect);
-                // Vertical extent on the ground plane that must fit in the
-                // camera frustum is roughly spanZ * sin(pitch) + spanX * 0    ?
-                // Simpler & robust: project the diagonal radius and divide by
-                // each fov. The ground projection foreshortens by sin(pitch).
                 const groundY = Math.sin(cameraPitch);
                 const distV = (spanZ * groundY * 0.5 * padding) / Math.tan(vFovRad / 2);
                 const distH = (spanX * 0.5 * padding) / Math.tan(hFovRad / 2);
@@ -621,8 +453,6 @@
                 cameraDistance = overviewDistance;
                 cameraYaw = OVERVIEW_YAW;
                 cameraPitch = VIEW_PITCH;
-                orbitYaw = 0;
-                orbiting = false;
                 focusing = false;
                 applyCameraPose();
             }
@@ -630,8 +460,6 @@
             let selectedName = null;
 
             // ── Resize handling ────────────────────────────────────────────
-            // On resize we recompute the overview fit so the map keeps every
-            // dorm visible regardless of viewport/aspect changes.
             function resize() {
                 const r = wrap.getBoundingClientRect();
                 renderer.setSize(r.width, r.height, false);
@@ -641,12 +469,10 @@
                 if (!selectedName) {
                     setOverviewPose();
                 } else {
-                    // While focused on a dorm, keep its target but rescale
-                    // distance proportionally to the new overview distance so
-                    // zoom level remains consistent across resizes.
-                    cameraDistance = Math.max(180, overviewDistance * 0.42);
+                    cameraDistance = Math.max(180, overviewDistance * 0.55);
                     applyCameraPose();
                 }
+                positionConnector();
             }
             window.addEventListener('resize', resize);
             resize();
@@ -657,9 +483,6 @@
             const mouse = new THREE.Vector2();
             let hovered = null;
 
-            // Hover/select coloring works at the *dorm group* level: each
-            // dorm's parts share one material, so setting it once recolors
-            // every cuboid in the group.
             function setDormColor(name, color) {
                 const group = dormByName[name];
                 if (!group || !group.length) return;
@@ -685,39 +508,214 @@
                 return hits.length ? hits[0].object : null;
             }
 
+            // ── Hover guide card ────────────────────────────────────────────
+            // Single focused card that follows the hovered building, with a
+            // dot+line connector showing exactly which structure it describes.
+            const hoverCard      = document.getElementById('dorm-hover-card');
+            const hoverRankEl    = document.getElementById('dorm-hover-rank');
+            const hoverRankSubEl = document.getElementById('dorm-hover-rank-sub');
+            const hoverTitleEl   = document.getElementById('dorm-hover-title');
+            const hoverMetaEl    = document.getElementById('dorm-hover-meta');
+            const hoverScoresEl  = document.getElementById('dorm-hover-scores');
+            const hoverFooterEl  = document.getElementById('dorm-hover-footer');
+            const connectorSvg   = document.getElementById('dorm-connector');
+            const connectorLine  = document.getElementById('dorm-connector-line');
+            const connectorDot   = document.getElementById('dorm-connector-dot');
+            const connectorDotIn = document.getElementById('dorm-connector-dot-inner');
+
+            // Category metadata mirrored client-side so the hover card can
+            // render verbal labels next to each dimension.
+            const HOVER_CATEGORIES = [
+              { key: 'culture',     icon: '🏆', label: 'Culture' },
+              { key: 'roomSize',    icon: '📦', label: 'Size' },
+              { key: 'quietness',   icon: '🔇', label: 'Noise' },
+              { key: 'tempControl', icon: '🌡️', label: 'Temp' },
+              { key: 'sunlight',    icon: '☀️', label: 'Light' }
+            ];
+            function ratingColorJS(val) {
+                const colors = { 5: '#34877A', 4: '#92B89D', 3: '#D69772', 2: '#C27654', 1: '#AE5436' };
+                return colors[Math.round(val)] || '#cfcfcf';
+            }
+            function rankTier(rank, total) {
+                if (!rank || !total) return { color: '#6b6b6b', tier: 'No data' };
+                const pct = (rank - 1) / Math.max(total - 1, 1);
+                if (pct <= 0.20) return { color: '#1f7a4d', tier: 'Top tier' };
+                if (pct <= 0.45) return { color: '#2f7a3a', tier: 'Strong' };
+                if (pct <= 0.65) return { color: '#7a6a1f', tier: 'Mid' };
+                if (pct <= 0.85) return { color: '#a3621f', tier: 'Below avg' };
+                return { color: '#a83434', tier: 'Bottom' };
+            }
+
+            function populateHoverCard(name) {
+                const data = DORM_SCORE_BY_NAME[name];
+                const rank = DORM_RANKS.rankByName[name];
+                const total = DORM_RANKS.total || 0;
+                const overall = DORM_RANKS.overallByName[name];
+                const tier = rankTier(rank, total);
+
+                hoverTitleEl.textContent = (name || '').replace(/_/g, '-');
+
+                // Rank chip
+                if (rank) {
+                    hoverRankEl.textContent = '#' + rank;
+                    hoverRankEl.style.background = tier.color;
+                    hoverRankSubEl.textContent = tier.tier + (total ? ' · of ' + total : '');
+                } else {
+                    hoverRankEl.textContent = '—';
+                    hoverRankEl.style.background = '#6b6b6b';
+                    hoverRankSubEl.textContent = 'Not yet ranked';
+                }
+
+                // Meta line: house count + overall score
+                const houseCount = data ? data.houseCount : 0;
+                const houseStr = houseCount + ' house' + (houseCount === 1 ? '' : 's');
+                const overallStr = (overall != null) ? ' · ' + overall.toFixed(1) + '/5 overall' : '';
+                hoverMetaEl.textContent = houseStr + overallStr;
+
+                // Score grid: 5 dimensions
+                let html = '';
+                HOVER_CATEGORIES.forEach(cat => {
+                    const score = data && data.scores ? data.scores[cat.key] : null;
+                    const has = score != null;
+                    const color = has ? ratingColorJS(score) : '#e5e7eb';
+                    const pct = has ? Math.max(6, Math.min(100, ((score - 1) / 4) * 100)) : 0;
+                    html += '<div class="dorm-hover-score">' +
+                              '<span class="dorm-hover-score__icon">' + cat.icon + '</span>' +
+                              '<span class="dorm-hover-score__label">' + cat.label + '</span>' +
+                              '<div class="dorm-hover-score__bar"><div class="dorm-hover-score__fill" style="width:' + pct + '%; background:' + color + ';"></div></div>' +
+                              '<span class="dorm-hover-score__val">' + (has ? score.toFixed(1) : '—') + '</span>' +
+                            '</div>';
+                });
+                hoverScoresEl.innerHTML = html;
+
+                // Footer: top vibes (if any)
+                if (data && data.topVibes && data.topVibes.length) {
+                    let f = '<div class="dorm-hover-card__footer-label">Top descriptors</div><div class="dorm-hover-card__chips">';
+                    data.topVibes.forEach(v => {
+                        f += '<span class="dorm-hover-card__chip">' + escapeHtml(v) + '</span>';
+                    });
+                    f += '</div>';
+                    hoverFooterEl.innerHTML = f;
+                    hoverFooterEl.hidden = false;
+                } else {
+                    hoverFooterEl.innerHTML = '';
+                    hoverFooterEl.hidden = true;
+                }
+            }
+
+            function escapeHtml(s) {
+                return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+            }
+
+            // Project the hovered dorm's anchor world position to screen px,
+            // then place the card off to one side (avoiding viewport edges)
+            // and draw the SVG connector from the dot at the building to a
+            // point on the card's edge facing the building.
+            function projectAnchor(name) {
+                const v = dormAnchor[name];
+                if (!v) return null;
+                const r = wrap.getBoundingClientRect();
+                const proj = v.clone().project(camera);
+                return {
+                    x: (proj.x * 0.5 + 0.5) * r.width,
+                    y: (-proj.y * 0.5 + 0.5) * r.height
+                };
+            }
+
+            function showHoverCard(name) {
+                populateHoverCard(name);
+                hoverCard.dataset.dorm = name;
+                hoverCard.setAttribute('aria-hidden', 'false');
+                hoverCard.classList.add('dorm-hover-card--visible');
+                connectorSvg.classList.add('dorm-connector--visible');
+                positionConnector();
+            }
+            function hideHoverCard() {
+                hoverCard.classList.remove('dorm-hover-card--visible');
+                hoverCard.setAttribute('aria-hidden', 'true');
+                hoverCard.removeAttribute('data-dorm');
+                connectorSvg.classList.remove('dorm-connector--visible');
+            }
+
+            function positionConnector() {
+                const name = hoverCard.dataset.dorm;
+                if (!name) return;
+                const anchor = projectAnchor(name);
+                if (!anchor) return;
+                const r = wrap.getBoundingClientRect();
+
+                // Decide which side of the building to place the card. Pick
+                // the side with more room so the card doesn't clip.
+                const cardWidth = hoverCard.offsetWidth || 320;
+                const cardHeight = hoverCard.offsetHeight || 260;
+                const margin = 24;
+
+                const placeRight = anchor.x < r.width / 2;
+                let cardX = placeRight
+                    ? Math.min(r.width - cardWidth - margin, anchor.x + 90)
+                    : Math.max(margin, anchor.x - cardWidth - 90);
+                let cardY = Math.max(margin, Math.min(r.height - cardHeight - margin, anchor.y - cardHeight / 2));
+
+                hoverCard.style.left = cardX + 'px';
+                hoverCard.style.top  = cardY + 'px';
+
+                // Connector: line from anchor dot to the card's near edge.
+                const cardEdgeX = placeRight ? cardX : (cardX + cardWidth);
+                const cardEdgeY = cardY + cardHeight / 2;
+
+                connectorSvg.setAttribute('width',  r.width);
+                connectorSvg.setAttribute('height', r.height);
+                connectorSvg.setAttribute('viewBox', '0 0 ' + r.width + ' ' + r.height);
+
+                connectorLine.setAttribute('x1', anchor.x);
+                connectorLine.setAttribute('y1', anchor.y);
+                connectorLine.setAttribute('x2', cardEdgeX);
+                connectorLine.setAttribute('y2', cardEdgeY);
+                connectorDot.setAttribute('cx', anchor.x);
+                connectorDot.setAttribute('cy', anchor.y);
+                connectorDotIn.setAttribute('cx', anchor.x);
+                connectorDotIn.setAttribute('cy', anchor.y);
+            }
+
             canvas.addEventListener('pointermove', (ev) => {
                 const hit = pickAt(ev.clientX, ev.clientY);
                 if (hit) {
                     setHover(hit);
                     canvas.style.cursor = 'pointer';
-                    tooltip.textContent = hit.userData.label;
-                    tooltip.style.opacity = '1';
-                    tooltip.style.left = (ev.clientX - wrap.getBoundingClientRect().left + 14) + 'px';
-                    tooltip.style.top = (ev.clientY - wrap.getBoundingClientRect().top + 14) + 'px';
+                    if (hoverCard.dataset.dorm !== hit.userData.name) {
+                        showHoverCard(hit.userData.name);
+                    }
                 } else {
                     if (hovered) setHover(null);
                     canvas.style.cursor = 'default';
-                    tooltip.style.opacity = '0';
+                    hideHoverCard();
                 }
             });
             canvas.addEventListener('pointerleave', () => {
                 if (hovered) setHover(null);
-                tooltip.style.opacity = '0';
+                hideHoverCard();
             });
 
-            // Click to select a dorm and reveal its rankings panel. Camera is
-            // locked so there is no drag-vs-click ambiguity — any pointerup
-            // on a dorm is a select. Touch taps work the same way.
+            // Click: zoom in on the dorm. No orbit. A second click on the
+            // already-selected dorm opens its full dorm page so the click
+            // remains useful even when zoomed.
             canvas.addEventListener('click', (ev) => {
                 const hit = pickAt(ev.clientX, ev.clientY);
-                if (hit) selectDorm(hit.userData.name);
+                if (!hit) return;
+                const name = hit.userData.name;
+                if (selectedName === name) {
+                    window.location.href = '/dorm/' + encodeURIComponent(name);
+                    return;
+                }
+                selectDorm(name);
             });
             // Keyboard accessibility — arrow keys cycle dorms when canvas focused
             canvas.tabIndex = 0;
             canvas.setAttribute('role', 'application');
             canvas.addEventListener('keydown', (e) => {
-                if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft' && e.key !== 'Enter') return;
+                if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft' && e.key !== 'Enter' && e.key !== 'Escape') return;
                 e.preventDefault();
+                if (e.key === 'Escape') { clearSelection(); return; }
                 const names = DORMS.map(d => d.name);
                 let idx = names.indexOf(selectedName);
                 if (e.key === 'ArrowRight') idx = (idx + 1 + names.length) % names.length;
@@ -726,13 +724,12 @@
                 if (idx >= 0) selectDorm(names[idx]);
             });
 
-            // ── Dorm selection → show side panel with same rankings card ────
-            const panel       = document.getElementById('dorm-panel');
-            const panelEmpty  = document.getElementById('dorm-panel-empty');
-            const panelCards  = document.getElementById('dorm-panel-cards');
-            const panelClose  = document.getElementById('dorm-panel-close');
+            // Click anywhere off-canvas (or on empty ground) to deselect.
+            wrap.addEventListener('click', (ev) => {
+                if (ev.target === canvas) return; // canvas handler runs
+            });
 
-            // Find dorm world position by name (centroid of its first part).
+            // ── Dorm selection: zoom only, no orbit ─────────────────────────
             function dormCenter(name) {
                 const d = DORMS.find(x => x.name === name);
                 if (!d) return null;
@@ -740,34 +737,17 @@
             }
 
             function selectDorm(name) {
-                // recolor previous selection
                 if (selectedName && dormByName[selectedName]) {
                     setDormColor(selectedName, DORM_BASE_COLOR);
                 }
                 selectedName = name;
                 if (dormByName[name]) setDormColor(name, DORM_SELECT_COLOR);
 
-                // Reveal correct dorm card
-                panelEmpty.hidden = true;
-                panelCards.hidden = false;
-                panel.setAttribute('aria-hidden', 'false');
-                panel.classList.add('dorm-panel--open');
-                panelCards.querySelectorAll('[data-dorm-card]').forEach(card => {
-                    card.hidden = (card.getAttribute('data-dorm-card') !== name);
-                });
-
-                // Programmatic camera focus + orbit on the selected dorm.
-                // The user cannot drive the camera, so this is the only way
-                // the view changes. We move the look-at to the dorm and
-                // tighten the zoom; the orbit yaw is driven in the animation
-                // loop unless prefers-reduced-motion is set.
                 const c = dormCenter(name);
                 if (c) {
                     focusTargetVec.set(c.x, 0, c.z);
-                    focusDistance = Math.max(180, overviewDistance * 0.42);
+                    focusDistance = Math.max(180, overviewDistance * 0.55);
                     focusing = true;
-                    orbiting = !REDUCED_MOTION;
-                    orbitYaw = 0;
                 }
             }
             function clearSelection() {
@@ -775,33 +755,16 @@
                     setDormColor(selectedName, DORM_BASE_COLOR);
                 }
                 selectedName = null;
-                panel.classList.remove('dorm-panel--open');
-                panel.setAttribute('aria-hidden', 'true');
-                panelEmpty.hidden = false;
-                panelCards.hidden = true;
-                panelCards.querySelectorAll('[data-dorm-card]').forEach(card => { card.hidden = true; });
 
-                // Programmatically pull back to the overview pose.
                 focusTargetVec.copy(overviewTarget);
                 focusDistance = overviewDistance;
                 focusing = true;
-                orbiting = false;
-                orbitYaw = 0;
             }
-            panelClose.addEventListener('click', clearSelection);
 
             // ── Animation loop ──────────────────────────────────────────────
-            // Drives smooth camera focus on selection and (optionally) the
-            // continuous orbit around the selected dorm. No user input
-            // affects the camera here — it's fully programmatic.
-            const ORBIT_SPEED = 0.0035;     // rad/frame, gentle rotation
-            const FOCUS_LERP  = 0.08;       // 0..1 per-frame blend toward target
-            let lastTime = performance.now();
+            const FOCUS_LERP  = 0.08;
             function animate() {
                 requestAnimationFrame(animate);
-                const now = performance.now();
-                const dt = Math.min(50, now - lastTime); // clamp dt for tab-switch
-                lastTime = now;
 
                 if (focusing) {
                     cameraTarget.lerp(focusTargetVec, FOCUS_LERP);
@@ -813,13 +776,12 @@
                         cameraDistance = focusDistance;
                     }
                 }
-                if (orbiting) {
-                    // Only orbit while a dorm is selected. dt-normalized so
-                    // speed feels consistent regardless of frame rate.
-                    orbitYaw += ORBIT_SPEED * (dt / 16.6667);
-                }
                 applyCameraPose();
                 renderer.render(scene, camera);
+
+                // Connector tracks the camera so the line stays glued to
+                // the building as we zoom in.
+                if (hoverCard.dataset.dorm) positionConnector();
             }
             animate();
 
@@ -849,26 +811,21 @@
                 const sprite = new THREE.Sprite(mat);
                 return sprite;
             }
-            // Color-coded rank badge: top tier gets a deep green, middle
-            // tiers stay neutral, bottom tier gets a warm copper. This gives
-            // direct on-map ranking without a legend. The number is the
-            // dorm's overall rank (1 = best); the optional overall score is
-            // tucked under it as a smaller label.
             function rankColor(rank, total) {
                 if (!rank || !total) return '#6b6b6b';
                 const pct = (rank - 1) / Math.max(total - 1, 1);
-                if (pct <= 0.20) return '#1f7a4d';      // top dorm(s) — green
-                if (pct <= 0.45) return '#2f7a3a';      // upper-mid
-                if (pct <= 0.65) return '#7a6a1f';      // middle — olive
-                if (pct <= 0.85) return '#a3621f';      // lower-mid — amber
-                return '#a83434';                        // bottom — red
+                if (pct <= 0.20) return '#1f7a4d';
+                if (pct <= 0.45) return '#2f7a3a';
+                if (pct <= 0.65) return '#7a6a1f';
+                if (pct <= 0.85) return '#a3621f';
+                return '#a83434';
             }
             function makeRankBadge(rank, total, overall) {
                 const size = 96;
                 const c = document.createElement('canvas');
                 c.width = size; c.height = size;
                 const ctx = c.getContext('2d');
-                const color = rankColor(rank, total);
+                const color = rank ? rankColor(rank, total) : '#6b6b6b';
                 ctx.beginPath();
                 ctx.arc(size/2, size/2, size/2 - 4, 0, Math.PI * 2);
                 ctx.fillStyle = color;
@@ -879,12 +836,22 @@
                 ctx.fillStyle = '#fff';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.font = '800 44px Inter, sans-serif';
-                ctx.fillText('#' + rank, size/2, size/2 - 6);
-                if (overall != null) {
-                    ctx.font = '700 16px Inter, sans-serif';
+                if (rank) {
+                    ctx.font = '800 44px Inter, sans-serif';
+                    ctx.fillText('#' + rank, size/2, size/2 - (overall != null ? 6 : 0));
+                    if (overall != null) {
+                        ctx.font = '700 16px Inter, sans-serif';
+                        ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                        ctx.fillText(overall.toFixed(1), size/2, size/2 + 24);
+                    }
+                } else {
+                    // Unranked dorm: still mark the building so every dorm
+                    // has a visible bubble on the map.
+                    ctx.font = '800 40px Inter, sans-serif';
+                    ctx.fillText('?', size/2, size/2 - 4);
+                    ctx.font = '700 14px Inter, sans-serif';
                     ctx.fillStyle = 'rgba(255,255,255,0.9)';
-                    ctx.fillText(overall.toFixed(1), size/2, size/2 + 24);
+                    ctx.fillText('No data', size/2, size/2 + 22);
                 }
                 const tex = new THREE.CanvasTexture(c);
                 tex.minFilter = THREE.LinearFilter;
@@ -901,88 +868,6 @@
                 ctx.arcTo(x,     y,     x + w, y,     r);
                 ctx.closePath();
             }
-        </script>
-
-        <!-- Vibe-tag theme coloring + tooltip — same logic as legacy page so
-             the rankings panel keeps its colored descriptor pills. -->
-        <script>
-            var EXPLORE_THEMES = {
-              'community':  { label: 'Community',   color: '#2563eb' },
-              'social':     { label: 'Social',       color: '#7c3aed' },
-              'academic':   { label: 'Academic',     color: '#0891b2' },
-              'positive':   { label: 'Positive',     color: '#16a34a' },
-              'negative':   { label: 'Negative',     color: '#dc2626' },
-              'neutral':    { label: 'Neutral',      color: '#78716c' },
-              'physical':   { label: 'Physical',     color: '#d97706' },
-            };
-            var EXPLORE_THEME_KEYWORDS = [
-              { theme: 'community',  words: ['welcoming','inclusive','tight-knit','tight','knit','community','friendly','warm','supportive','diverse','belonging','together','family','close','bond','connected','unity','cohesive','collaborative','welcom'] },
-              { theme: 'social',     words: ['social','fun','lively','party','events','active','spirited','outgoing','vibrant','energetic','loud','noisy','busy','happening','nightlife','gatherings','hangout','chill','laid-back','relaxed','casual'] },
-              { theme: 'academic',   words: ['studious','quiet','independent','focused','academic','study','intellectual','competitive','pressure','serious','hardworking','driven','ambitious','scholarly','research','library','work'] },
-              { theme: 'positive',   words: ['great','good','nice','beautiful','clean','spacious','bright','cozy','comfortable','modern','amazing','love','best','awesome','excellent','wonderful','fantastic','perfect','ideal','pleasant','enjoyable','happy','positive'] },
-              { theme: 'negative',   words: ['bad','dirty','small','dark','cramped','old','broken','worst','terrible','ugly','smelly','gross','cliquey','exclusive','disconnected','toxic','unwelcoming','hostile','isolated','lonely','negative','poor','awful'] },
-              { theme: 'physical',   words: ['big','large','spacious','small','tiny','room','floor','window','light','sunlight','sunny','temperature','hot','cold','drafty','heating','ac','storage','ceiling','view','bathroom','kitchen','furniture','layout'] },
-            ];
-            function exploreAssignTheme(word) {
-              var lower = word.toLowerCase().replace(/[^a-z0-9\-]/g, '');
-              for (var i = 0; i < EXPLORE_THEME_KEYWORDS.length; i++) {
-                var entry = EXPLORE_THEME_KEYWORDS[i];
-                for (var j = 0; j < entry.words.length; j++) {
-                  if (lower.indexOf(entry.words[j]) !== -1 || entry.words[j].indexOf(lower) !== -1) {
-                    return entry.theme;
-                  }
-                }
-              }
-              return 'neutral';
-            }
-
-            document.addEventListener('DOMContentLoaded', function() {
-              var vibeTooltip = document.getElementById('explore-vibe-tooltip');
-              var dormScoresData = [];
-              try { dormScoresData = JSON.parse(document.getElementById('dorm-scores-data').textContent); } catch(e) {}
-              var globalVibeCounts = {};
-              dormScoresData.forEach(function(dorm) {
-                if (dorm.vibeCounts) {
-                  Object.entries(dorm.vibeCounts).forEach(function([vibe, count]) {
-                    globalVibeCounts[vibe] = (globalVibeCounts[vibe] || 0) + count;
-                  });
-                }
-              });
-              document.querySelectorAll('.explore-vibe-tag').forEach(function(tagEl) {
-                var text = tagEl.dataset.vibeText || tagEl.textContent.trim();
-                var theme = exploreAssignTheme(text);
-                var color = (EXPLORE_THEMES[theme] || EXPLORE_THEMES['neutral']).color;
-                var r = parseInt(color.slice(1,3),16);
-                var g = parseInt(color.slice(3,5),16);
-                var b = parseInt(color.slice(5,7),16);
-                var dr = Math.round(r * 0.62);
-                var dg = Math.round(g * 0.62);
-                var db = Math.round(b * 0.62);
-                tagEl.style.color = 'rgb(' + dr + ',' + dg + ',' + db + ')';
-                tagEl.style.backgroundColor = 'rgba(' + r + ',' + g + ',' + b + ',0.1)';
-                tagEl.style.borderColor = 'rgba(' + r + ',' + g + ',' + b + ',0.35)';
-                tagEl.addEventListener('mouseenter', function(e) {
-                  if (!vibeTooltip) return;
-                  var themeObj = EXPLORE_THEMES[theme] || EXPLORE_THEMES['neutral'];
-                  var totalMentions = globalVibeCounts[text] || 0;
-                  var mentionStr = totalMentions > 0
-                    ? '<span style="color:rgba(255,255,255,0.7); font-weight:400;"> · ' + totalMentions + ' mention' + (totalMentions !== 1 ? 's' : '') + ' across all houses</span>'
-                    : '';
-                  vibeTooltip.innerHTML = '<span style="font-weight:700; color:' + themeObj.color + ';">' + themeObj.label + '</span>' + mentionStr;
-                  vibeTooltip.style.left = (e.clientX + 14) + 'px';
-                  vibeTooltip.style.top = (e.clientY + 18) + 'px';
-                  vibeTooltip.style.opacity = '1';
-                });
-                tagEl.addEventListener('mousemove', function(e) {
-                  if (!vibeTooltip) return;
-                  vibeTooltip.style.left = (e.clientX + 14) + 'px';
-                  vibeTooltip.style.top = (e.clientY + 18) + 'px';
-                });
-                tagEl.addEventListener('mouseleave', function() {
-                  if (vibeTooltip) vibeTooltip.style.opacity = '0';
-                });
-              });
-            });
         </script>
     </body>
 

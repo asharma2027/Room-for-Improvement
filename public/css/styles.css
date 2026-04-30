@@ -2770,46 +2770,192 @@ table tbody tr:hover {
   white-space: nowrap;
 }
 
-/* Slide-in panel showing the selected dorm's rankings card. */
-.dorm-panel {
+/* ============================================================
+   Hover guide card — single focused card that follows the
+   pointer-hovered dorm, with an SVG connector (dot + line)
+   visually tying it to the building it describes.
+   ============================================================ */
+.dorm-connector {
   position: absolute;
-  top: 12px; right: 12px;
-  width: min(380px, calc(100% - 24px));
-  max-height: calc(100% - 24px);
-  background: rgba(255,255,255,0.97);
-  border: 1px solid var(--border-color, #e5e7eb);
-  border-radius: 0.85rem;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
-  padding: 0.85rem 0.85rem 0.95rem;
-  overflow-y: auto;
-  transform: translateX(105%);
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.14s ease;
+  z-index: 9;
 }
-.dorm-panel--open { transform: translateX(0); }
-.dorm-panel-close {
-  position: absolute; top: 6px; right: 8px;
-  width: 28px; height: 28px;
-  border: none; background: transparent;
-  font-size: 1.5rem; line-height: 1;
-  color: var(--text-secondary); cursor: pointer;
-  border-radius: 50%;
+.dorm-connector--visible { opacity: 1; }
+.dorm-connector line {
+  stroke: #1f1f1f;
+  stroke-width: 1.6;
+  stroke-dasharray: 4 4;
+  opacity: 0.78;
 }
-.dorm-panel-close:hover { background: rgba(0,0,0,0.07); color: #000; }
-.dorm-panel-empty {
-  font-size: 0.85rem; color: var(--text-secondary);
-  text-align: center; padding: 1rem 0.5rem;
+.dorm-connector circle#dorm-connector-dot {
+  fill: rgba(255,255,255,0.92);
+  stroke: #1f1f1f;
+  stroke-width: 2;
 }
-.dorm-panel .dorm-rank-card { margin: 0; }
+.dorm-connector circle#dorm-connector-dot-inner {
+  fill: #d97a2c;
+}
+
+.dorm-hover-card {
+  position: absolute;
+  top: 0; left: 0;
+  width: 320px;
+  max-width: calc(100% - 32px);
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.18), 0 2px 6px rgba(15, 23, 42, 0.06);
+  padding: 0.85rem 0.95rem 0.8rem;
+  pointer-events: none; /* card is informational; clicks go to the canvas */
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.14s ease, transform 0.14s ease;
+  z-index: 10;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+.dorm-hover-card--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.dorm-hover-card__header {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+.dorm-hover-card__rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 38px;
+  padding: 0 0.45rem;
+  border-radius: 0.5rem;
+  background: #6b6b6b;
+  color: #fff;
+  font-size: 1.0rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.dorm-hover-card__rank-sub {
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+  margin-top: 0.2rem;
+  text-align: center;
+  white-space: nowrap;
+}
+.dorm-hover-card__title-wrap {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.dorm-hover-card__title {
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dorm-hover-card__meta {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin-top: 0.15rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dorm-hover-card__scores {
+  display: grid;
+  grid-template-columns: 1.2rem 3.6rem 1fr 1.8rem;
+  align-items: center;
+  gap: 0.18rem 0.5rem;
+}
+.dorm-hover-score {
+  display: contents;
+}
+.dorm-hover-score__icon {
+  font-size: 0.95rem;
+  line-height: 1;
+  text-align: center;
+}
+.dorm-hover-score__label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #4b5563;
+}
+.dorm-hover-score__bar {
+  position: relative;
+  height: 8px;
+  border-radius: 4px;
+  background: #f1f5f9;
+  overflow: hidden;
+}
+.dorm-hover-score__fill {
+  position: absolute;
+  left: 0; top: 0;
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.18s ease;
+}
+.dorm-hover-score__val {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #111827;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.dorm-hover-card__footer {
+  margin-top: 0.6rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid #f1f5f9;
+}
+.dorm-hover-card__footer-label {
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+  margin-bottom: 0.3rem;
+}
+.dorm-hover-card__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+.dorm-hover-card__chip {
+  font-size: 0.7rem;
+  padding: 0.16em 0.55em;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #374151;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.dorm-hover-card__hint {
+  margin-top: 0.55rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-align: right;
+  letter-spacing: 0.01em;
+}
 
 @media (max-width: 768px) {
   .campus-3d-canvas-wrap { height: calc(100vh - 260px); min-height: 360px; }
-  .dorm-panel {
-    width: calc(100% - 24px);
-    max-height: 60%;
-    top: auto; bottom: 12px; right: 12px; left: 12px;
-    transform: translateY(110%);
+  .dorm-hover-card {
+    width: calc(100% - 32px);
+    max-width: 360px;
   }
-  .dorm-panel--open { transform: translateY(0); }
   .explore-map-3d-hint { display: none; }
 }
 
