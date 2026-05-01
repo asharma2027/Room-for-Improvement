@@ -48384,5 +48384,33 @@
       "Cliquey / exclusive"
     ],
     "customName": "Reg Adjacent"
+  },
+  {
+    "entryId": "46b5c063cc94f3fa",
+    "roomId": "max_palevsky__graham__w123__f",
+    "userEmail": "test@uchicago.edu",
+    "academicYear": "2024-2025",
+    "timestamp": "2026-04-29T22:25:00.241Z",
+    "tags": [
+      "Extra storage / closet space",
+      "Gets poor sunlight",
+      "Noise from above or below"
+    ],
+    "scalars": {
+      "my house has a good culture": 1,
+      "my room gets a lot of outside noise": 1,
+      "room size": 1,
+      "natural light": 1,
+      "temperature control": 1,
+      "culture note": "fun house",
+      "freetext note": "asdj aisdiansd iansd inasd",
+      "form version": "v2"
+    },
+    "customName": "asdasd",
+    "cultureTags": [
+      "Welcoming / inclusive",
+      "Lively / social",
+      "Party-oriented"
+    ]
   }
 ]

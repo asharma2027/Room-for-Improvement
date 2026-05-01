@@ -459,6 +459,21 @@
 
             let selectedName = null;
 
+            // ── Hover guide card DOM refs ───────────────────────────────────
+            // Declared here (before resize) so positionConnector() can safely
+            // reference hoverCard when resize() is called on first load.
+            const hoverCard      = document.getElementById('dorm-hover-card');
+            const hoverRankEl    = document.getElementById('dorm-hover-rank');
+            const hoverRankSubEl = document.getElementById('dorm-hover-rank-sub');
+            const hoverTitleEl   = document.getElementById('dorm-hover-title');
+            const hoverMetaEl    = document.getElementById('dorm-hover-meta');
+            const hoverScoresEl  = document.getElementById('dorm-hover-scores');
+            const hoverFooterEl  = document.getElementById('dorm-hover-footer');
+            const connectorSvg   = document.getElementById('dorm-connector');
+            const connectorLine  = document.getElementById('dorm-connector-line');
+            const connectorDot   = document.getElementById('dorm-connector-dot');
+            const connectorDotIn = document.getElementById('dorm-connector-dot-inner');
+
             // ── Resize handling ────────────────────────────────────────────
             function resize() {
                 const r = wrap.getBoundingClientRect();
@@ -511,17 +526,7 @@
             // ── Hover guide card ────────────────────────────────────────────
             // Single focused card that follows the hovered building, with a
             // dot+line connector showing exactly which structure it describes.
-            const hoverCard      = document.getElementById('dorm-hover-card');
-            const hoverRankEl    = document.getElementById('dorm-hover-rank');
-            const hoverRankSubEl = document.getElementById('dorm-hover-rank-sub');
-            const hoverTitleEl   = document.getElementById('dorm-hover-title');
-            const hoverMetaEl    = document.getElementById('dorm-hover-meta');
-            const hoverScoresEl  = document.getElementById('dorm-hover-scores');
-            const hoverFooterEl  = document.getElementById('dorm-hover-footer');
-            const connectorSvg   = document.getElementById('dorm-connector');
-            const connectorLine  = document.getElementById('dorm-connector-line');
-            const connectorDot   = document.getElementById('dorm-connector-dot');
-            const connectorDotIn = document.getElementById('dorm-connector-dot-inner');
+            // (DOM refs declared earlier, before resize(), to avoid TDZ errors.)
 
             // Category metadata mirrored client-side so the hover card can
             // render verbal labels next to each dimension.
