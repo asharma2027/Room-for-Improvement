@@ -84,14 +84,10 @@
                 <div id="campus-3d-canvas-wrap" class="campus-3d-canvas-wrap campus-3d-canvas-wrap--full" data-testid="explore-map">
                     <canvas id="campus-3d-canvas" aria-label="3D map of UChicago campus dorms"></canvas>
 
-                    <!-- SVG overlay for the hover-card connector line + dot.
-                         Sits between the 3D canvas and the floating card so
-                         the geometric link reads as a guide annotation. -->
-                    <svg id="dorm-connector" class="dorm-connector" aria-hidden="true">
-                      <line id="dorm-connector-line" x1="0" y1="0" x2="0" y2="0"></line>
-                      <circle id="dorm-connector-dot" cx="0" cy="0" r="9"></circle>
-                      <circle id="dorm-connector-dot-inner" cx="0" cy="0" r="3"></circle>
-                    </svg>
+                    <!-- 2D overlay for dorm labels + rank circles — rendered in
+                         screen space so sizing/spacing is uniform regardless
+                         of camera distance. Positioned each frame via JS. -->
+                    <div id="dorm-labels-overlay" class="dorm-labels-overlay" aria-hidden="true"></div>
 
                     <!-- Hover guide card: a single focused card that follows
                          the hovered dorm. Built once, populated on hover. -->
@@ -110,6 +106,35 @@
                       <footer class="dorm-hover-card__footer" id="dorm-hover-footer"></footer>
                       <div class="dorm-hover-card__hint">Click to zoom in · Open dorm page →</div>
                     </aside>
+
+                    <!-- 2D Compass overlay — single compass for the entire map -->
+                    <div id="compass-2d" style="position:absolute; bottom:20px; left:20px; z-index:20; pointer-events:none;
+                         width:100px; height:100px; display:flex; align-items:center; justify-content:center; transition:opacity 0.3s ease;">
+                      <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Outer ring -->
+                        <circle cx="50" cy="50" r="34" stroke="rgba(128,0,0,0.35)" stroke-width="1.5" fill="rgba(255,255,255,0.82)"/>
+                        <!-- Inner tick marks at N/E/S/W -->
+                        <line x1="50" y1="16" x2="50" y2="20" stroke="rgba(128,0,0,0.3)" stroke-width="1"/>
+                        <line x1="50" y1="80" x2="50" y2="84" stroke="rgba(128,0,0,0.3)" stroke-width="1"/>
+                        <line x1="16" y1="50" x2="20" y2="50" stroke="rgba(128,0,0,0.3)" stroke-width="1"/>
+                        <line x1="80" y1="50" x2="84" y2="50" stroke="rgba(128,0,0,0.3)" stroke-width="1"/>
+                        <!-- N arrow (up) — north half of diamond, filled maroon -->
+                        <polygon points="50,22 44,50 50,46 56,50" fill="#800000"/>
+                        <!-- S arrow (down) — south half of diamond, lighter -->
+                        <polygon points="50,78 56,50 50,54 44,50" fill="rgba(128,0,0,0.25)"/>
+                        <!-- E arrow (right) -->
+                        <polygon points="78,50 50,44 54,50 50,56" fill="rgba(128,0,0,0.25)"/>
+                        <!-- W arrow (left) -->
+                        <polygon points="22,50 50,56 46,50 50,44" fill="rgba(128,0,0,0.25)"/>
+                        <!-- Center dot -->
+                        <circle cx="50" cy="50" r="3" fill="#800000" opacity="0.5"/>
+                        <!-- Cardinal labels — placed OUTSIDE the ring so they don't overlap arrows -->
+                        <text x="50" y="10" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="800" fill="#800000" font-family="Inter, sans-serif">N</text>
+                        <text x="50" y="92" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="rgba(128,0,0,0.55)" font-family="Inter, sans-serif">S</text>
+                        <text x="92" y="51" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="rgba(128,0,0,0.55)" font-family="Inter, sans-serif">E</text>
+                        <text x="8" y="51" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="rgba(128,0,0,0.55)" font-family="Inter, sans-serif">W</text>
+                      </svg>
+                    </div>
                 </div>
             </section>
 
@@ -170,7 +195,7 @@
 
             // ── DORM building data ──────────────────────────────────────────
             const DORMS = [
-                { name: 'Burton Judson',
+                { name: 'Burton-Judson',
                   label: 'Burton-Judson',
                   lat: 41.7855031698, lng: -87.6003483856,
                   w: 105.6, d: 74.7, h: 24.4, rotY: 0 },
@@ -180,7 +205,7 @@
                   lat: 41.7882362427, lng: -87.5908153883,
                   w: 83.9, d: 55.5, h: 45.1, rotY: 0 },
 
-                { name: 'Snell-Hitchcock',
+                { name: 'Snell_Hitchcock',
                   label: 'Snell-Hitchcock',
                   lat: 41.7911141668, lng: -87.6008801585,
                   w: 70, d: 50, h: 22, rotY: 0,
@@ -204,7 +229,7 @@
                   lat: 41.7948207035, lng: -87.5991278838,
                   w: 79.3, d: 22.8, h: 41.1, rotY: 0 },
 
-                { name: 'Renee Granville-Grossman',
+                { name: 'Renee_Granville-Grossman',
                   label: 'Renee Granville-Grossman',
                   lat: 41.7845934364, lng: -87.6003320148,
                   w: 105.2, d: 76.6, h: 31.7, rotY: 0 },
@@ -310,14 +335,7 @@
             grid.material.transparent = true;
             scene.add(grid);
 
-            const compass = new THREE.ArrowHelper(
-                new THREE.Vector3(0, 0, -1), new THREE.Vector3(-450, 1, -450), 60, 0x800000, 18, 12
-            );
-            scene.add(compass);
-            const compassLabel = makeTextSprite('N', { color: '#800000', fontSize: 38, weight: 700, bg: 'rgba(255,255,255,0.85)' });
-            compassLabel.position.set(-450, 70, -515);
-            compassLabel.scale.set(40, 20, 1);
-            scene.add(compassLabel);
+            // 3D north arrow removed — replaced by a 2D compass in the UI overlay.
 
             // ── Render quad (green grass patch) ─────────────────────────────
             (function renderQuad() {
@@ -331,9 +349,11 @@
                 grass.position.set(pos.x, q.h / 2, pos.z);
                 grass.receiveShadow = true;
                 scene.add(grass);
-                const lbl = makeTextSprite(q.name, { color: '#2f5d2f', fontSize: 30, weight: 700, bg: 'rgba(255,255,255,0.7)' });
+                const lbl = makeTextSprite(q.name, { color: '#2f5d2f', fontSize: 48, weight: 700, bg: 'rgba(255,255,255,0.7)' });
                 lbl.position.set(pos.x, 6, pos.z);
-                lbl.scale.set(70, 18, 1);
+                const qAspect = lbl.userData.canvasWidth / lbl.userData.canvasHeight;
+                const LABEL_H = 36;
+                lbl.scale.set(LABEL_H * qAspect, LABEL_H, 1);
                 scene.add(lbl);
             })();
 
@@ -354,24 +374,49 @@
                 });
 
                 const labelPos = latLngToXZ(l.lat, l.lng);
-                const lbl = makeTextSprite(l.name, { color: '#444', fontSize: 26, weight: 600, bg: 'rgba(255,255,255,0.85)' });
-                lbl.position.set(labelPos.x, maxTop + 14, labelPos.z);
-                lbl.scale.set(85, 22, 1);
+                const lbl = makeTextSprite(l.name, { color: '#444', fontSize: 48, weight: 600, bg: 'rgba(255,255,255,0.85)' });
+                lbl.position.set(labelPos.x, maxTop + 6, labelPos.z);
+                const lmAspect = lbl.userData.canvasWidth / lbl.userData.canvasHeight;
+                const LM_LABEL_H = 36;
+                lbl.scale.set(LM_LABEL_H * lmAspect, LM_LABEL_H, 1);
                 scene.add(lbl);
             });
 
             // ── Render dorms ────────────────────────────────────────────────
-            // Each dorm has its own ranking bubble — even if it lacks scores
-            // we still place a neutral "?" bubble so every building is
-            // annotated (per the user's explicit request).
+            // Each dorm gets a 3D cuboid in the scene, but the text label
+            // and ranking circle are rendered as 2D HTML elements in a
+            // screen-space overlay. This keeps their size and spacing
+            // uniform regardless of camera distance.
+            //
+            // ── CONFIGURABLE LAYOUT KNOBS ───────────────────────────────────
+            // Adjust these to change the relative positioning of labels and
+            // circles uniformly across ALL dorms.
+            const LABEL_PX_ABOVE_ANCHOR = -18;   // px above the projected anchor point for the label
+            const CIRCLE_PX_BELOW_LABEL = 2;   // px gap between label bottom and circle top
+            // The anchor point itself is placed this many world-units above
+            // the tallest cuboid of each dorm:
+            const ANCHOR_Y_ABOVE_ROOF   = 20;  // world-units above building top
+
+            // ── CAMERA HORIZONTAL OFFSET (north/south) ──────────────────────
+            // Shifts the overview camera target along the Z axis (scene coords).
+            // Positive values = south, negative values = north.
+            // Tweak this single number to pan the default view north or south.
+            const CAMERA_Z_OFFSET = 79;
+
             const DORM_BASE_COLOR  = new THREE.Color('#7a1f1f');
             const DORM_HOVER_COLOR = new THREE.Color('#a83434');
             const DORM_SELECT_COLOR= new THREE.Color('#d97a2c');
             const dormMeshes = [];
             const dormByName = {};
-            // Per-dorm "anchor" world position used by the SVG connector to
-            // determine the on-screen point a hover card should point at.
+            // Per-dorm "anchor" world position used by the hover card
+            // connector and the 2D label projection.
             const dormAnchor = {};
+            // Store references to the 2D overlay elements for each dorm
+            const dormOverlayEls = {};
+
+            // Build the 2D overlay container
+            const labelsOverlay = document.getElementById('dorm-labels-overlay');
+
             DORMS.forEach(d => {
                 const cuboids = (d.parts && d.parts.length) ? d.parts : [{ lat: d.lat, lng: d.lng, w: d.w, d: d.d, h: d.h }];
                 const sharedMat = new THREE.MeshLambertMaterial({ color: DORM_BASE_COLOR.clone() });
@@ -393,25 +438,109 @@
                 dormByName[d.name] = meshes;
 
                 const labelPos = latLngToXZ(d.lat, d.lng);
-                const lbl = makeTextSprite(d.label, { color: '#fff', fontSize: 28, weight: 700, bg: 'rgba(122,31,31,0.92)' });
-                lbl.position.set(labelPos.x, maxTop + 14, labelPos.z);
-                lbl.scale.set(95, 22, 1);
-                scene.add(lbl);
 
-                // Anchor point used by the HTML hover card connector (top
-                // of the dorm's silhouette).
-                dormAnchor[d.name] = new THREE.Vector3(labelPos.x, maxTop + 14, labelPos.z);
+                // Anchor point: top of the dorm silhouette + offset
+                dormAnchor[d.name] = new THREE.Vector3(labelPos.x, maxTop + ANCHOR_Y_ABOVE_ROOF, labelPos.z);
 
-                // Every dorm gets a bubble. If the dorm has no overall score
-                // yet we still draw a neutral bubble so the building isn't
-                // unannotated on the map.
+                // ── Create 2D overlay element for this dorm ─────────────
                 const rank = DORM_RANKS.rankByName[d.name];
                 const overall = DORM_RANKS.overallByName[d.name];
-                const badge = makeRankBadge(rank, DORM_RANKS.total || 0, overall);
-                badge.position.set(labelPos.x + 38, maxTop + 38, labelPos.z);
-                badge.scale.set(34, 34, 1);
-                scene.add(badge);
+                const total = DORM_RANKS.total || 0;
+
+                const el = document.createElement('div');
+                el.className = 'dorm-label-2d';
+                el.style.gap = CIRCLE_PX_BELOW_LABEL + 'px';
+
+                // Text label
+                const textEl = document.createElement('div');
+                textEl.className = 'dorm-label-2d__text';
+                textEl.textContent = d.label;
+
+                // Rank circle
+                const circleEl = document.createElement('div');
+                circleEl.className = 'dorm-label-2d__circle';
+                const circleColor = rank ? rankColor(rank, total) : '#6b6b6b';
+                circleEl.style.background = circleColor;
+                if (rank) {
+                    circleEl.textContent = '#' + rank;
+                } else {
+                    circleEl.textContent = '?';
+                    circleEl.classList.add('dorm-label-2d__circle--unranked');
+                }
+
+                el.appendChild(textEl);
+                el.appendChild(circleEl);
+                labelsOverlay.appendChild(el);
+
+                dormOverlayEls[d.name] = el;
             });
+
+            // ── Connector dot sprite (rendered in 3D scene, behind labels) ──
+            // This replaces the SVG circles so that dorm text labels (which
+            // have renderOrder: 2) appear on top of the connector dot.
+            const connectorDotSprite = (function() {
+                const size = 64;
+                const c = document.createElement('canvas');
+                c.width = size; c.height = size;
+                const ctx = c.getContext('2d');
+                // Outer ring (white with dark stroke)
+                ctx.beginPath();
+                ctx.arc(size/2, size/2, size/2 - 4, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255,255,255,0.92)';
+                ctx.fill();
+                ctx.lineWidth = 4;
+                ctx.strokeStyle = '#1f1f1f';
+                ctx.stroke();
+                // Inner dot
+                ctx.beginPath();
+                ctx.arc(size/2, size/2, size * 3/32, 0, Math.PI * 2);
+                ctx.fillStyle = '#d97a2c';
+                ctx.fill();
+                const tex = new THREE.CanvasTexture(c);
+                tex.minFilter = THREE.LinearFilter;
+                const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+                const sprite = new THREE.Sprite(mat);
+                sprite.scale.set(24, 24, 1);
+                sprite.renderOrder = 1; // behind labels (renderOrder 2), above badges (renderOrder 0)
+                sprite.visible = false;
+                scene.add(sprite);
+                return sprite;
+            })();
+
+            // ── Connector dashed line (rendered in 3D scene, behind labels) ──
+            // The line connects the dorm anchor (world space) to the hover
+            // card edge (screen space, unprojected to world space each frame).
+            const connectorLineMat = new THREE.LineDashedMaterial({
+                color: 0x1f1f1f,
+                dashSize: 6,
+                gapSize: 6,
+                linewidth: 1,
+                transparent: true,
+                opacity: 0.78,
+                depthTest: false
+            });
+            const connectorLineGeo = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(0, 0, 0),
+                new THREE.Vector3(0, 0, 0)
+            ]);
+            const connectorLine3D = new THREE.Line(connectorLineGeo, connectorLineMat);
+            connectorLine3D.renderOrder = 1; // behind labels (renderOrder 2)
+            connectorLine3D.visible = false;
+            connectorLine3D.frustumCulled = false;
+            scene.add(connectorLine3D);
+
+            // Helper: unproject a screen-space pixel coordinate to a world-space
+            // point on a plane at the same camera-distance as a reference point.
+            function screenToWorld(screenX, screenY, refWorldPos) {
+                const r = wrap.getBoundingClientRect();
+                const ndcX = (screenX / r.width) * 2 - 1;
+                const ndcY = -(screenY / r.height) * 2 + 1;
+                // Project the reference point to get its NDC z-depth
+                const refProj = refWorldPos.clone().project(camera);
+                const v = new THREE.Vector3(ndcX, ndcY, refProj.z);
+                v.unproject(camera);
+                return v;
+            }
 
             // ── Compute the overview camera pose ────────────────────────────
             function computeOverviewPose() {
@@ -436,7 +565,7 @@
                 const r = wrap.getBoundingClientRect();
                 const aspect = r.width / Math.max(r.height, 1);
 
-                const padding = 1.18;
+                const padding = 1.09;
                 const vFovRad = CAMERA_FOV * Math.PI / 180;
                 const hFovRad = 2 * Math.atan(Math.tan(vFovRad / 2) * aspect);
                 const groundY = Math.sin(cameraPitch);
@@ -444,7 +573,10 @@
                 const distH = (spanX * 0.5 * padding) / Math.tan(hFovRad / 2);
                 const dist = Math.max(distV, distH, 220);
 
-                overviewTarget.set(cx, 0, cz);
+                // Center on Main Quad (origin 0,0) and shift south (+Z in scene coords)
+                // so the camera looks down at the quad from a slightly southern vantage.
+                const mainQuadPos = latLngToXZ(ORIGIN_LAT, ORIGIN_LNG); // (0, 0)
+                overviewTarget.set(mainQuadPos.x, 0, mainQuadPos.z + CAMERA_Z_OFFSET);
                 overviewDistance = dist;
             }
 
@@ -469,10 +601,6 @@
             const hoverMetaEl    = document.getElementById('dorm-hover-meta');
             const hoverScoresEl  = document.getElementById('dorm-hover-scores');
             const hoverFooterEl  = document.getElementById('dorm-hover-footer');
-            const connectorSvg   = document.getElementById('dorm-connector');
-            const connectorLine  = document.getElementById('dorm-connector-line');
-            const connectorDot   = document.getElementById('dorm-connector-dot');
-            const connectorDotIn = document.getElementById('dorm-connector-dot-inner');
 
             // ── Resize handling ────────────────────────────────────────────
             function resize() {
@@ -571,11 +699,13 @@
                     hoverRankSubEl.textContent = 'Not yet ranked';
                 }
 
-                // Meta line: house count + overall score
+                // Meta line: house count + overall score + review count
                 const houseCount = data ? data.houseCount : 0;
+                const reviewCount = data ? (data.reviewCount || 0) : 0;
                 const houseStr = houseCount + ' house' + (houseCount === 1 ? '' : 's');
-                const overallStr = (overall != null) ? ' · ' + overall.toFixed(1) + '/5 overall' : '';
-                hoverMetaEl.textContent = houseStr + overallStr;
+                const overallStr = '';
+                const reviewStr = reviewCount > 0 ? ' · ' + reviewCount + ' review' + (reviewCount === 1 ? '' : 's') : '';
+                hoverMetaEl.textContent = houseStr + overallStr + reviewStr;
 
                 // Score grid: 5 dimensions
                 let html = '';
@@ -632,14 +762,23 @@
                 hoverCard.dataset.dorm = name;
                 hoverCard.setAttribute('aria-hidden', 'false');
                 hoverCard.classList.add('dorm-hover-card--visible');
-                connectorSvg.classList.add('dorm-connector--visible');
+                // Scale up the card when a dorm is selected (zoomed in)
+                if (selectedName) {
+                    hoverCard.classList.add('dorm-hover-card--zoomed');
+                } else {
+                    hoverCard.classList.remove('dorm-hover-card--zoomed');
+                }
+                connectorDotSprite.visible = true;
+                connectorLine3D.visible = true;
                 positionConnector();
             }
             function hideHoverCard() {
                 hoverCard.classList.remove('dorm-hover-card--visible');
+                hoverCard.classList.remove('dorm-hover-card--zoomed');
                 hoverCard.setAttribute('aria-hidden', 'true');
                 hoverCard.removeAttribute('data-dorm');
-                connectorSvg.classList.remove('dorm-connector--visible');
+                connectorDotSprite.visible = false;
+                connectorLine3D.visible = false;
             }
 
             function positionConnector() {
@@ -655,31 +794,39 @@
                 const cardHeight = hoverCard.offsetHeight || 260;
                 const margin = 24;
 
+                // When zoomed into a selected dorm, push the card further
+                // away so the connector line is clearly visible.
+                const cardOffset = selectedName ? 250 : 90;
+
                 const placeRight = anchor.x < r.width / 2;
                 let cardX = placeRight
-                    ? Math.min(r.width - cardWidth - margin, anchor.x + 90)
-                    : Math.max(margin, anchor.x - cardWidth - 90);
+                    ? Math.min(r.width - cardWidth - margin, anchor.x + cardOffset)
+                    : Math.max(margin, anchor.x - cardWidth - cardOffset);
                 let cardY = Math.max(margin, Math.min(r.height - cardHeight - margin, anchor.y - cardHeight / 2));
 
                 hoverCard.style.left = cardX + 'px';
                 hoverCard.style.top  = cardY + 'px';
 
-                // Connector: line from anchor dot to the card's near edge.
+                // Connector: line from anchor to the card's near edge.
                 const cardEdgeX = placeRight ? cardX : (cardX + cardWidth);
                 const cardEdgeY = cardY + cardHeight / 2;
 
-                connectorSvg.setAttribute('width',  r.width);
-                connectorSvg.setAttribute('height', r.height);
-                connectorSvg.setAttribute('viewBox', '0 0 ' + r.width + ' ' + r.height);
+                // Position the 3D connector dot sprite at the dorm's anchor
+                const anchorWorld = dormAnchor[name];
+                if (anchorWorld) {
+                    connectorDotSprite.position.copy(anchorWorld);
+                    connectorDotSprite.visible = true;
 
-                connectorLine.setAttribute('x1', anchor.x);
-                connectorLine.setAttribute('y1', anchor.y);
-                connectorLine.setAttribute('x2', cardEdgeX);
-                connectorLine.setAttribute('y2', cardEdgeY);
-                connectorDot.setAttribute('cx', anchor.x);
-                connectorDot.setAttribute('cy', anchor.y);
-                connectorDotIn.setAttribute('cx', anchor.x);
-                connectorDotIn.setAttribute('cy', anchor.y);
+                    // Update the 3D dashed line: from anchor (world) to
+                    // card edge (screen → unprojected to world).
+                    const cardEdgeWorld = screenToWorld(cardEdgeX, cardEdgeY, anchorWorld);
+                    const positions = connectorLineGeo.attributes.position;
+                    positions.setXYZ(0, anchorWorld.x, anchorWorld.y, anchorWorld.z);
+                    positions.setXYZ(1, cardEdgeWorld.x, cardEdgeWorld.y, cardEdgeWorld.z);
+                    positions.needsUpdate = true;
+                    connectorLine3D.computeLineDistances(); // required for dashed material
+                    connectorLine3D.visible = true;
+                }
             }
 
             canvas.addEventListener('pointermove', (ev) => {
@@ -687,18 +834,29 @@
                 if (hit) {
                     setHover(hit);
                     canvas.style.cursor = 'pointer';
-                    if (hoverCard.dataset.dorm !== hit.userData.name) {
-                        showHoverCard(hit.userData.name);
+                    // When zoomed into a selected dorm, keep that card pinned
+                    if (selectedName) {
+                        // Don't change the card — it stays on the selected dorm
+                    } else {
+                        if (hoverCard.dataset.dorm !== hit.userData.name) {
+                            showHoverCard(hit.userData.name);
+                        }
                     }
                 } else {
                     if (hovered) setHover(null);
                     canvas.style.cursor = 'default';
-                    hideHoverCard();
+                    // Only hide hover card if NOT zoomed into a selected dorm
+                    if (!selectedName) {
+                        hideHoverCard();
+                    }
                 }
             });
             canvas.addEventListener('pointerleave', () => {
                 if (hovered) setHover(null);
-                hideHoverCard();
+                // Only hide hover card if NOT zoomed into a selected dorm
+                if (!selectedName) {
+                    hideHoverCard();
+                }
             });
 
             // Click: zoom in on the dorm. No orbit. A second click on the
@@ -706,7 +864,14 @@
             // remains useful even when zoomed.
             canvas.addEventListener('click', (ev) => {
                 const hit = pickAt(ev.clientX, ev.clientY);
-                if (!hit) return;
+                if (!hit) {
+                    // Clicked empty space — exit zoomed view
+                    if (selectedName) {
+                        clearSelection();
+                        hideHoverCard();
+                    }
+                    return;
+                }
                 const name = hit.userData.name;
                 if (selectedName === name) {
                     window.location.href = '/dorm/' + encodeURIComponent(name);
@@ -720,7 +885,7 @@
             canvas.addEventListener('keydown', (e) => {
                 if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft' && e.key !== 'Enter' && e.key !== 'Escape') return;
                 e.preventDefault();
-                if (e.key === 'Escape') { clearSelection(); return; }
+                if (e.key === 'Escape') { clearSelection(); hideHoverCard(); return; }
                 const names = DORMS.map(d => d.name);
                 let idx = names.indexOf(selectedName);
                 if (e.key === 'ArrowRight') idx = (idx + 1 + names.length) % names.length;
@@ -729,9 +894,20 @@
                 if (idx >= 0) selectDorm(names[idx]);
             });
 
+            // Global Escape key listener — exits zoomed view from anywhere
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && selectedName) {
+                    e.preventDefault();
+                    clearSelection();
+                    hideHoverCard();
+                }
+            });
+
             // Click anywhere off-canvas (or on empty ground) to deselect.
+            // Clicks on the hover card itself should NOT deselect.
             wrap.addEventListener('click', (ev) => {
                 if (ev.target === canvas) return; // canvas handler runs
+                if (hoverCard.contains(ev.target)) return; // clicking the card itself
             });
 
             // ── Dorm selection: zoom only, no orbit ─────────────────────────
@@ -747,6 +923,9 @@
                 }
                 selectedName = name;
                 if (dormByName[name]) setDormColor(name, DORM_SELECT_COLOR);
+
+                // Show and pin the hover card for the selected dorm
+                showHoverCard(name);
 
                 const c = dormCenter(name);
                 if (c) {
@@ -766,8 +945,39 @@
                 focusing = true;
             }
 
+            // ── Update 2D overlay label positions each frame ──────────────
+            // Projects each dorm's anchor from world space to screen pixels
+            // and positions the HTML overlay element accordingly.
+            function updateDormLabels2D() {
+                const r = wrap.getBoundingClientRect();
+                const halfW = r.width / 2;
+                const halfH = r.height / 2;
+                DORMS.forEach(d => {
+                    const el = dormOverlayEls[d.name];
+                    const anchor = dormAnchor[d.name];
+                    if (!el || !anchor) return;
+
+                    // Project world → NDC → screen pixels
+                    const proj = anchor.clone().project(camera);
+
+                    // Behind camera? Hide.
+                    if (proj.z > 1) {
+                        el.style.opacity = '0';
+                        return;
+                    }
+
+                    const sx = (proj.x * halfW) + halfW;
+                    const sy = (-proj.y * halfH) + halfH;
+
+                    el.style.opacity = '1';
+                    el.style.left = sx + 'px';
+                    el.style.top  = (sy - LABEL_PX_ABOVE_ANCHOR) + 'px';
+                });
+            }
+
             // ── Animation loop ──────────────────────────────────────────────
             const FOCUS_LERP  = 0.08;
+            const compassEl = document.getElementById('compass-2d');
             function animate() {
                 requestAnimationFrame(animate);
 
@@ -781,8 +991,18 @@
                         cameraDistance = focusDistance;
                     }
                 }
+
+                // Show compass when zoomed out (near overview distance), hide when zoomed in
+                if (compassEl) {
+                    var zoomRatio = cameraDistance / overviewDistance;
+                    compassEl.style.opacity = zoomRatio > 0.75 ? '1' : '0';
+                }
+
                 applyCameraPose();
                 renderer.render(scene, camera);
+
+                // Update 2D overlay labels to track projected positions
+                updateDormLabels2D();
 
                 // Connector tracks the camera so the line stays glued to
                 // the building as we zoom in.
@@ -814,6 +1034,9 @@
                 tex.minFilter = THREE.LinearFilter;
                 const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
                 const sprite = new THREE.Sprite(mat);
+                // Store canvas dimensions so callers can compute proportional scale
+                sprite.userData.canvasWidth = c.width;
+                sprite.userData.canvasHeight = c.height;
                 return sprite;
             }
             function rankColor(rank, total) {
@@ -824,44 +1047,6 @@
                 if (pct <= 0.65) return '#7a6a1f';
                 if (pct <= 0.85) return '#a3621f';
                 return '#a83434';
-            }
-            function makeRankBadge(rank, total, overall) {
-                const size = 96;
-                const c = document.createElement('canvas');
-                c.width = size; c.height = size;
-                const ctx = c.getContext('2d');
-                const color = rank ? rankColor(rank, total) : '#6b6b6b';
-                ctx.beginPath();
-                ctx.arc(size/2, size/2, size/2 - 4, 0, Math.PI * 2);
-                ctx.fillStyle = color;
-                ctx.fill();
-                ctx.lineWidth = 4;
-                ctx.strokeStyle = 'rgba(255,255,255,0.95)';
-                ctx.stroke();
-                ctx.fillStyle = '#fff';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                if (rank) {
-                    ctx.font = '800 44px Inter, sans-serif';
-                    ctx.fillText('#' + rank, size/2, size/2 - (overall != null ? 6 : 0));
-                    if (overall != null) {
-                        ctx.font = '700 16px Inter, sans-serif';
-                        ctx.fillStyle = 'rgba(255,255,255,0.9)';
-                        ctx.fillText(overall.toFixed(1), size/2, size/2 + 24);
-                    }
-                } else {
-                    // Unranked dorm: still mark the building so every dorm
-                    // has a visible bubble on the map.
-                    ctx.font = '800 40px Inter, sans-serif';
-                    ctx.fillText('?', size/2, size/2 - 4);
-                    ctx.font = '700 14px Inter, sans-serif';
-                    ctx.fillStyle = 'rgba(255,255,255,0.9)';
-                    ctx.fillText('No data', size/2, size/2 + 22);
-                }
-                const tex = new THREE.CanvasTexture(c);
-                tex.minFilter = THREE.LinearFilter;
-                const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
-                return new THREE.Sprite(mat);
             }
 
             function roundRect(ctx, x, y, w, h, r) {

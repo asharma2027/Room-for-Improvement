@@ -2772,34 +2772,9 @@ table tbody tr:hover {
 
 /* ============================================================
    Hover guide card — single focused card that follows the
-   pointer-hovered dorm, with an SVG connector (dot + line)
-   visually tying it to the building it describes.
+   pointer-hovered dorm. The connector line + dot are now
+   rendered as Three.js objects (behind dorm labels).
    ============================================================ */
-.dorm-connector {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.14s ease;
-  z-index: 9;
-}
-.dorm-connector--visible { opacity: 1; }
-.dorm-connector line {
-  stroke: #1f1f1f;
-  stroke-width: 1.6;
-  stroke-dasharray: 4 4;
-  opacity: 0.78;
-}
-.dorm-connector circle#dorm-connector-dot {
-  fill: rgba(255,255,255,0.92);
-  stroke: #1f1f1f;
-  stroke-width: 2;
-}
-.dorm-connector circle#dorm-connector-dot-inner {
-  fill: #d97a2c;
-}
 
 .dorm-hover-card {
   position: absolute;
@@ -2821,6 +2796,12 @@ table tbody tr:hover {
 .dorm-hover-card--visible {
   opacity: 1;
   transform: translateY(0);
+}
+.dorm-hover-card--zoomed {
+  width: 400px;
+  padding: 1.1rem 1.2rem 1rem;
+  transform: translateY(0) scale(1.12);
+  transform-origin: top left;
 }
 .dorm-hover-card__header {
   display: flex;
@@ -2950,6 +2931,62 @@ table tbody tr:hover {
   letter-spacing: 0.01em;
 }
 
+/* ============================================================
+   2D Dorm label + rank circle overlay
+   Rendered in screen space so size/spacing is uniform across
+   all dorms regardless of camera distance.
+   ============================================================ */
+.dorm-labels-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  overflow: hidden;
+}
+.dorm-label-2d {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  /* Centered on the projected point; the gap between circle and
+     label is controlled by the CSS gap on this flex container. */
+  transform: translate(-50%, -100%);
+  transition: opacity 0.18s ease;
+}
+.dorm-label-2d__text {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(122, 31, 31, 0.92);
+  padding: 0.18em 0.55em;
+  border-radius: 4px;
+  white-space: nowrap;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+}
+.dorm-label-2d__circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 800;
+  border: 2.5px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  line-height: 1;
+  flex-shrink: 0;
+}
+.dorm-label-2d__circle--unranked {
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
 @media (max-width: 768px) {
   .campus-3d-canvas-wrap { height: calc(100vh - 260px); min-height: 360px; }
   .dorm-hover-card {
@@ -2957,6 +2994,8 @@ table tbody tr:hover {
     max-width: 360px;
   }
   .explore-map-3d-hint { display: none; }
+  .dorm-label-2d__text { font-size: 0.62rem; }
+  .dorm-label-2d__circle { width: 26px; height: 26px; font-size: 0.58rem; }
 }
 
 /* ============================================================

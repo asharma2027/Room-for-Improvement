@@ -545,7 +545,7 @@ app.get('/explore', ensureAuthenticated, (req, res) => {
         .slice(0, 3)
         .map(([vibe]) => vibe);
 
-      return { name: dorm, scores, houseCount: houseRankings.length, topVibes, vibeCounts };
+      return { name: dorm, scores, houseCount: houseRankings.length, topVibes, vibeCounts, reviewCount: houseRankings.reduce((sum, h) => sum + (h.reviewCount || 0), 0) };
     });
 
     res.render('explore', {

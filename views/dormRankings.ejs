@@ -83,7 +83,7 @@
                     style="background:#fff; border-radius:1rem; box-shadow:var(--shadow-md); padding:1.25rem 1.5rem; margin-bottom:1.75rem;">
                     <p
                         style="margin:0 0 1rem; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-secondary); font-weight:600;">
-                        Hover an emblem to highlight in rankings · Click to visit that house's page
+                        Hover an emblem to highlight in rankings · Right-click to lock the highlight · Click to visit that house's page
                     </p>
                     <div id="emblem-strip" style="display:flex; flex-wrap:wrap; gap:1rem; align-items:flex-start;">
                         <% rankings.forEach((h, i)=> { %>
@@ -94,19 +94,19 @@
                                 onclick="window.location='/house/<%= encodeURIComponent(dormName) %>/<%= encodeURIComponent(h.name) %>'"
                                 title="<%= h.name %>"
                                 style="display:flex; flex-direction:column; align-items:center; gap:0.35rem; cursor:pointer; transition:transform 0.2s;">
-                                <div class="emblem-circle" id="emblem-<%= i %>" style="width:52px; height:52px; border-radius:50%; background:<%= h.color %>; <%= h.emblem ? `background-image:url('${h.emblem}'); background-size:cover; background-position:center; background-color:#fff;` : '' %>
+                                <div class="emblem-circle" id="emblem-<%= i %>" style="width:72px; height:72px; border-radius:50%; background:<%= h.color %>; <%= h.emblem ? `background-image:url('${h.emblem}'); background-size:cover; background-position:center; background-color:#fff;` : '' %>
                         display:flex; align-items:center; justify-content:center;
                         box-shadow: 0 3px 10px rgba(0,0,0,0.18);
                         border: 3px solid transparent; transition: all 0.25s; position:relative; overflow:hidden;">
                                     <% if (!h.emblem) { %>
                                         <span
-                                            style="color:white; font-weight:800; font-size:0.85rem; letter-spacing:0.02em;">
+                                            style="color:white; font-weight:800; font-size:1.1rem; letter-spacing:0.02em;">
                                             <%= h.initials %>
                                         </span>
                                         <% } %>
                                 </div>
                                 <span
-                                    style="font-size:0.7rem; font-weight:600; color:var(--text-secondary); text-align:center; max-width:64px; min-height:2.4em; line-height:1.2;">
+                                    style="font-size:0.7rem; font-weight:600; color:var(--text-secondary); text-align:center; max-width:80px; min-height:2.4em; line-height:1.2;">
                                     <%= h.name %>
                                 </span>
                             </div>
@@ -316,7 +316,7 @@
                 <!-- Hint -->
                 <p style="text-align:center; color:var(--text-secondary); font-size:0.85rem; margin-top:1.25rem;">
                     💡 Click any row to view all rooms in that house &nbsp;·&nbsp; Hover an emblem to spotlight that
-                    house across every ranking
+                    house across every ranking &nbsp;·&nbsp; Right-click an emblem to lock/unlock the spotlight
                 </p>
             </main>
 
@@ -327,12 +327,23 @@
             <!-- Likert label tooltip (same style as word cloud tooltip in house page) -->
             <div id="dorm-likert-tooltip" style="position:fixed; z-index:9999; pointer-events:none; background:rgba(30,30,30,0.92); color:#fff; padding:0.45rem 0.75rem; border-radius:0.4rem; font-size:0.82rem; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; white-space:nowrap; box-shadow:0 3px 12px rgba(0,0,0,0.25); opacity:0; transition:opacity 0.15s ease;"></div>
 
+            <!-- Review count tooltip (same style as word cloud tooltips) -->
+            <div id="review-count-tooltip" style="position:fixed; z-index:9999; pointer-events:none; background:rgba(30,30,30,0.92); color:#fff; padding:0.45rem 0.75rem; border-radius:0.4rem; font-size:0.82rem; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; white-space:nowrap; box-shadow:0 3px 12px rgba(0,0,0,0.25); opacity:0; transition:opacity 0.15s ease;"></div>
+
             <script id="rankings-data" type="application/json"><%- rankingsJson %></script>
             <script>
                 const rankings = JSON.parse(document.getElementById('rankings-data').textContent);
                 const NUM_CATS = 5;
 
+                // Track which house is "locked" via right-click
+                var lockedHouseIdx = null;
+
                 function hoverHouse(houseIdx, isHover) {
+                    // If a house is locked and this is a mouseleave, ignore it
+                    if (lockedHouseIdx !== null && !isHover && houseIdx === lockedHouseIdx) return;
+                    // If a house is locked and this is a mouseenter for a different house, ignore it
+                    if (lockedHouseIdx !== null && isHover && houseIdx !== lockedHouseIdx) return;
+
                     const embEl = document.getElementById('emblem-' + houseIdx);
                     if (embEl) {
                         if (isHover) {
@@ -358,6 +369,62 @@
                         if (embDiv) embDiv.style.opacity = isHover ? '0.3' : '';
                     }
 
+                    // Show/hide ranking overlay on dimmed emblems
+                    for (let i = 0; i < rankings.length; i++) {
+                        if (i === houseIdx) continue;
+                        const otherEmb = document.getElementById('emblem-' + i);
+                        if (!otherEmb) continue;
+                        var existingOverlay = otherEmb.querySelector('.emblem-rank-overlay');
+                        if (isHover) {
+                            if (!existingOverlay) {
+                                // Compute overall rank for this house across all categories
+                                var catKeys = ['culture', 'roomSize', 'quietness', 'tempControl', 'sunlight'];
+                                var vals = catKeys.map(function(k) { return rankings[i].scores[k]; }).filter(function(v) { return v != null; });
+                                var overallScore = vals.length ? vals.reduce(function(a, b) { return a + b; }, 0) / vals.length : null;
+                                // Rank among all houses by overall score
+                                var allOveralls = rankings.map(function(h, idx) {
+                                    var hVals = catKeys.map(function(k) { return h.scores[k]; }).filter(function(v) { return v != null; });
+                                    return { idx: idx, overall: hVals.length ? hVals.reduce(function(a, b) { return a + b; }, 0) / hVals.length : null };
+                                }).filter(function(h) { return h.overall != null; }).sort(function(a, b) { return b.overall - a.overall; });
+                                var overallRank = null;
+                                var totalRanked = allOveralls.length;
+                                for (var ri = 0; ri < allOveralls.length; ri++) {
+                                    if (allOveralls[ri].idx === i) { overallRank = ri + 1; break; }
+                                }
+                                // Gradient color: rank 1 (best) = green, rank totalRanked (worst) = red
+                                var overlayColor = (function(r, t) {
+                                    if (!r || !t) return '#6b6b6b';
+                                    var pct = (r - 1) / Math.max(t - 1, 1); // 0 = best, 1 = worst
+                                    var stops = [
+                                        { p: 0,    r: 0x34, g: 0x87, b: 0x7A },
+                                        { p: 0.25, r: 0x92, g: 0xB8, b: 0x9D },
+                                        { p: 0.5,  r: 0xD6, g: 0x97, b: 0x72 },
+                                        { p: 0.75, r: 0xC2, g: 0x76, b: 0x54 },
+                                        { p: 1,    r: 0xAE, g: 0x54, b: 0x36 }
+                                    ];
+                                    var lo = stops[0], hi = stops[stops.length - 1];
+                                    for (var si = 0; si < stops.length - 1; si++) {
+                                        if (pct >= stops[si].p && pct <= stops[si + 1].p) {
+                                            lo = stops[si]; hi = stops[si + 1]; break;
+                                        }
+                                    }
+                                    var segPct = (hi.p === lo.p) ? 0 : (pct - lo.p) / (hi.p - lo.p);
+                                    var cr = Math.round(lo.r + (hi.r - lo.r) * segPct);
+                                    var cg = Math.round(lo.g + (hi.g - lo.g) * segPct);
+                                    var cb = Math.round(lo.b + (hi.b - lo.b) * segPct);
+                                    return 'rgb(' + cr + ',' + cg + ',' + cb + ')';
+                                })(overallRank, totalRanked);
+                                var overlay = document.createElement('div');
+                                overlay.className = 'emblem-rank-overlay';
+                                overlay.style.cssText = 'position:absolute; inset:0; border-radius:50%; background:' + overlayColor + '; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:0.82rem; z-index:5; pointer-events:none;';
+                                overlay.textContent = overallRank ? '#' + overallRank : '?';
+                                otherEmb.appendChild(overlay);
+                            }
+                        } else {
+                            if (existingOverlay) existingOverlay.remove();
+                        }
+                    }
+
                     // Highlight the hovered house rows; dim all other rows
                     for (let catIdx = 0; catIdx < NUM_CATS; catIdx++) {
                         for (let i = 0; i < rankings.length; i++) {
@@ -371,16 +438,77 @@
                                     row.style.opacity = '';
                                 } else {
                                     row.classList.remove('rank-row-highlight');
+                                    row.style.transition = 'none';
                                     row.style.background = '';
                                     row.style.borderLeft = '';
                                     row.style.opacity = '';
+                                    // Force reflow then restore transition
+                                    void row.offsetHeight;
+                                    row.style.transition = '';
                                 }
                             } else {
-                                row.style.opacity = isHover ? '0.3' : '';
+                                if (isHover) {
+                                    row.style.opacity = '0.3';
+                                } else {
+                                    row.style.transition = 'none';
+                                    row.style.opacity = '';
+                                    void row.offsetHeight;
+                                    row.style.transition = '';
+                                }
+                            }
+                        }
+
+                        // Scroll the panel so the hovered house's row is visible
+                        if (isHover) {
+                            var targetRow = document.getElementById('row-' + catIdx + '-' + houseIdx);
+                            var scrollContainer = document.getElementById('scroll-' + catIdx);
+                            if (targetRow && scrollContainer) {
+                                var rowTop = targetRow.offsetTop - scrollContainer.offsetTop;
+                                var rowHeight = targetRow.offsetHeight;
+                                var scrollTop = scrollContainer.scrollTop;
+                                var containerHeight = scrollContainer.clientHeight;
+                                if (rowTop < scrollTop || rowTop + rowHeight > scrollTop + containerHeight) {
+                                    scrollContainer.scrollTop = rowTop - containerHeight / 2 + rowHeight / 2;
+                                }
                             }
                         }
                     }
                 }
+
+                // Right-click on emblems to toggle lock
+                document.getElementById('emblem-strip').addEventListener('contextmenu', function(e) {
+                    var emblemDiv = e.target.closest('.emblem');
+                    if (!emblemDiv) return;
+                    e.preventDefault();
+                    var houseIdx = parseInt(emblemDiv.dataset.house, 10);
+                    if (isNaN(houseIdx)) return;
+
+                    if (lockedHouseIdx === houseIdx) {
+                        // Unlock: clear the highlight
+                        lockedHouseIdx = null;
+                        hoverHouse(houseIdx, false);
+                    } else {
+                        // If another house was locked, clear it first
+                        if (lockedHouseIdx !== null) {
+                            var prev = lockedHouseIdx;
+                            lockedHouseIdx = null;
+                            hoverHouse(prev, false);
+                        }
+                        // Lock this house
+                        lockedHouseIdx = houseIdx;
+                        hoverHouse(houseIdx, true);
+                    }
+                });
+
+                // Click anywhere else to unlock
+                document.addEventListener('click', function(e) {
+                    if (lockedHouseIdx === null) return;
+                    var emblemDiv = e.target.closest('.emblem');
+                    if (emblemDiv) return; // clicking an emblem (left-click navigates)
+                    var prev = lockedHouseIdx;
+                    lockedHouseIdx = null;
+                    hoverHouse(prev, false);
+                });
             </script>
 
             <script>
@@ -417,6 +545,211 @@
                         });
                         labelEl.addEventListener('mouseleave', function() {
                             tooltip.style.opacity = '0';
+                        });
+                    });
+                })();
+            </script>
+
+            <script>
+                // ── Review count tooltips — only appear after 1 second hover ──
+                (function() {
+                    var tooltip = document.getElementById('review-count-tooltip');
+                    if (!tooltip) return;
+                    document.querySelectorAll('.rank-review-count').forEach(function(el) {
+                        var hoverTimer = null;
+                        el.style.cursor = 'default';
+                        el.addEventListener('mouseenter', function(e) {
+                            e.stopPropagation();
+                            // Extract the review count number from the text "(68)" → 68
+                            var countText = (el.textContent || '').replace(/[^0-9]/g, '');
+                            tooltip.textContent = countText + ' reviews submitted for this house';
+                            hoverTimer = setTimeout(function() {
+                                var tx = e.clientX + 14;
+                                var ty = e.clientY + 18;
+                                var tw = tooltip.offsetWidth || 200;
+                                var th = tooltip.offsetHeight || 36;
+                                if (tx + tw > window.innerWidth - 8) tx = e.clientX - tw - 10;
+                                if (ty + th > window.innerHeight - 8) ty = e.clientY - th - 10;
+                                if (ty < 8) ty = 8;
+                                tooltip.style.left = tx + 'px';
+                                tooltip.style.top = ty + 'px';
+                                tooltip.style.opacity = '1';
+                            }, 1000);
+                        });
+                        el.addEventListener('mousemove', function(e) {
+                            if (tooltip.style.opacity === '1') {
+                                var tx = e.clientX + 14;
+                                var ty = e.clientY + 18;
+                                var tw = tooltip.offsetWidth || 200;
+                                var th = tooltip.offsetHeight || 36;
+                                if (tx + tw > window.innerWidth - 8) tx = e.clientX - tw - 10;
+                                if (ty + th > window.innerHeight - 8) ty = e.clientY - th - 10;
+                                if (ty < 8) ty = 8;
+                                tooltip.style.left = tx + 'px';
+                                tooltip.style.top = ty + 'px';
+                            }
+                        });
+                        el.addEventListener('mouseleave', function() {
+                            if (hoverTimer) { clearTimeout(hoverTimer); hoverTimer = null; }
+                            tooltip.style.opacity = '0';
+                        });
+                    });
+                })();
+            </script>
+
+            <script>
+                // ── Emblem hover: show numeric rank labels in ranking rows ──
+                // On emblem hover, each highlighted row gets a rank number badge
+                // prepended, the bar compresses, and name/score shift right.
+                // Also: row hover triggers dimming after 1 second (same as emblem hover).
+                (function() {
+                    var catKeys = ['culture', 'roomSize', 'quietness', 'tempControl', 'sunlight'];
+
+                    // Pre-compute per-category sorted order so we know each house's rank
+                    var rankByCatAndHouse = {}; // rankByCatAndHouse[catIdx][houseIdx] = rank (1-based)
+                    var totalRankedByCat = {}; // totalRankedByCat[catIdx] = number of ranked houses
+                    for (var catIdx = 0; catIdx < catKeys.length; catIdx++) {
+                        rankByCatAndHouse[catIdx] = {};
+                        var key = catKeys[catIdx];
+                        // Sort rankings by this category descending (null last)
+                        var sorted = rankings.slice().sort(function(a, b) {
+                            var va = a.scores[key];
+                            var vb = b.scores[key];
+                            if (va === null && vb === null) return 0;
+                            if (va === null) return 1;
+                            if (vb === null) return -1;
+                            return vb - va;
+                        });
+                        var rankedCount = sorted.filter(function(h) { return h.scores[key] !== null; }).length;
+                        totalRankedByCat[catIdx] = rankedCount;
+                        sorted.forEach(function(h, rank) {
+                            var origIdx = rankings.findIndex(function(r) { return r.name === h.name; });
+                            rankByCatAndHouse[catIdx][origIdx] = rank + 1;
+                        });
+                    }
+
+                    // Override hoverHouse to add rank badges and animated swipe
+                    var origHoverHouse = window.hoverHouse || hoverHouse;
+
+                    window.hoverHouse = function(houseIdx, isHover) {
+                        // Call original highlight/dim logic
+                        origHoverHouse(houseIdx, isHover);
+
+                        // Add or remove rank badges with swipe animation
+                        for (var catIdx = 0; catIdx < NUM_CATS; catIdx++) {
+                            (function(catIdx) {
+                                var row = document.getElementById('row-' + catIdx + '-' + houseIdx);
+                                if (!row) return;
+
+                                var existingBadge = row.querySelector('.rank-num-badge');
+                                if (isHover) {
+                                    if (!existingBadge) {
+                                        var rank = rankByCatAndHouse[catIdx][houseIdx];
+                                        var total = totalRankedByCat[catIdx];
+                                        var badge = document.createElement('div');
+                                        badge.className = 'rank-num-badge';
+                                        // Color follows red→green gradient based on ranking position
+                                        var badgeColor = (function(r, t) {
+                                            if (!r || !t) return '#6b6b6b';
+                                            // rank 1 = best (green), rank t = worst (red)
+                                            // Interpolate from green (#34877A) to red (#AE5436)
+                                            var pct = (r - 1) / Math.max(t - 1, 1); // 0 = best, 1 = worst
+                                            // 5-stop gradient matching the rating color scale
+                                            var stops = [
+                                                { p: 0,    r: 0x34, g: 0x87, b: 0x7A }, // #34877A (best)
+                                                { p: 0.25, r: 0x92, g: 0xB8, b: 0x9D }, // #92B89D
+                                                { p: 0.5,  r: 0xD6, g: 0x97, b: 0x72 }, // #D69772
+                                                { p: 0.75, r: 0xC2, g: 0x76, b: 0x54 }, // #C27654
+                                                { p: 1,    r: 0xAE, g: 0x54, b: 0x36 }  // #AE5436 (worst)
+                                            ];
+                                            // Find the two stops to interpolate between
+                                            var lo = stops[0], hi = stops[stops.length - 1];
+                                            for (var si = 0; si < stops.length - 1; si++) {
+                                                if (pct >= stops[si].p && pct <= stops[si + 1].p) {
+                                                    lo = stops[si]; hi = stops[si + 1]; break;
+                                                }
+                                            }
+                                            var segPct = (hi.p === lo.p) ? 0 : (pct - lo.p) / (hi.p - lo.p);
+                                            var cr = Math.round(lo.r + (hi.r - lo.r) * segPct);
+                                            var cg = Math.round(lo.g + (hi.g - lo.g) * segPct);
+                                            var cb = Math.round(lo.b + (hi.b - lo.b) * segPct);
+                                            return 'rgb(' + cr + ',' + cg + ',' + cb + ')';
+                                        })(rank, total);
+                                        badge.style.cssText = 'flex-shrink:0; width:36px; height:36px; border-radius:50%; background:' + badgeColor + '; color:#fff; font-size:0.82rem; font-weight:800; display:flex; align-items:center; justify-content:center; margin-right:0.35rem; box-shadow:0 2px 6px rgba(0,0,0,0.2); opacity:0; transform:translateX(-20px); transition:all 0.3s ease;';
+                                        badge.textContent = rank ? rank + '/' + total : '—';
+                                        row.insertBefore(badge, row.firstChild);
+                                        // Trigger animation — capture badge in closure
+                                        (function(b) {
+                                            requestAnimationFrame(function() {
+                                                b.style.opacity = '1';
+                                                b.style.transform = 'translateX(0)';
+                                            });
+                                        })(badge);
+                                    }
+                                    // Animate the row inner to swipe right
+                                    var rowInner = row.querySelector('.rank-row-inner');
+                                    if (rowInner) {
+                                        rowInner.style.transition = 'transform 0.3s ease';
+                                        rowInner.style.transform = 'translateX(4px)';
+                                    }
+                                    // Compress the bar
+                                    var barWrap = row.querySelector('.rank-row-inner > div:last-child');
+                                    if (barWrap) {
+                                        barWrap.style.transition = 'height 0.3s ease';
+                                        barWrap.style.height = '10px';
+                                    }
+                                } else {
+                                    // Snap back instantly — no animated transition
+                                    if (existingBadge) {
+                                        existingBadge.remove();
+                                    }
+                                    // Reset row inner transform instantly
+                                    var rowInner = row.querySelector('.rank-row-inner');
+                                    if (rowInner) {
+                                        rowInner.style.transition = 'none';
+                                        rowInner.style.transform = '';
+                                    }
+                                    // Restore bar height instantly
+                                    var barWrap = row.querySelector('.rank-row-inner > div:last-child');
+                                    if (barWrap) {
+                                        barWrap.style.transition = 'none';
+                                        barWrap.style.height = '16px';
+                                    }
+                                }
+                            })(catIdx);
+                        }
+                    };
+
+                    // ── Row hover: after 1 second, trigger the same dimming effect as emblem hover ──
+                    var rowHoverTimer = null;
+                    var rowHoverActiveIdx = null;
+
+                    function clearRowHoverEffect() {
+                        if (rowHoverActiveIdx !== null) {
+                            // Only clear if not locked
+                            if (lockedHouseIdx === null) {
+                                hoverHouse(rowHoverActiveIdx, false);
+                            }
+                            rowHoverActiveIdx = null;
+                        }
+                        if (rowHoverTimer) {
+                            clearTimeout(rowHoverTimer);
+                            rowHoverTimer = null;
+                        }
+                    }
+
+                    document.querySelectorAll('.rank-row').forEach(function(row) {
+                        row.addEventListener('mouseenter', function() {
+                            var houseIdx = parseInt(row.dataset.houseIdx, 10);
+                            if (isNaN(houseIdx)) return;
+                            if (lockedHouseIdx !== null) return; // don't override lock
+                            rowHoverTimer = setTimeout(function() {
+                                rowHoverActiveIdx = houseIdx;
+                                hoverHouse(houseIdx, true);
+                            }, 1000);
+                        });
+                        row.addEventListener('mouseleave', function() {
+                            clearRowHoverEffect();
                         });
                     });
                 })();
