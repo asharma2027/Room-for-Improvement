@@ -251,6 +251,46 @@ function ensureAuthenticated(req, res, next) {
   return res.redirect('/');
 }
 
+// ── DEV MODE: auto-login as test@uchicago.edu ────────────────────────────────
+// Set DEV_MODE=true in .env to skip auth and land directly on /explore.
+// NEVER enable this in production.
+const DEV_MODE = process.env.DEV_MODE === 'true';
+
+if (DEV_MODE) {
+  console.warn('⚠️  DEV_MODE is ON — auto-logging in as test@uchicago.edu');
+
+  // Ensure the test user exists (verified, no real password needed)
+  const testEmail = 'test@uchicago.edu';
+  const users = readUsers();
+  if (!users.find(u => u.email === testEmail)) {
+    const bcryptSync = require('bcryptjs');
+    users.push({
+      email: testEmail,
+      hashedPassword: bcryptSync.hashSync('test', 10),
+      verified: true,
+      verificationToken: null
+    });
+    writeUsers(users);
+    console.log('  Created test@uchicago.edu user.');
+  }
+
+  // Middleware: auto-authenticate every request as the test user
+  app.use((req, res, next) => {
+    if (!req.isAuthenticated()) {
+      const all = readUsers();
+      const testUser = all.find(u => u.email === testEmail);
+      if (testUser) {
+        return req.login(testUser, (err) => {
+          if (err) return next(err);
+          next();
+        });
+      }
+    }
+    next();
+  });
+}
+// ────────────────────────────────────────────────────────────────────────────
+
 // Global Middleware to pass 'path' and 'user' to all views
 app.use((req, res, next) => {
   res.locals.path = req.path;
@@ -262,6 +302,7 @@ app.use((req, res, next) => {
 
 // Home
 app.get('/', (req, res) => {
+  if (DEV_MODE && req.isAuthenticated()) return res.redirect('/explore');
   res.render('index', { user: req.user });
 });
 

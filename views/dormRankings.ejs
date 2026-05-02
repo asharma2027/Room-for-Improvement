@@ -433,8 +433,8 @@
                             if (i === houseIdx) {
                                 if (isHover) {
                                     row.classList.add('rank-row-highlight');
-                                    row.style.background = rankings[houseIdx].color + '22';
-                                    row.style.borderLeft = '4px solid ' + rankings[houseIdx].color;
+                                    row.style.background = 'rgba(100, 116, 139, 0.12)';
+                                    row.style.borderLeft = '4px solid rgba(100, 116, 139, 0.6)';
                                     row.style.opacity = '';
                                 } else {
                                     row.classList.remove('rank-row-highlight');
@@ -497,6 +497,23 @@
                         // Lock this house
                         lockedHouseIdx = houseIdx;
                         hoverHouse(houseIdx, true);
+
+                        // Scroll the page so the rankings board is fully in view.
+                        // We want all 5 columns' highlighted rows to be visible,
+                        // so scroll to the rankings board itself.
+                        var board = document.getElementById('rankings-board');
+                        if (board) {
+                            // Small delay so the column scroll (inside hoverHouse) settles first
+                            setTimeout(function() {
+                                var boardTop = board.getBoundingClientRect().top + window.scrollY;
+                                var boardBottom = board.getBoundingClientRect().bottom + window.scrollY;
+                                var viewH = window.innerHeight;
+                                // If the board is taller than the viewport, scroll so the top is near the top
+                                // of the viewport (with a small margin for the nav bar).
+                                var targetScroll = boardTop - 80;
+                                window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+                            }, 60);
+                        }
                     }
                 });
 

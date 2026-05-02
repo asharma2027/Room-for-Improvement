@@ -135,6 +135,31 @@
                         <text x="8" y="51" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="rgba(128,0,0,0.55)" font-family="Inter, sans-serif">W</text>
                       </svg>
                     </div>
+
+                    <!-- Map legend -->
+                    <div class="map-legend" aria-label="Map legend">
+                      <div class="map-legend__title">Legend</div>
+                      <div class="map-legend__item">
+                        <div class="map-legend__swatch" style="background:#7a1f1f;"></div>
+                        <span>Dorms</span>
+                      </div>
+                      <div class="map-legend__item">
+                        <div class="map-legend__swatch" style="background:#5b8abf;"></div>
+                        <span>Libraries</span>
+                      </div>
+                      <div class="map-legend__item">
+                        <div class="map-legend__swatch" style="background:#d4a054;"></div>
+                        <span>Dining</span>
+                      </div>
+                      <div class="map-legend__item">
+                        <div class="map-legend__swatch" style="background:#4da6a6;"></div>
+                        <span>Gyms</span>
+                      </div>
+                      <div class="map-legend__item">
+                        <div class="map-legend__swatch" style="background:#cfcfcf;"></div>
+                        <span>Other</span>
+                      </div>
+                    </div>
                 </div>
             </section>
 
@@ -249,18 +274,138 @@
                   footprintId: 'dorm_woodlawn' }
             ];
 
-            // ── Non-dorm landmarks (gray cuboids + green quads) ─────────────
+            // ── Non-dorm landmarks ────────────────────────────────────────
+            // Positions, dimensions, and heights sourced from UChicago ArcGIS
+            // Building Footprint layer (2021-08-05 Campus Archibus Web Map).
+            // Heights converted from feet to meters (BLDG_HGT × 0.3048).
+            // Widths/depths computed from polygon bounding boxes in WGS84.
+            //
+            // Building types: 'building' (gray), 'library' (blue), 'dining'
+            // (amber/orange), 'gym' (teal), 'quad' (green flat).
             const LANDMARKS = [
-                { type: 'quad',     name: 'Main Quad',
+                // ── Green spaces ────────────────────────────────────────────
+                { type: 'quad', name: 'Main Quad',
                   lat: 41.7895, lng: -87.5995,
                   w: 220, d: 130, h: 0.2 },
 
-                { type: 'building', name: 'Regenstein Library',
+                { type: 'quad', name: 'Midway Plaisance',
+                  lat: 41.7832, lng: -87.5990,
+                  w: 700, d: 60, h: 0.2 },
+
+                // Hull Court (between Snell-Hitchcock and the quads)
+                { type: 'quad', name: 'Hull Court',
+                  lat: 41.7905, lng: -87.5995,
+                  w: 140, d: 40, h: 0.15 },
+
+                // Hutchinson Court (east of Rockefeller)
+                { type: 'quad', name: 'Hutchinson Court',
+                  lat: 41.7886, lng: -87.5982,
+                  w: 60, d: 70, h: 0.15 },
+
+                // Botany Pond area
+                { type: 'quad', name: 'Botany Pond',
+                  lat: 41.7900, lng: -87.5978,
+                  w: 50, d: 35, h: 0.15 },
+
+                // South Campus green (between BJ and RGG)
+                { type: 'quad', name: 'South Campus Green',
+                  lat: 41.7850, lng: -87.5985,
+                  w: 80, d: 40, h: 0.15 },
+
+                // Woodlawn Ave green strip (east of Rockefeller)
+                { type: 'quad', name: 'Woodlawn Green',
+                  lat: 41.7895, lng: -87.5960,
+                  w: 30, d: 80, h: 0.12 },
+
+                // 57th St green median (between Regenstein and Bartlett)
+                { type: 'quad', name: '57th Green',
+                  lat: 41.7920, lng: -87.5992,
+                  w: 60, d: 20, h: 0.12 },
+
+                // ── Libraries (blue) ────────────────────────────────────────
+                // ArcGIS: Regenstein Library — 41.7922131882, -87.5999558277
+                // BBox 109.0m × 126.3m, BLDG_HGT 88ft → 26.8m
+                { type: 'library', name: 'Regenstein',
                   lat: 41.7922131882, lng: -87.5999558277,
                   w: 109.0, d: 126.3, h: 26.8 },
 
-                { type: 'building', name: 'Rockefeller Chapel',
-                  lat: 41.7885324798, lng: -87.5970610293,
+                // ArcGIS: John Crerar Library — 41.7905519198, -87.6028134134
+                // BBox 49.2m × 89.9m, BLDG_HGT 60ft → 18.3m
+                { type: 'library', name: 'Crerar',
+                  lat: 41.7905519198, lng: -87.6028134134,
+                  w: 49.2, d: 89.9, h: 18.3 },
+
+                // ArcGIS: Harper Memorial Library — 41.7879911699, -87.5996176668
+                // BBox 83.8m × 25.9m, BLDG_HGT 96ft → 29.3m
+                { type: 'library', name: 'Harper',
+                  lat: 41.7879911699, lng: -87.5996176668,
+                  w: 83.8, d: 25.9, h: 29.3 },
+
+                // ── Dining commons (amber) ──────────────────────────────────
+                // ArcGIS: Bartlett Commons — 41.7919480829, -87.5984764408
+                // BBox 37.8m × 73.8m, BLDG_HGT 76ft → 23.2m
+                { type: 'dining', name: 'Bartlett',
+                  lat: 41.7919480829, lng: -87.5984764408,
+                  w: 37.8, d: 73.8, h: 23.2 },
+
+                // ArcGIS: Cathey Dining Commons — 41.7850932274, -87.6003608561
+                // BBox 57.1m × 36.8m, BLDG_HGT 60ft → 18.3m
+                { type: 'dining', name: 'Cathey Dining',
+                  lat: 41.7850932274, lng: -87.6003608561,
+                  w: 57.1, d: 36.8, h: 18.3 },
+
+                // ── Gyms / Athletics (teal) ─────────────────────────────────
+                // ArcGIS: Ratner Athletics Center — 41.794167286, -87.6020612031
+                // BBox 77.0m × 164.8m, BLDG_HGT 54ft → 16.5m
+                { type: 'gym', name: 'Ratner',
+                  lat: 41.794167286, lng: -87.6020612031,
+                  w: 77.0, d: 164.8, h: 16.5 },
+
+                // ArcGIS: Henry Crown Field House — 41.7935651382, -87.5989484493
+                // BBox 108.6m × 52.1m, BLDG_HGT 32ft → 9.8m
+                { type: 'gym', name: 'Crown',
+                  lat: 41.7935651382, lng: -87.5989484493,
+                  w: 108.6, d: 52.1, h: 9.8 },
+
+                // ── Libraries (continued) ───────────────────────────────────
+                // D'Angelo Law Library removed from map display
+
+                // ArcGIS: Eckhart Hall (houses Eckhart Library)
+                // 41.7902601919, -87.5985446188, BBox 52.4m × 41.1m, BLDG_HGT 80ft → 24.4m
+                { type: 'library', name: 'Eckhart',
+                  lat: 41.7902601919, lng: -87.5985446188,
+                  w: 52.4, d: 41.1, h: 24.4 },
+
+                // SSA Library removed from map display
+
+                // ── Dining commons (continued) ──────────────────────────────
+                // Baker Dining Commons (CNRC building at 55th & University)
+                // ArcGIS: CNRC — 41.7945528291, -87.5991870748
+                // BBox 78.2m × 60.0m, BLDG_HGT 22ft → 6.7m
+                { type: 'dining', name: 'Baker Dining',
+                  lat: 41.7945528291, lng: -87.5991870748,
+                  w: 78.2, d: 60.0, h: 6.7 },
+
+                // Woodlawn Dining (inside Woodlawn Residential Commons)
+                // Separate label marker near the dining entrance at 1156 E 61st
+                // Using a small footprint near the south side of the Woodlawn complex
+                { type: 'dining', name: 'Woodlawn Dining',
+                  lat: 41.7840, lng: -87.5970,
+                  w: 50, d: 25, h: 5.0 },
+
+                // ── Gyms / Athletics (continued) ────────────────────────────
+                // Kovler Gym and Sunny Gym removed from map display
+
+                // ArcGIS: Ida Noyes Hall
+                // 41.7881890814, -87.5955909701, BBox 73.9m × 56.9m, BLDG_HGT 64ft → 19.5m
+                { type: 'building', name: 'Ida Noyes',
+                  lat: 41.7881890814, lng: -87.5955909701,
+                  w: 73.9, d: 56.9, h: 19.5 },
+
+                // ── Other buildings (gray) ──────────────────────────────────
+                // ArcGIS: Rockefeller Chapel — two records (nave + tower)
+                { type: 'building', name: 'Rockefeller',
+                  lat: 41.7885326920, lng: -87.5970532895,
                   w: 34.0, d: 80.7, h: 30.5,
                   parts: [
                       { lat: 41.7885324798, lng: -87.5970610293, w: 34.0, d: 80.7, h: 30.5 },
@@ -349,20 +494,40 @@
             let focusDistance = overviewDistance;
             let focusing = false;
 
+            // hoverZoomOffset is declared near the animate loop below;
+            // applyCameraPose reads it to apply a subtle pull-in on hover.
+            let hoverZoomOffset = 0;
+
+            // Hover yaw state — on hover the camera rotates to face the dorm,
+            // Hover look-at state — on hover the camera keeps its position
+            // but rotates to face the dorm. On exit it eases back to normal.
+            const hoverLookAtCurrent = new THREE.Vector3(); // current interpolated look-at point
+            let   hoverLookAtActive  = false;               // true while hover look-at is in effect
+
+            // Kept for clearSelection / setOverviewPose compatibility
+            const hoverTargetVec  = new THREE.Vector3();
+            let   hoverTargetActive = false;
+
             function applyCameraPose() {
                 const yaw = cameraYaw;
                 const cosP = Math.cos(cameraPitch);
                 const sinP = Math.sin(cameraPitch);
-                const dx = Math.sin(yaw) * cosP * cameraDistance;
-                const dz = Math.cos(yaw) * cosP * cameraDistance;
-                const dy = sinP * cameraDistance;
+                const dist = cameraDistance + hoverZoomOffset;
+                const dx = Math.sin(yaw) * cosP * dist;
+                const dz = Math.cos(yaw) * cosP * dist;
+                const dy = sinP * dist;
                 camera.position.set(
                     cameraTarget.x + dx,
                     cameraTarget.y + dy,
                     cameraTarget.z + dz
                 );
                 camera.up.set(0, 1, 0);
-                camera.lookAt(cameraTarget);
+                // During hover, look toward the dorm instead of cameraTarget
+                if (hoverLookAtActive) {
+                    camera.lookAt(hoverLookAtCurrent);
+                } else {
+                    camera.lookAt(cameraTarget);
+                }
             }
 
             const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -398,12 +563,66 @@
             grid.material.transparent = true;
             scene.add(grid);
 
+            // ── Render roads ────────────────────────────────────────────────
+            const ROAD_COLOR = 0x9e9e9e;
+            const ROAD_MAT = new THREE.MeshLambertMaterial({ color: ROAD_COLOR });
+            ROADS.forEach(rd => {
+                if (rd.lat !== undefined) {
+                    // East-West road
+                    const p1 = latLngToXZ(rd.lat, rd.lngStart);
+                    const p2 = latLngToXZ(rd.lat, rd.lngEnd);
+                    const length = Math.abs(p2.x - p1.x);
+                    const cx = (p1.x + p2.x) / 2;
+                    const cz = p1.z;
+                    const mesh = new THREE.Mesh(
+                        new THREE.BoxGeometry(length, 0.15, rd.width),
+                        ROAD_MAT
+                    );
+                    mesh.position.set(cx, 0.08, cz);
+                    mesh.receiveShadow = true;
+                    scene.add(mesh);
+                } else {
+                    // North-South road
+                    const p1 = latLngToXZ(rd.latStart, rd.lng);
+                    const p2 = latLngToXZ(rd.latEnd, rd.lng);
+                    const length = Math.abs(p2.z - p1.z);
+                    const cx = p1.x;
+                    const cz = (p1.z + p2.z) / 2;
+                    const mesh = new THREE.Mesh(
+                        new THREE.BoxGeometry(rd.width, 0.15, length),
+                        ROAD_MAT
+                    );
+                    mesh.position.set(cx, 0.08, cz);
+                    mesh.receiveShadow = true;
+                    scene.add(mesh);
+                }
+            });
+
+            // ── Render sidewalks / campus paths ─────────────────────────────
+            const SIDEWALK_MAT = new THREE.MeshLambertMaterial({ color: 0xc8c0b0 });
+            SIDEWALKS.forEach(sw => {
+                const pts = sw.points;
+                if (pts.length < 2) return;
+                const p0 = latLngToXZ(pts[0].lat, pts[0].lng);
+                const p1 = latLngToXZ(pts[1].lat, pts[1].lng);
+                const dx = p1.x - p0.x;
+                const dz = p1.z - p0.z;
+                const length = Math.sqrt(dx * dx + dz * dz);
+                const angle = Math.atan2(dx, dz);
+                const mesh = new THREE.Mesh(
+                    new THREE.BoxGeometry(sw.width, 0.12, length),
+                    SIDEWALK_MAT
+                );
+                mesh.position.set((p0.x + p1.x) / 2, 0.12, (p0.z + p1.z) / 2);
+                mesh.rotation.y = angle;
+                mesh.receiveShadow = true;
+                scene.add(mesh);
+            });
+
             // 3D north arrow removed — replaced by a 2D compass in the UI overlay.
 
             // ── Render quad (green grass patch) ─────────────────────────────
-            (function renderQuad() {
-                const q = LANDMARKS.find(l => l.type === 'quad');
-                if (!q) return;
+            LANDMARKS.filter(l => l.type === 'quad').forEach(q => {
                 const pos = latLngToXZ(q.lat, q.lng);
                 const grass = new THREE.Mesh(
                     new THREE.BoxGeometry(q.w, q.h, q.d),
@@ -574,9 +793,7 @@
             // circles uniformly across ALL dorms.
             const LABEL_PX_ABOVE_ANCHOR = -18;   // px above the projected anchor point for the label
             const CIRCLE_PX_BELOW_LABEL = 2;   // px gap between label bottom and circle top
-            // The anchor point itself is placed this many world-units above
-            // the tallest cuboid of each dorm:
-            const ANCHOR_Y_ABOVE_ROOF   = 20;  // world-units above building top
+            // ANCHOR_Y_ABOVE_ROOF is declared above (before the landmark loop)
 
             // ── CAMERA HORIZONTAL OFFSET (north/south) ──────────────────────
             // Shifts the overview camera target along the Z axis (scene coords).
@@ -594,9 +811,6 @@
             const dormAnchor = {};
             // Store references to the 2D overlay elements for each dorm
             const dormOverlayEls = {};
-
-            // Build the 2D overlay container
-            const labelsOverlay = document.getElementById('dorm-labels-overlay');
 
             DORMS.forEach(d => {
                 const sharedMat = new THREE.MeshLambertMaterial({ color: DORM_BASE_COLOR.clone() });
@@ -708,24 +922,117 @@
                 return sprite;
             })();
 
-            // ── Connector dashed line (rendered in 3D scene, behind labels) ──
-            // The line connects the dorm anchor (world space) to the hover
-            // card edge (screen space, unprojected to world space each frame).
-            const connectorLineMat = new THREE.LineDashedMaterial({
-                color: 0x1f1f1f,
-                dashSize: 6,
-                gapSize: 6,
-                linewidth: 1,
-                transparent: true,
-                opacity: 0.78,
-                depthTest: false
-            });
+            // ── Connector circuit-trace line (rendered in 3D scene, behind labels) ──
+            // Replaces the old dashed line with an animated circuit-board trace effect.
+            // The line connects the dorm anchor (world space) to the hover card edge.
+            //
+            // We draw the circuit trace as a 2D canvas overlay so we can render
+            // the characteristic right-angle "PCB trace" look with animated pulses.
+            const circuitCanvas = document.createElement('canvas');
+            circuitCanvas.style.cssText = 'position:absolute; inset:0; pointer-events:none; z-index:8;';
+            wrap.appendChild(circuitCanvas);
+
+            // Circuit trace state
+            let circuitVisible = false;
+            let circuitAnchorScreen = null;   // { x, y } in canvas pixels
+            let circuitCardEdge = null;        // { x, y } in canvas pixels
+
+            function resizeCircuitCanvas() {
+                const r = wrap.getBoundingClientRect();
+                circuitCanvas.width  = r.width;
+                circuitCanvas.height = r.height;
+            }
+            resizeCircuitCanvas();
+            window.addEventListener('resize', resizeCircuitCanvas);
+
+            // Draw the circuit trace each frame.
+            // Shape: PCB-style 45° routing — a short straight run out from the
+            // anchor, a 45° diagonal transition, then a straight run into the
+            // card edge. No animation, no motion — just a clean static trace.
+            function drawCircuitTrace() {
+                const ctx = circuitCanvas.getContext('2d');
+                ctx.clearRect(0, 0, circuitCanvas.width, circuitCanvas.height);
+                if (!circuitVisible || !circuitAnchorScreen || !circuitCardEdge) return;
+
+                const ax = circuitAnchorScreen.x, ay = circuitAnchorScreen.y;
+                const bx = circuitCardEdge.x,     by = circuitCardEdge.y;
+
+                // Build a 45°-routed path:
+                //   A  →  P1  (short horizontal stub out from anchor)
+                //   P1 →  P2  (45° diagonal)
+                //   P2 →  B   (vertical run into card edge)
+                //
+                // The diagonal covers the full vertical delta; the horizontal
+                // stub is just enough to clear the building label.
+                const STUB = 28;                        // px of horizontal stub at anchor
+                const dx = bx > ax ? STUB : -STUB;     // stub direction matches card side
+                const dy = by - ay;                     // total vertical travel
+                const diagLen = Math.abs(dy);           // 45° means equal horiz + vert
+
+                const p1 = { x: ax + dx,              y: ay };
+                const p2 = { x: ax + dx + (bx > ax ? diagLen : -diagLen), y: by };
+
+                // If p2 overshoots bx, clamp and fall back to a simple L
+                const pts = (bx > ax ? p2.x <= bx : p2.x >= bx)
+                    ? [ { x: ax, y: ay }, p1, p2, { x: bx, y: by } ]
+                    : [ { x: ax, y: ay }, { x: bx, y: ay }, { x: bx, y: by } ];
+
+                function drawPath(pts) {
+                    ctx.beginPath();
+                    ctx.moveTo(pts[0].x, pts[0].y);
+                    for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+                    ctx.stroke();
+                }
+
+                // ── Glow layer ──
+                ctx.save();
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+                ctx.lineWidth = 6;
+                ctx.lineCap = 'square';
+                ctx.lineJoin = 'miter';
+                drawPath(pts);
+                ctx.restore();
+
+                // ── Main trace ──
+                ctx.save();
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.70)';
+                ctx.lineWidth = 1.5;
+                ctx.lineCap = 'square';
+                ctx.lineJoin = 'miter';
+                drawPath(pts);
+                ctx.restore();
+
+                // ── Via pads at each bend (small filled squares) ──
+                const PAD = 3;
+                ctx.save();
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.88)';
+                for (let i = 1; i < pts.length - 1; i++) {
+                    ctx.fillRect(pts[i].x - PAD, pts[i].y - PAD, PAD * 2, PAD * 2);
+                }
+                ctx.restore();
+
+                // ── Anchor pad (circle at building end) ──
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(ax, ay, 3, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.88)';
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // No animation — tickCircuitPulse is a no-op kept so the animate
+            // loop call doesn't error if referenced elsewhere.
+            function tickCircuitPulse(dt) {}
+
+            // Dummy Three.js objects kept so positionConnector() still works
+            // (it sets positions on these; we just ignore them for rendering)
+            const connectorLineMat = new THREE.LineBasicMaterial({ visible: false });
             const connectorLineGeo = new THREE.BufferGeometry().setFromPoints([
                 new THREE.Vector3(0, 0, 0),
                 new THREE.Vector3(0, 0, 0)
             ]);
             const connectorLine3D = new THREE.Line(connectorLineGeo, connectorLineMat);
-            connectorLine3D.renderOrder = 1; // behind labels (renderOrder 2)
+            connectorLine3D.renderOrder = 1;
             connectorLine3D.visible = false;
             connectorLine3D.frustumCulled = false;
             scene.add(connectorLine3D);
@@ -800,6 +1107,10 @@
                 cameraYaw = OVERVIEW_YAW;
                 cameraPitch = VIEW_PITCH;
                 focusing = false;
+                hoverTargetVec.copy(overviewTarget);
+                hoverTargetActive = false;
+                hoverLookAtActive = false;
+                hoverLookAtCurrent.copy(overviewTarget);
                 applyCameraPose();
             }
 
@@ -845,14 +1156,48 @@
                 if (!group || !group.length) return;
                 group[0].material.color.copy(color);
             }
+
+            // ── Dorm hover scale animation ──────────────────────────────────
+            // Each dorm tracks a target scale (1.0 = normal, HOVER_SCALE = hovered).
+            // The render loop lerps toward the target each frame for a smooth feel.
+            const HOVER_SCALE = 1.035; // subtle — just enough for visual feedback
+            const SCALE_LERP  = 0.12;  // speed (higher = snappier)
+            const dormScaleTarget = {}; // name → target scale
+            const dormScaleCurrent = {}; // name → current scale
+            DORMS.forEach(d => {
+                dormScaleTarget[d.name]  = 1.0;
+                dormScaleCurrent[d.name] = 1.0;
+            });
+
+            function setDormScale(name, target) {
+                dormScaleTarget[name] = target;
+            }
+
+            function tickDormScales() {
+                DORMS.forEach(d => {
+                    const cur = dormScaleCurrent[d.name];
+                    const tgt = dormScaleTarget[d.name];
+                    if (Math.abs(cur - tgt) < 0.0001) {
+                        dormScaleCurrent[d.name] = tgt;
+                    } else {
+                        dormScaleCurrent[d.name] = cur + (tgt - cur) * SCALE_LERP;
+                    }
+                    const s = dormScaleCurrent[d.name];
+                    const group = dormByName[d.name];
+                    if (group) group.forEach(m => m.scale.set(s, s, s));
+                });
+            }
+
             function setHover(mesh) {
                 if (hovered && (!mesh || hovered.userData.name !== mesh.userData.name)) {
                     const prevName = hovered.userData.name;
                     setDormColor(prevName, prevName === selectedName ? DORM_SELECT_COLOR : DORM_BASE_COLOR);
+                    if (prevName !== selectedName) setDormScale(prevName, 1.0);
                 }
                 hovered = mesh;
                 if (mesh && mesh.userData.name !== selectedName) {
                     setDormColor(mesh.userData.name, DORM_HOVER_COLOR);
+                    setDormScale(mesh.userData.name, HOVER_SCALE);
                 }
             }
 
@@ -983,7 +1328,8 @@
                     hoverCard.classList.remove('dorm-hover-card--zoomed');
                 }
                 connectorDotSprite.visible = true;
-                connectorLine3D.visible = true;
+                connectorLine3D.visible = false; // circuit canvas handles the line
+                circuitVisible = true;
                 positionConnector();
             }
             function hideHoverCard() {
@@ -993,6 +1339,9 @@
                 hoverCard.removeAttribute('data-dorm');
                 connectorDotSprite.visible = false;
                 connectorLine3D.visible = false;
+                circuitVisible = false;
+                circuitAnchorScreen = null;
+                circuitCardEdge = null;
             }
 
             function positionConnector() {
@@ -1010,7 +1359,7 @@
 
                 // When zoomed into a selected dorm, push the card further
                 // away so the connector line is clearly visible.
-                const cardOffset = selectedName ? 250 : 90;
+                const cardOffset = selectedName ? 340 : 160;
 
                 const placeRight = anchor.x < r.width / 2;
                 let cardX = placeRight
@@ -1025,21 +1374,16 @@
                 const cardEdgeX = placeRight ? cardX : (cardX + cardWidth);
                 const cardEdgeY = cardY + cardHeight / 2;
 
+                // Update circuit trace endpoints (screen-space pixels)
+                circuitAnchorScreen = { x: anchor.x, y: anchor.y };
+                circuitCardEdge     = { x: cardEdgeX, y: cardEdgeY };
+                circuitVisible      = true;
+
                 // Position the 3D connector dot sprite at the dorm's anchor
                 const anchorWorld = dormAnchor[name];
                 if (anchorWorld) {
                     connectorDotSprite.position.copy(anchorWorld);
                     connectorDotSprite.visible = true;
-
-                    // Update the 3D dashed line: from anchor (world) to
-                    // card edge (screen → unprojected to world).
-                    const cardEdgeWorld = screenToWorld(cardEdgeX, cardEdgeY, anchorWorld);
-                    const positions = connectorLineGeo.attributes.position;
-                    positions.setXYZ(0, anchorWorld.x, anchorWorld.y, anchorWorld.z);
-                    positions.setXYZ(1, cardEdgeWorld.x, cardEdgeWorld.y, cardEdgeWorld.z);
-                    positions.needsUpdate = true;
-                    connectorLine3D.computeLineDistances(); // required for dashed material
-                    connectorLine3D.visible = true;
                 }
             }
 
@@ -1162,6 +1506,12 @@
                 focusTargetVec.copy(overviewTarget);
                 focusDistance = overviewDistance;
                 focusing = true;
+
+                // Reset hover state so the camera eases back to overview
+                hoverTargetVec.copy(overviewTarget);
+                hoverTargetActive = false;
+                hoverLookAtActive = false;
+                hoverLookAtCurrent.copy(overviewTarget);
             }
 
             // ── Update 2D overlay label positions each frame ──────────────
@@ -1176,14 +1526,8 @@
                     const anchor = dormAnchor[d.name];
                     if (!el || !anchor) return;
 
-                    // Project world → NDC → screen pixels
                     const proj = anchor.clone().project(camera);
-
-                    // Behind camera? Hide.
-                    if (proj.z > 1) {
-                        el.style.opacity = '0';
-                        return;
-                    }
+                    if (proj.z > 1) { el.style.opacity = '0'; return; }
 
                     const sx = (proj.x * halfW) + halfW;
                     const sy = (-proj.y * halfH) + halfH;
@@ -1194,11 +1538,50 @@
                 });
             }
 
+            // Projects each landmark's anchor to screen space and positions
+            // its 2D HTML label element, same approach as dorm labels.
+            function updateLandmarkLabels2D() {
+                const r = wrap.getBoundingClientRect();
+                const halfW = r.width / 2;
+                const halfH = r.height / 2;
+                Object.keys(landmarkOverlayEls).forEach(name => {
+                    const el = landmarkOverlayEls[name];
+                    const anchor = landmarkAnchor[name];
+                    if (!el || !anchor) return;
+
+                    const proj = anchor.clone().project(camera);
+                    if (proj.z > 1) { el.style.opacity = '0'; return; }
+
+                    const sx = (proj.x * halfW) + halfW;
+                    const sy = (-proj.y * halfH) + halfH;
+
+                    el.style.opacity = '1';
+                    el.style.left = sx + 'px';
+                    el.style.top  = sy + 'px';
+                });
+            }
+
             // ── Animation loop ──────────────────────────────────────────────
             const FOCUS_LERP  = 0.08;
             const compassEl = document.getElementById('compass-2d');
+            let lastFrameTime = performance.now();
+
+            // ── Hover zoom ──────────────────────────────────────────────────
+            // On hover, smoothly shift the camera target toward the hovered
+            // dorm's position and pull the distance in slightly, so the zoom
+            // moves in the direction of the dorm rather than toward the center.
+            // On hover exit the camera eases back to the overview pose.
+            // This is entirely independent of the click-to-focus system.
+            const HOVER_ZOOM_AMOUNT  = 28;   // world-units to pull in on distance
+            const HOVER_ZOOM_LERP    = 0.10;
+            let hoverZoomTarget      = 0;    // target distance offset
+
             function animate() {
                 requestAnimationFrame(animate);
+
+                const now = performance.now();
+                const dt = Math.min((now - lastFrameTime) / 1000, 0.1); // seconds, capped
+                lastFrameTime = now;
 
                 if (focusing) {
                     cameraTarget.lerp(focusTargetVec, FOCUS_LERP);
@@ -1211,21 +1594,59 @@
                     }
                 }
 
+                // Hover: keep camera position fixed, nudge the look-at point
+                // a tiny amount toward the dorm — barely perceptible tilt.
+                const LOOK_LERP   = 0.03;  // very slow ease
+                const LOOK_BLEND  = 0.02;
+                if (hovered && !selectedName && !focusing) {
+                    const c = dormCenter(hovered.userData.name);
+                    if (c) {
+                        const lookTarget = new THREE.Vector3(
+                            cameraTarget.x + (c.x - cameraTarget.x) * LOOK_BLEND,
+                            cameraTarget.y,
+                            cameraTarget.z + (c.z - cameraTarget.z) * LOOK_BLEND
+                        );
+                        if (!hoverLookAtActive) {
+                            hoverLookAtCurrent.copy(cameraTarget);
+                            hoverLookAtActive = true;
+                        }
+                        hoverLookAtCurrent.lerp(lookTarget, LOOK_LERP);
+                    }
+                    hoverZoomTarget = -HOVER_ZOOM_AMOUNT;
+                } else {
+                    hoverZoomTarget = 0;
+                    if (hoverLookAtActive) {
+                        hoverLookAtCurrent.lerp(cameraTarget, LOOK_LERP);
+                        if (hoverLookAtCurrent.distanceToSquared(cameraTarget) < 0.1) {
+                            hoverLookAtActive = false;
+                            hoverLookAtCurrent.copy(cameraTarget);
+                        }
+                    }
+                }
+
+                hoverZoomOffset += (hoverZoomTarget - hoverZoomOffset) * HOVER_ZOOM_LERP;
+
                 // Show compass when zoomed out (near overview distance), hide when zoomed in
                 if (compassEl) {
                     var zoomRatio = cameraDistance / overviewDistance;
                     compassEl.style.opacity = zoomRatio > 0.75 ? '1' : '0';
                 }
 
+                tickDormScales();
                 applyCameraPose();
                 renderer.render(scene, camera);
 
                 // Update 2D overlay labels to track projected positions
                 updateDormLabels2D();
+                updateLandmarkLabels2D();
 
                 // Connector tracks the camera so the line stays glued to
                 // the building as we zoom in.
                 if (hoverCard.dataset.dorm) positionConnector();
+
+                // Tick and draw the circuit trace overlay
+                tickCircuitPulse(dt);
+                drawCircuitTrace();
             }
             animate();
 
