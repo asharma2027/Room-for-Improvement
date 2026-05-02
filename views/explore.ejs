@@ -467,6 +467,147 @@
                   label: 'Crerar' }
             ];
 
+            // ── Roads ───────────────────────────────────────────────────────
+            // Simplified road segments as flat rectangles. Each road is defined
+            // by two lat/lng endpoints and a width. Rendered as thin dark-gray
+            // strips on the ground plane.
+            //
+            // UChicago campus grid (real lat/lng from ArcGIS / satellite):
+            //   E-W streets run at constant latitude
+            //   N-S avenues run at constant longitude
+            const ROADS = [
+                // ── East-West streets ───────────────────────────────────────
+                // 55th St (north edge of campus)
+                { name: '55th St',
+                  lat: 41.7953, lngStart: -87.6040, lngEnd: -87.5910, width: 12 },
+                // 56th St
+                { name: '56th St',
+                  lat: 41.7939, lngStart: -87.6040, lngEnd: -87.5910, width: 10 },
+                // 57th St
+                { name: '57th St',
+                  lat: 41.7925, lngStart: -87.6040, lngEnd: -87.5910, width: 10 },
+                // 58th St
+                { name: '58th St',
+                  lat: 41.7911, lngStart: -87.6040, lngEnd: -87.5910, width: 10 },
+                // 59th St
+                { name: '59th St',
+                  lat: 41.7876, lngStart: -87.6040, lngEnd: -87.5910, width: 12 },
+                // 60th St
+                { name: '60th St',
+                  lat: 41.7862, lngStart: -87.6040, lngEnd: -87.5910, width: 10 },
+                // 61st St
+                { name: '61st St',
+                  lat: 41.7840, lngStart: -87.6040, lngEnd: -87.5910, width: 10 },
+
+                // ── North-South avenues ─────────────────────────────────────
+                // Ellis Ave
+                { name: 'Ellis Ave',
+                  lng: -87.6013, latStart: 41.7840, latEnd: 41.7955, width: 10 },
+                // University Ave
+                { name: 'University Ave',
+                  lng: -87.5985, latStart: 41.7840, latEnd: 41.7955, width: 10 },
+                // Woodlawn Ave
+                { name: 'Woodlawn Ave',
+                  lng: -87.5960, latStart: 41.7840, latEnd: 41.7955, width: 10 },
+                // Kimbark Ave
+                { name: 'Kimbark Ave',
+                  lng: -87.5940, latStart: 41.7840, latEnd: 41.7955, width: 10 },
+                // Kenwood Ave
+                { name: 'Kenwood Ave',
+                  lng: -87.5925, latStart: 41.7840, latEnd: 41.7955, width: 10 },
+                // Greenwood Ave (west edge)
+                { name: 'Greenwood Ave',
+                  lng: -87.6035, latStart: 41.7840, latEnd: 41.7955, width: 10 },
+                // Dorchester Ave
+                { name: 'Dorchester Ave',
+                  lng: -87.5910, latStart: 41.7840, latEnd: 41.7955, width: 10 },
+                // Blackstone Ave
+                { name: 'Blackstone Ave',
+                  lng: -87.5900, latStart: 41.7840, latEnd: 41.7955, width: 10 },
+                // Ingleside Ave
+                { name: 'Ingleside Ave',
+                  lng: -87.6025, latStart: 41.7840, latEnd: 41.7870, width: 8 },
+                // Drexel Ave
+                { name: 'Drexel Ave',
+                  lng: -87.6040, latStart: 41.7840, latEnd: 41.7955, width: 10 },
+                // Maryland Ave
+                { name: 'Maryland Ave',
+                  lng: -87.6050, latStart: 41.7870, latEnd: 41.7955, width: 10 },
+                // Cottage Grove Ave (far west)
+                { name: 'Cottage Grove Ave',
+                  lng: -87.6060, latStart: 41.7840, latEnd: 41.7955, width: 10 },
+            ];
+
+            // ── Sidewalks / campus paths ────────────────────────────────────
+            // Thin light-gray strips representing major pedestrian walkways.
+            const SIDEWALKS = [
+                // Main Quad diagonal paths (NW-SE and NE-SW)
+                { name: 'Quad Path NW-SE',
+                  points: [
+                    { lat: 41.7908, lng: -87.6010 },
+                    { lat: 41.7882, lng: -87.5980 }
+                  ], width: 3 },
+                { name: 'Quad Path NE-SW',
+                  points: [
+                    { lat: 41.7908, lng: -87.5980 },
+                    { lat: 41.7882, lng: -87.6010 }
+                  ], width: 3 },
+                // Main Quad N-S center path
+                { name: 'Quad Center N-S',
+                  points: [
+                    { lat: 41.7908, lng: -87.5995 },
+                    { lat: 41.7882, lng: -87.5995 }
+                  ], width: 3 },
+                // Main Quad E-W center path
+                { name: 'Quad Center E-W',
+                  points: [
+                    { lat: 41.7895, lng: -87.6010 },
+                    { lat: 41.7895, lng: -87.5980 }
+                  ], width: 3 },
+                // 57th St campus walk (between Regenstein and Bartlett)
+                { name: '57th Walk',
+                  points: [
+                    { lat: 41.7920, lng: -87.6030 },
+                    { lat: 41.7920, lng: -87.5960 }
+                  ], width: 4 },
+                // Ellis Ave campus walk (west side of quads)
+                { name: 'Ellis Walk',
+                  points: [
+                    { lat: 41.7875, lng: -87.6010 },
+                    { lat: 41.7940, lng: -87.6010 }
+                  ], width: 3 },
+                // University Ave campus walk
+                { name: 'University Walk',
+                  points: [
+                    { lat: 41.7875, lng: -87.5985 },
+                    { lat: 41.7940, lng: -87.5985 }
+                  ], width: 3 },
+                // Woodlawn Ave campus walk
+                { name: 'Woodlawn Walk',
+                  points: [
+                    { lat: 41.7875, lng: -87.5960 },
+                    { lat: 41.7940, lng: -87.5960 }
+                  ], width: 3 },
+                // South campus E-W path (between BJ and RGG)
+                { name: 'South Campus Walk',
+                  points: [
+                    { lat: 41.7850, lng: -87.6010 },
+                    { lat: 41.7850, lng: -87.5960 }
+                  ], width: 3 },
+                // Midway N edge path
+                { name: 'Midway North Walk',
+                  points: [
+                    { lat: 41.7838, lng: -87.6040 },
+                    { lat: 41.7838, lng: -87.5910 }
+                  ], width: 3 },
+                // Midway S edge path
+                { name: 'Midway South Walk',
+                  points: [
+                    { lat: 41.7826, lng: -87.6040 },
+                    { lat: 41.7826, lng: -87.5910 }
+                  ], width: 3 },
+            ];
+
             // ── Three.js scene setup ────────────────────────────────────────
             const wrap = document.getElementById('campus-3d-canvas-wrap');
             const canvas = document.getElementById('campus-3d-canvas');
