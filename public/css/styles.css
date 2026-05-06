@@ -2959,6 +2959,8 @@ table tbody tr:hover {
 /* ── Dorm labels — large + bold ── */
 .dorm-label-2d {
   /* gap controlled inline via JS (CIRCLE_PX_BELOW_LABEL) */
+  /* No transform transition — top/left are set every frame by JS */
+  transition: opacity 0.18s ease;
 }
 .dorm-label-2d__text {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -2993,11 +2995,27 @@ table tbody tr:hover {
   font-weight: 700;
 }
 
+/* ── Dorm labels when a non-dorm building is hovered ── */
+/* Hide the rank circle. The JS updateDormLabels2D() compensates the
+   top position each frame so the text label stays at the same spot.
+   An additional translateY nudges the label lower on screen so it
+   doesn't crowd the center of the map during landmark hover. */
+.dorm-label-2d--landmark-hovered .dorm-label-2d__circle {
+  display: none;
+}
+.dorm-label-2d--landmark-hovered {
+  transform: translate(-50%, -100%) translateY(24px);
+  transition: transform 0.05s ease;
+}
+
 /* ── Landmark (non-dorm) labels — small + light ── */
 /* Override the shared -100% vertical shift so labels sit centered on the
    projected anchor point (mid-building) rather than floating above it. */
 .landmark-label-2d {
   transform: translate(-50%, -50%);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 3;
+  cursor: default;
 }
 .landmark-label-2d__text {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -3011,6 +3029,30 @@ table tbody tr:hover {
   line-height: 1.3;
   letter-spacing: 0.01em;
   border: 1px solid rgba(0, 0, 0, 0.08);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, font-size 0.18s ease, padding 0.18s ease;
+}
+
+/* Hovered landmark label: expand and emphasize */
+.landmark-label-2d--hovered {
+  z-index: 10;
+  transform: translate(-50%, -50%) scale(1.5);
+}
+.landmark-label-2d--hovered .landmark-label-2d__text {
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  font-weight: 700;
+  border-color: rgba(0, 0, 0, 0.18);
+}
+
+/* Same-type peer labels: subtle scale-up, less than the directly hovered one */
+.landmark-label-2d--hovered-peer {
+  z-index: 9;
+  transform: translate(-50%, -50%) scale(1.09);
+}
+.landmark-label-2d--hovered-peer .landmark-label-2d__text {
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.10);
+  border-color: rgba(0, 0, 0, 0.12);
 }
 
 /* Type-specific landmark label colors */
@@ -3019,15 +3061,141 @@ table tbody tr:hover {
   background: rgba(220, 235, 255, 0.88);
   border-color: rgba(91, 138, 191, 0.25);
 }
+.landmark-label-2d--library.landmark-label-2d--hovered .landmark-label-2d__text {
+  background: rgba(220, 235, 255, 0.98);
+  border-color: rgba(91, 138, 191, 0.45);
+}
 .landmark-label-2d--dining .landmark-label-2d__text {
   color: #8a6520;
   background: rgba(255, 240, 210, 0.88);
   border-color: rgba(212, 160, 84, 0.25);
 }
+.landmark-label-2d--dining.landmark-label-2d--hovered .landmark-label-2d__text {
+  background: rgba(255, 240, 210, 0.98);
+  border-color: rgba(212, 160, 84, 0.45);
+}
 .landmark-label-2d--gym .landmark-label-2d__text {
   color: #2a7070;
   background: rgba(210, 245, 245, 0.88);
   border-color: rgba(77, 166, 166, 0.25);
+}
+.landmark-label-2d--gym.landmark-label-2d--hovered .landmark-label-2d__text {
+  background: rgba(210, 245, 245, 0.98);
+  border-color: rgba(77, 166, 166, 0.45);
+}
+.landmark-label-2d--culture .landmark-label-2d__text {
+  color: #5a3a20;
+  background: rgba(245, 230, 215, 0.88);
+  border-color: rgba(139, 94, 60, 0.25);
+}
+.landmark-label-2d--culture.landmark-label-2d--hovered .landmark-label-2d__text {
+  background: rgba(245, 230, 215, 0.98);
+  border-color: rgba(139, 94, 60, 0.45);
+}
+
+/* ── Walk routes toggle button ── */
+.walk-routes-toggle {
+  position: absolute;
+  bottom: 20px;
+  right: 160px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  background: rgba(255, 255, 255, 0.90);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, opacity 0.3s ease;
+  white-space: nowrap;
+  line-height: 1;
+}
+.walk-routes-toggle:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(0, 0, 0, 0.2);
+  color: #333;
+}
+.walk-routes-toggle--active {
+  background: rgba(122, 31, 31, 0.10);
+  border-color: rgba(122, 31, 31, 0.45);
+  color: #7a1f1f;
+}
+.walk-routes-toggle--active:hover {
+  background: rgba(122, 31, 31, 0.16);
+}
+
+/* ── Walk-time labels (shown on hover of non-dorm buildings) ── */
+.walk-time-label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  pointer-events: none;
+  animation: walkTimeFadeIn 0.25s ease-out both;
+  z-index: 12;
+}
+@keyframes walkTimeFadeIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+.walk-time-label__time {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.96);
+  padding: 2px 7px;
+  border-radius: 10px;
+  border: 2px solid currentColor;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  white-space: nowrap;
+  line-height: 1.3;
+}
+.walk-time-label__dorm {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 0.52rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.88);
+  padding: 1px 5px;
+  border-radius: 6px;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+/* ── Road name labels ── */
+/* Rendered in a separate overlay below dorm/landmark labels.
+   Intentionally low-contrast and small so they read as map
+   context without competing with building labels. */
+.road-labels-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3; /* below dorm labels (z-index 5) */
+  overflow: hidden;
+}
+.road-label-2d {
+  position: absolute;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.25s ease;
+}
+.road-label-2d__text {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.82);
+  white-space: nowrap;
+  /* No background — the label sits directly on the road surface color,
+     which provides enough contrast without a pill/badge treatment. */
+  user-select: none;
 }
 
 /* ── Map legend ── */
@@ -3048,6 +3216,7 @@ table tbody tr:hover {
   display: flex;
   flex-direction: column;
   gap: 3px;
+  transition: opacity 0.3s ease;
 }
 .map-legend__title {
   font-weight: 700;
@@ -3080,6 +3249,7 @@ table tbody tr:hover {
   .dorm-label-2d__circle { width: 26px; height: 26px; font-size: 0.58rem; }
   .landmark-label-2d__text { font-size: 0.52rem; }
   .map-legend { font-size: 0.55rem; padding: 7px 10px; bottom: 14px; right: 14px; }
+  .walk-routes-toggle { bottom: 14px; right: 130px; font-size: 0.55rem; padding: 5px 9px; }
 }
 
 /* ============================================================

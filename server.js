@@ -528,6 +528,28 @@ function getDormBackground(dormName) {
   return dormBackgroundsCache[dormName] || null;
 }
 
+// Load OSM roads data once at startup (526 KB, no need to re-read per request)
+let OSM_ROADS_JSON = '{"roads":[]}';
+try {
+  OSM_ROADS_JSON = fs.readFileSync(path.join(__dirname, 'public', 'data', 'osm_roads.json'), 'utf8');
+} catch (e) {
+  console.warn('[explore] osm_roads.json not found — roads will be empty');
+}
+
+// Load Campus North 3mf mesh data at startup.
+// Source: public/data/3mf_buildings.json building_0002 (originally matched as
+// "Baker Dining" but is actually the full CNRC/Campus North footprint).
+// The mesh vertices were pre-converted from the 3mf coordinate system to the
+// explore page's Three.js scene coordinate system using a linear transform
+// (see comments in explore.ejs buildFromMeshData for full details).
+// Format: { v: [x0,z0,x1,z1,...], t: [i0,j0,k0,...] } — flat arrays for compactness.
+let CAMPUS_NORTH_MESH_JSON = '{"v":[],"t":[]}';
+try {
+  CAMPUS_NORTH_MESH_JSON = fs.readFileSync(path.join(__dirname, 'public', 'data', 'campus_north_mesh.json'), 'utf8');
+} catch (e) {
+  console.warn('[explore] campus_north_mesh.json not found — Campus North will use fallback');
+}
+
 // GET /explore - combined campus map + dorm rankings page
 app.get('/explore', ensureAuthenticated, (req, res) => {
   readRooms((err, rooms) => {
@@ -593,7 +615,9 @@ app.get('/explore', ensureAuthenticated, (req, res) => {
       user: req.user,
       allHousesJson: JSON.stringify(allHouses),
       dormScores,
-      dormScoresJson: JSON.stringify(dormScores)
+      dormScoresJson: JSON.stringify(dormScores),
+      osmRoadsJson: OSM_ROADS_JSON,
+      campusNorthMeshJson: CAMPUS_NORTH_MESH_JSON
     });
   });
 });
