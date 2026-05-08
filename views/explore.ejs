@@ -140,44 +140,46 @@
                       </svg>
                     </div>
 
-                    <!-- Walk routes toggle -->
-                    <button id="walk-routes-toggle" class="walk-routes-toggle" aria-pressed="false" title="Toggle walking route lines">
-                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <circle cx="4" cy="2.5" r="1.5" fill="currentColor"/>
-                        <path d="M4 4.5 L4 7.5 L2 10.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                        <path d="M4 6 L6.5 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none"/>
-                        <path d="M4 7.5 L5.5 11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none"/>
-                      </svg>
-                      <span>Walk Routes</span>
-                    </button>
-
-                    <!-- Map legend -->
-                    <div class="map-legend" aria-label="Map legend">
-                      <div class="map-legend__title">Legend</div>
-                      <div class="map-legend__item">
-                        <div class="map-legend__swatch" style="background:#7a1f1f;"></div>
-                        <span>Dorms</span>
+                    <!-- Walk routes toggle removed — feature always-on. See
+                         WALK_ROUTES_ENABLED constant in the page script for
+                         the backend kill-switch if the feature needs to be
+                         disabled without removing the implementation. -->
+                    <!-- Map filter panel -->
+                    <div class="map-filter-bar" aria-label="Filter buildings by type" role="group">
+                      <div class="map-filter-bar__header">
+                        <span class="map-filter-bar__title">Filter</span>
+                        <button class="map-filter-bar__clear" id="map-filter-clear" aria-label="Clear filter">Clear</button>
                       </div>
-                      <div class="map-legend__item">
-                        <div class="map-legend__swatch" style="background:#5b8abf;"></div>
-                        <span>Libraries</span>
-                      </div>
-                      <div class="map-legend__item">
-                        <div class="map-legend__swatch" style="background:#d4a054;"></div>
-                        <span>Dining</span>
-                      </div>
-                      <div class="map-legend__item">
-                        <div class="map-legend__swatch" style="background:#4da6a6;"></div>
-                        <span>Gyms</span>
-                      </div>
-                      <div class="map-legend__item">
-                        <div class="map-legend__swatch" style="background:#8b5e3c;"></div>
-                        <span>Culture</span>
-                      </div>
-                      <div class="map-legend__item">
-                        <div class="map-legend__swatch" style="background:#cfcfcf;"></div>
-                        <span>Other</span>
-                      </div>
+                      <button class="map-filter-chip" data-legend-type="dorm"    aria-pressed="false" style="--chip-color:#7a1f1f;">
+                        <span class="map-filter-chip__dot"></span>
+                        <span class="map-filter-chip__label">Dorms</span>
+                        <span class="map-filter-chip__check" aria-hidden="true"></span>
+                      </button>
+                      <button class="map-filter-chip" data-legend-type="library" aria-pressed="false" style="--chip-color:#9a3412;">
+                        <span class="map-filter-chip__dot"></span>
+                        <span class="map-filter-chip__label">Libraries</span>
+                        <span class="map-filter-chip__check" aria-hidden="true"></span>
+                      </button>
+                      <button class="map-filter-chip" data-legend-type="dining"  aria-pressed="false" style="--chip-color:#b45309;">
+                        <span class="map-filter-chip__dot"></span>
+                        <span class="map-filter-chip__label">Dining</span>
+                        <span class="map-filter-chip__check" aria-hidden="true"></span>
+                      </button>
+                      <button class="map-filter-chip" data-legend-type="gym"     aria-pressed="false" style="--chip-color:#be123c;">
+                        <span class="map-filter-chip__dot"></span>
+                        <span class="map-filter-chip__label">Gyms</span>
+                        <span class="map-filter-chip__check" aria-hidden="true"></span>
+                      </button>
+                      <button class="map-filter-chip" data-legend-type="culture" aria-pressed="false" style="--chip-color:#713f12;">
+                        <span class="map-filter-chip__dot"></span>
+                        <span class="map-filter-chip__label">Culture</span>
+                        <span class="map-filter-chip__check" aria-hidden="true"></span>
+                      </button>
+                      <button class="map-filter-chip" data-legend-type="building" aria-pressed="false" style="--chip-color:#6b6b6b;">
+                        <span class="map-filter-chip__dot"></span>
+                        <span class="map-filter-chip__label">Other</span>
+                        <span class="map-filter-chip__check" aria-hidden="true"></span>
+                      </button>
                     </div>
                 </div>
             </section>
@@ -311,60 +313,23 @@
                 return mesh;
             }
 
-            // ── Build a 3D mesh from pre-triangulated 3mf data ──────────────
+            // ── Build a 3D mesh from pre-triangulated campus_north_mesh data ──
             //
             // COORDINATE SYSTEM NOTES (for future LLM/developer reference):
             //
-            // The raw vertices in public/data/3mf_buildings.json are in the
-            // coordinate system produced by extract_3mf.py's mm_to_scene():
-            //   scene_x = SW_SCENE_X + (x_mm * SCALE_X)
-            //   scene_z = SW_SCENE_Z - (y_mm * SCALE_Y)
-            //   scene_y = z_mm / 1000.0
-            // where SW_SCENE_X ≈ -1017.6, SW_SCENE_Z ≈ 592.6, SCALE ≈ 13.772 m/mm.
+            // campus_north_mesh.json format:
+            //   v: flat array of XZ pairs [x0,z0, x1,z1, ...] for ALL vertices.
+            //      First half (indices 0..nVerts/2-1) = bottom ring (y=0).
+            //      Second half (indices nVerts/2..nVerts-1) = top ring (y=heightM).
+            //      Both halves share the same XZ footprint.
+            //   t: flat array of triangle vertex indices (3 per triangle).
+            //      The mesh is a COMPLETE 3D SOLID: bottom face (~418 tris),
+            //      top face (~418 tris), and side walls (~832 tris) are all
+            //      pre-triangulated. Do NOT re-extrude.
             //
-            // The explore page uses latLngToXZ() which produces:
-            //   x = (lng - ORIGIN_LNG) * M_PER_DEG_LNG
-            //   z = -(lat - ORIGIN_LAT) * M_PER_DEG_LAT
-            // with ORIGIN_LAT=41.7895, ORIGIN_LNG=-87.5995.
-            //
-            // Both systems share the same origin and conventions (x=east,
-            // -z=north, y=up) but differ by a constant offset (~1033m in
-            // both X and Z) because extract_3mf.py bakes in the SW corner
-            // offset of the 3MF export bounding box. The scale factors are
-            // ~1.0 (differ by <0.006% due to cos(lat) evaluated at bbox
-            // center vs ORIGIN_LAT).
-            //
-            // campus_north_mesh.json was pre-converted from 3mf_buildings.json
-            // building_0002 using the linear transform:
-            //   scene_x = 1032.96 + 1.0001 * raw_x
-            //   scene_z = -1032.91 + 1.0000 * raw_z
-            // (derived from mapping raw coords → lat/lon → latLngToXZ).
-            // The vertices in campus_north_mesh.json are ALREADY in explore
-            // page scene coordinates and can be used directly with Three.js.
-            //
-            // The mesh is a flat 2D triangulated footprint (all y=0 in the
-            // source). We extrude it to heightM by duplicating vertices at
-            // y=heightM and using the same triangle indices for top/bottom.
-            // Side walls are NOT generated (the mesh is dense enough that
-            // the visual difference is negligible at typical camera angles).
-            //
-            // GOTCHAS:
-            // - If you regenerate campus_north_mesh.json from 3mf_buildings.json,
-            //   you MUST recompute the linear transform using the FULL vertex
-            //   range (x_min/x_max/z_min/z_max) of ALL buildings in the file,
-            //   not just the target building. The split_building_mesh.py
-            //   meters_to_latlon() function uses these global ranges.
-            // - The 3mf_buildings.json "centroid_lat/lon" values are computed
-            //   via this same global-range mapping, so they won't exactly match
-            //   the ArcGIS coordinates used elsewhere in explore.ejs (typically
-            //   off by 10-20m).
-            // - Triangle winding in the source 3mf data is CCW when viewed
-            //   from above (looking down -Y). For the bottom face we reverse
-            //   winding so normals point downward.
-            //
-            // `meshData` format: { v: [x0,z0, x1,z1, ...], t: [i0,j0,k0, ...] }
-            // where v is a flat array of 2D scene-space XZ pairs, and t is a
-            // flat array of triangle vertex indices (3 per triangle).
+            // Vertices are already in explore page scene coordinates
+            // (pre-converted by scripts/split_building_mesh.py).
+            // Y values are assigned here: bottom half → 0, top half → heightM.
             //
             var CAMPUS_NORTH_MESH = null;
             try { CAMPUS_NORTH_MESH = JSON.parse(document.getElementById('campus-north-mesh-data').textContent); } catch(e) {}
@@ -373,43 +338,30 @@
                 if (!meshData) return null;
                 const flatV = meshData.v;
                 const flatT = meshData.t;
-                const nVerts = flatV.length / 2;
-                const nTris = flatT.length / 3;
+                const nVerts = flatV.length / 2;   // total vertices (bottom + top halves)
+                const nTris  = flatT.length / 3;
 
-                // Vertices are already in scene coords (pre-converted).
-                // No runtime coordinate transform needed.
+                // ── Mesh structure (campus_north_mesh.json) ──────────────────
+                // The v array stores XZ pairs for ALL vertices as a flat list.
+                // The mesh is already a complete 3D solid: bottom face, top face,
+                // and side walls are all pre-triangulated.
+                // Vertex layout: first half (indices 0..nVerts/2-1) = bottom ring
+                //                second half (indices nVerts/2..nVerts-1) = top ring
+                // Both halves share the same XZ coordinates; Y is assigned here:
+                //   bottom half → y = 0
+                //   top half    → y = heightM
+                // Triangle indices reference this combined vertex array directly.
+                const halfN = nVerts / 2;
 
-                // Build positions: bottom face (y=0) + top face (y=heightM)
-                const positions = new Float32Array(nVerts * 2 * 3);
+                const positions = new Float32Array(nVerts * 3);
                 for (let i = 0; i < nVerts; i++) {
-                    const x = flatV[i * 2];
-                    const z = flatV[i * 2 + 1];
-                    // Bottom vertex
-                    positions[i * 3]     = x;
-                    positions[i * 3 + 1] = 0;
-                    positions[i * 3 + 2] = z;
-                    // Top vertex (offset by nVerts in the position array)
-                    positions[(nVerts + i) * 3]     = x;
-                    positions[(nVerts + i) * 3 + 1] = heightM;
-                    positions[(nVerts + i) * 3 + 2] = z;
+                    positions[i * 3]     = flatV[i * 2];           // x
+                    positions[i * 3 + 1] = i < halfN ? 0 : heightM; // y
+                    positions[i * 3 + 2] = flatV[i * 2 + 1];       // z
                 }
 
-                // Build index: bottom triangles (flipped winding) + top triangles.
-                // Source triangles are CCW from above → top face keeps original
-                // winding (normals point up). Bottom face reverses winding so
-                // normals point down.
-                const indices = new Uint32Array(nTris * 2 * 3);
-                for (let i = 0; i < nTris; i++) {
-                    const a = flatT[i * 3], b = flatT[i * 3 + 1], c = flatT[i * 3 + 2];
-                    // Bottom face (reversed winding for downward-facing normal)
-                    indices[i * 3]     = a;
-                    indices[i * 3 + 1] = c;
-                    indices[i * 3 + 2] = b;
-                    // Top face (original winding for upward-facing normal)
-                    indices[(nTris + i) * 3]     = nVerts + a;
-                    indices[(nTris + i) * 3 + 1] = nVerts + b;
-                    indices[(nTris + i) * 3 + 2] = nVerts + c;
-                }
+                const indices = new Uint32Array(flatT.length);
+                for (let i = 0; i < flatT.length; i++) indices[i] = flatT[i];
 
                 const geo = new THREE.BufferGeometry();
                 geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -789,6 +741,7 @@
                 new THREE.MeshLambertMaterial({ color: 0xdfe6d6 })
             );
             ground.rotation.x = -Math.PI / 2;
+            ground.position.y = -0.02;
             ground.receiveShadow = true;
             scene.add(ground);
 
@@ -949,14 +902,15 @@
             });
 
             // ── Render landmark (non-dorm) buildings ────────────────────────
-            // Color by building type
+            // Color by building type. All non-dorm mesh colors are warm or
+            // neutral so the cold walk-route ribbons stay visually distinct.
             const LANDMARK_MATS = {
-                building: new THREE.MeshLambertMaterial({ color: 0xcfcfcf }),  // gray
-                library:  new THREE.MeshLambertMaterial({ color: 0x5b8abf }),  // steel blue
-                dining:   new THREE.MeshLambertMaterial({ color: 0xd4a054 }),  // warm amber
-                gym:      new THREE.MeshLambertMaterial({ color: 0x4da6a6 }),  // teal
-                museum:   new THREE.MeshLambertMaterial({ color: 0x8b5e3c }),  // warm brown
-                culture:  new THREE.MeshLambertMaterial({ color: 0x8b5e3c }),  // warm brown (culture)
+                building: new THREE.MeshLambertMaterial({ color: 0xcfcfcf }),  // neutral slate
+                library:  new THREE.MeshLambertMaterial({ color: 0xc27256 }),  // muted sienna
+                dining:   new THREE.MeshLambertMaterial({ color: 0xd68a3c }),  // warm amber
+                gym:      new THREE.MeshLambertMaterial({ color: 0xcf6a7d }),  // dusty rose
+                museum:   new THREE.MeshLambertMaterial({ color: 0x9c6b3d }),  // warm tan
+                culture:  new THREE.MeshLambertMaterial({ color: 0x9c6b3d }),  // warm tan
             };
             const LANDMARK_MAT = LANDMARK_MATS.building; // fallback
             // Per-landmark anchor world positions for 2D label projection
@@ -1163,10 +1117,10 @@
 
                 if (d.meshId && CAMPUS_NORTH_MESH) {
                     // 3mf triangulated mesh path (Campus North).
-                    // Uses pre-triangulated footprint from 3mf_buildings.json
-                    // (building_0002) extruded to full building height.
-                    // mesh.position is set to the mesh's XZ centroid in scene
-                    // coords, so anchorX/anchorZ give the correct label position.
+                    // The pre-triangulated mesh has inconsistent winding on the
+                    // top face, so we use DoubleSide to ensure the roof is always
+                    // visible regardless of triangle orientation.
+                    sharedMat.side = THREE.DoubleSide;
                     const heightM = d.h || 41.1;
                     const mesh = buildFromMeshData(CAMPUS_NORTH_MESH, heightM, sharedMat);
                     if (mesh) {
@@ -1565,6 +1519,36 @@
                 });
             }
 
+            // ── Landmark hover scale animation ──────────────────────────────
+            // Mirrors the dorm scale system so non-dorm buildings get the same
+            // subtle grow-on-hover feedback. Landmark geometry is re-centered
+            // in buildFootprintMesh() / buildFromMeshData() so uniform scale
+            // expands from the building's own footprint center.
+            const landmarkScaleTarget  = {}; // name → target scale
+            const landmarkScaleCurrent = {}; // name → current scale
+
+            function setLandmarkScale(name, target) {
+                landmarkScaleTarget[name] = target;
+            }
+
+            function tickLandmarkScales() {
+                Object.keys(landmarkMeshesByName).forEach(name => {
+                    const tgt = landmarkScaleTarget[name] !== undefined
+                        ? landmarkScaleTarget[name] : 1.0;
+                    const cur = landmarkScaleCurrent[name] !== undefined
+                        ? landmarkScaleCurrent[name] : 1.0;
+                    let next;
+                    if (Math.abs(cur - tgt) < 0.0001) {
+                        next = tgt;
+                    } else {
+                        next = cur + (tgt - cur) * SCALE_LERP;
+                    }
+                    landmarkScaleCurrent[name] = next;
+                    const meshes = landmarkMeshesByName[name];
+                    if (meshes) meshes.forEach(m => m.scale.set(next, next, next));
+                });
+            }
+
             function setHover(mesh) {
                 if (hovered && (!mesh || hovered.userData.name !== mesh.userData.name)) {
                     const prevName = hovered.userData.name;
@@ -1776,8 +1760,28 @@
             canvas.addEventListener('pointermove', (ev) => {
                 const hit = pickAt(ev.clientX, ev.clientY);
                 if (hit) {
-                    // Clear any landmark hover when hovering a dorm
-                    if (_hoveredLandmarkName) clearLandmarkLabelHover();
+                    // Clear any landmark hover when hovering a dorm — but only
+                    // after a 1-frame delay so that cursor jitter at the boundary
+                    // between a dorm and an adjacent landmark doesn't cause all
+                    // labels to flash visible for a frame before being re-hidden.
+                    if (_hoveredLandmarkName) {
+                        if (_landmarkHoverClearRaf === null) {
+                            _landmarkHoverClearRaf = requestAnimationFrame(() => {
+                                _landmarkHoverClearRaf = null;
+                                // Only clear if we're still hovering a dorm (not a landmark)
+                                if (!_hoveredLandmarkName) return;
+                                clearLandmarkLabelHover();
+                            });
+                        }
+                    }
+                    // Clear pinned legend filter when user hovers a real building
+                    if (_pinnedLegendType) {
+                        _pinnedLegendType = null;
+                        document.querySelectorAll('.map-filter-chip').forEach(el => {
+                            el.classList.remove('map-filter-chip--dimmed');
+                            el.setAttribute('aria-pressed', 'false');
+                        });
+                    }
                     setHover(hit);
                     canvas.style.cursor = 'pointer';
                     // When zoomed into a selected dorm, keep that card pinned
@@ -1794,6 +1798,14 @@
                     if (landmarkHit && landmarkHit.userData && landmarkHit.userData.name) {
                         if (hovered) setHover(null);
                         canvas.style.cursor = 'pointer';
+                        // Clear pinned legend filter when user hovers a real building
+                        if (_pinnedLegendType) {
+                            _pinnedLegendType = null;
+                            document.querySelectorAll('.map-filter-chip').forEach(el => {
+                                el.classList.remove('map-filter-chip--dimmed');
+                                el.setAttribute('aria-pressed', 'false');
+                            });
+                        }
                         onLandmarkLabelHover(landmarkHit.userData.name);
                         // Only hide dorm hover card if NOT zoomed into a selected dorm
                         if (!selectedName) {
@@ -1804,6 +1816,8 @@
                         canvas.style.cursor = 'default';
                         // Clear landmark hover if we left the building
                         if (_hoveredLandmarkName) clearLandmarkLabelHover();
+                        // Re-apply pinned legend filter if one is active
+                        if (_pinnedLegendType) _applyLegendTypeFilter(_pinnedLegendType);
                         // Only hide hover card if NOT zoomed into a selected dorm
                         if (!selectedName) {
                             hideHoverCard();
@@ -1821,6 +1835,8 @@
                     ev.relatedTarget.closest('.landmark-label-2d')
                 );
                 if (_hoveredLandmarkName && !movingToLabel) clearLandmarkLabelHover();
+                // Re-apply pinned legend filter if one is active
+                if (_pinnedLegendType && !movingToLabel) _applyLegendTypeFilter(_pinnedLegendType);
                 // Only hide hover card if NOT zoomed into a selected dorm
                 if (!selectedName) {
                     hideHoverCard();
@@ -1927,6 +1943,7 @@
             // ── Landmark hover state (declared early for use in update fns) ──
             let _hoveredLandmarkName = null;
             const _landmarkHoverHidden = new Set(); // names hidden during current hover
+            let _landmarkHoverClearRaf = null; // rAF id for debounced clear
 
             // ── Update 2D overlay label positions each frame ──────────────
             // Projects each dorm's anchor from world space to screen pixels
@@ -2333,28 +2350,25 @@
             resizeLabelConnectorCanvas();
             window.addEventListener('resize', resizeLabelConnectorCanvas);
 
-            // ── Walk-time lines canvas ──────────────────────────────────────
-            // Draws routed lines from a hovered non-dorm building to all 7 dorms
-            // following the campus street grid (realistic walking paths).
-            const walkTimeCanvas = document.createElement('canvas');
-            walkTimeCanvas.style.cssText = 'position:absolute; inset:0; pointer-events:none; z-index:11;';
-            wrap.appendChild(walkTimeCanvas);
+            // ── Walk routes (3D) + walk-time labels (DOM) ───────────────────
+            // Routes from a hovered non-dorm building to all 7 dorms are drawn
+            // as thin ribbon meshes IN the 3D scene (not a 2D overlay) so that
+            // THREE's depth test naturally occludes them behind buildings and
+            // other scene geometry — they never render "on top of" buildings
+            // or labels. Walk-time pills stay as DOM so the type stays crisp.
+            const walkRouteGroup = new THREE.Group();
+            walkRouteGroup.renderOrder = 0; // default; buildings occlude via depth
+            scene.add(walkRouteGroup);
 
             // Container for walk-time label DOM elements (positioned along lines)
             const walkTimeLabelContainer = document.createElement('div');
-            walkTimeLabelContainer.style.cssText = 'position:absolute; inset:0; pointer-events:none; z-index:12;';
+            walkTimeLabelContainer.style.cssText = 'position:absolute; top:0; right:0; bottom:0; left:0; pointer-events:none; z-index:12;';
             wrap.appendChild(walkTimeLabelContainer);
 
-            function resizeWalkTimeCanvas() {
-                const r = wrap.getBoundingClientRect();
-                walkTimeCanvas.width  = r.width;
-                walkTimeCanvas.height = r.height;
-            }
-            resizeWalkTimeCanvas();
-            window.addEventListener('resize', resizeWalkTimeCanvas);
-
             // ── Walking time calculation ────────────────────────────────────
-            const WALK_SPEED_M_PER_MIN = 80;   // ~3 mph pedestrian speed
+            // Google Maps defaults to ~5 km/h (~3 mph) for pedestrian ETAs.
+            // 3 mph × 1609.34 m/mi ÷ 60 min ≈ 80.47 m/min → we use 80.
+            const WALK_SPEED_M_PER_MIN = 80;
 
             function haversineMeters(lat1, lon1, lat2, lon2) {
                 const R = 6371000;
@@ -2368,154 +2382,333 @@
             }
 
             // ── Unique dorm route colors ────────────────────────────────────
-            // Each dorm gets a distinct, high-contrast color so routes don't
-            // get confused when multiple lines are drawn simultaneously.
+            // Each dorm gets a distinct, high-contrast COLD color so routes
+            // read as the "walk-to" information layer while dorm buildings
+            // (warm maroon) stay visually separate. All seven colors clear
+            // WCAG AA contrast on the white pill text (≥4.5:1).
             const DORM_ROUTE_COLORS = {
-                'Burton-Judson':           '#e63946',  // red
-                'I-House':                 '#2a9d8f',  // teal
-                'Snell_Hitchcock':         '#e9c46a',  // gold
-                'Max Palevsky':            '#264653',  // dark blue
-                'Campus North':            '#f4a261',  // orange
-                'Renee_Granville-Grossman':'#7b2cbf',  // purple
-                'Woodlawn':                '#06d6a0',  // mint green
+                'Burton-Judson':           '#1e3a8a',  // deep navy blue
+                'I-House':                 '#0e7490',  // dark cyan
+                'Snell_Hitchcock':         '#0f766e',  // deep teal
+                'Max Palevsky':            '#6d28d9',  // cold violet
+                'Campus North':            '#0369a1',  // ocean blue
+                'Renee_Granville-Grossman':'#4338ca',  // indigo
+                'Woodlawn':                '#047857',  // cold emerald
             };
 
-            // ── Street-grid routing ─────────────────────────────────────────
-            // Routes walking paths along the UChicago street grid instead of
-            // drawing straight lines. Uses the nearest N-S avenue and E-W street
-            // to create realistic L-shaped or multi-segment walking routes.
+            // ── Real-road walking routes (OSM shortest path) ────────────────
+            // Routes walk paths along the actual UChicago road/sidewalk network
+            // using Dijkstra's algorithm over a graph built from the OSM polyline
+            // data already loaded into OSM_ROADS. Coordinates in OSM_ROADS are
+            // in scene XZ meters (see scripts/fetch_osm_roads.py), so edge costs
+            // are Euclidean meters — no projection needed.
+            //
+            // Graph construction (lazy, runs once on first hover):
+            //   • every polyline vertex becomes a node (quantized to 1.5 m grid
+            //     so coincident endpoints from different OSM ways merge),
+            //   • consecutive vertices of the same polyline become edges,
+            //   • origin/destination are injected by snapping them to the
+            //     nearest projection on any polyline segment and inserting a
+            //     temporary split node + two short edges.
 
-            // Key street latitudes (E-W)
-            const STREET_LATS = [
-                41.7840, // 61st St
-                41.7862, // 60th St
-                41.7876, // 59th St
-                41.7911, // 58th St
-                41.7925, // 57th St
-                41.7939, // 56th St
-                41.7953, // 55th St
-            ];
+            // Build a walkable graph from OSM polylines. Nodes are quantized by
+            // SNAP_M so nearby endpoints collapse into one node (this is what
+            // lets the graph be actually connected — OSM ways at an intersection
+            // rarely share exact coordinates).
+            const WALK_GRAPH = (function buildWalkGraph() {
+                const SNAP_M = 1.5;  // snap radius in meters
+                const nodes = [];    // [{x,z}]
+                const edges = [];    // [[nodeIdxA, nodeIdxB, distM]]
+                const segments = []; // [{ax,az,bx,bz, aIdx, bIdx}] — flat list of polyline segments
+                const nodeKey = new Map();
 
-            // Key avenue longitudes (N-S)
-            const AVE_LNGS = [
-                -87.6060, // Cottage Grove
-                -87.6040, // Drexel
-                -87.6035, // Greenwood
-                -87.6025, // Ingleside
-                -87.6013, // Ellis
-                -87.5985, // University
-                -87.5960, // Woodlawn
-                -87.5940, // Kimbark
-                -87.5925, // Kenwood
-                -87.5910, // Dorchester
-            ];
-
-            // Find the nearest street (lat) to a given latitude
-            function nearestStreetLat(lat) {
-                let best = STREET_LATS[0], bestDist = Math.abs(lat - best);
-                for (let i = 1; i < STREET_LATS.length; i++) {
-                    const d = Math.abs(lat - STREET_LATS[i]);
-                    if (d < bestDist) { best = STREET_LATS[i]; bestDist = d; }
-                }
-                return best;
-            }
-
-            // Find the nearest avenue (lng) to a given longitude
-            function nearestAveLng(lng) {
-                let best = AVE_LNGS[0], bestDist = Math.abs(lng - best);
-                for (let i = 1; i < AVE_LNGS.length; i++) {
-                    const d = Math.abs(lng - AVE_LNGS[i]);
-                    if (d < bestDist) { best = AVE_LNGS[i]; bestDist = d; }
-                }
-                return best;
-            }
-
-            // Generate a walking route as an array of {lat, lng} waypoints
-            // that follows the street grid from origin to destination.
-            // Strategy: walk to nearest avenue, then along a street, then to dest.
-            function computeWalkingRoute(fromLat, fromLng, toLat, toLng) {
-                const route = [{ lat: fromLat, lng: fromLng }];
-
-                // If very close (same block), just go direct
-                const latDiff = Math.abs(fromLat - toLat);
-                const lngDiff = Math.abs(fromLng - toLng);
-                if (latDiff < 0.001 && lngDiff < 0.001) {
-                    route.push({ lat: toLat, lng: toLng });
-                    return route;
-                }
-
-                // Find the best intermediate streets/avenues
-                const fromAve = nearestAveLng(fromLng);
-                const toAve = nearestAveLng(toLng);
-                const fromStreet = nearestStreetLat(fromLat);
-                const toStreet = nearestStreetLat(toLat);
-
-                // Decide routing strategy based on relative positions
-                // Strategy 1: Walk to nearest avenue, go N/S, then E/W to dest
-                // Strategy 2: Walk to nearest street, go E/W, then N/S to dest
-                // Pick the strategy that produces a shorter total route
-
-                // Strategy A: from → fromAve → travel N/S to toStreet → travel E/W → dest
-                const routeA = [];
-                routeA.push({ lat: fromLat, lng: fromAve });  // walk to avenue
-                routeA.push({ lat: toLat, lng: fromAve });    // go N/S along avenue
-                routeA.push({ lat: toLat, lng: toLng });      // go E/W to dest
-
-                // Strategy B: from → fromStreet → travel E/W to toAve → travel N/S → dest
-                const routeB = [];
-                routeB.push({ lat: fromStreet, lng: fromLng }); // walk to street
-                routeB.push({ lat: fromStreet, lng: toLng });   // go E/W along street
-                routeB.push({ lat: toLat, lng: toLng });        // go N/S to dest
-
-                // Strategy C: from → fromAve → travel N/S to toStreet → travel E/W to toAve → N/S to dest
-                const midStreet = nearestStreetLat((fromLat + toLat) / 2);
-                const routeC = [];
-                routeC.push({ lat: fromLat, lng: fromAve });    // walk to avenue
-                routeC.push({ lat: midStreet, lng: fromAve });  // go N/S to mid street
-                routeC.push({ lat: midStreet, lng: toAve });    // go E/W along street
-                routeC.push({ lat: toLat, lng: toAve });        // go N/S to dest avenue
-                routeC.push({ lat: toLat, lng: toLng });        // walk to dest
-
-                // Calculate total distance for each strategy
-                function routeDistance(pts) {
-                    let total = 0;
-                    for (let i = 0; i < pts.length - 1; i++) {
-                        total += haversineMeters(pts[i].lat, pts[i].lng, pts[i+1].lat, pts[i+1].lng);
+                function getNodeIdx(x, z) {
+                    const kx = Math.round(x / SNAP_M);
+                    const kz = Math.round(z / SNAP_M);
+                    const k = kx + ',' + kz;
+                    let idx = nodeKey.get(k);
+                    if (idx === undefined) {
+                        idx = nodes.length;
+                        nodes.push({ x, z });
+                        nodeKey.set(k, idx);
                     }
-                    return total;
+                    return idx;
                 }
 
-                const distA = routeDistance([{ lat: fromLat, lng: fromLng }, ...routeA]);
-                const distB = routeDistance([{ lat: fromLat, lng: fromLng }, ...routeB]);
-                const distC = routeDistance([{ lat: fromLat, lng: fromLng }, ...routeC]);
+                // Include all walkable categories: streets, sidewalks/paths, and
+                // narrow service drives (parking lanes, etc. — still walkable).
+                const WALKABLE = new Set(['street', 'path', 'service']);
 
-                // Pick shortest route
-                let bestRoute;
-                if (distA <= distB && distA <= distC) bestRoute = routeA;
-                else if (distB <= distA && distB <= distC) bestRoute = routeB;
-                else bestRoute = routeC;
-
-                // Add waypoints, skipping any that are too close to previous point
-                bestRoute.forEach(wp => {
-                    const prev = route[route.length - 1];
-                    const d = haversineMeters(prev.lat, prev.lng, wp.lat, wp.lng);
-                    if (d > 5) route.push(wp); // skip waypoints < 5m from previous
+                OSM_ROADS.forEach(rd => {
+                    if (!WALKABLE.has(rd.category)) return;
+                    const pts = rd.points;
+                    if (!pts || pts.length < 2) return;
+                    for (let i = 0; i < pts.length - 1; i++) {
+                        const ax = pts[i][0],   az = pts[i][1];
+                        const bx = pts[i+1][0], bz = pts[i+1][1];
+                        const dx = bx - ax, dz = bz - az;
+                        const len = Math.sqrt(dx*dx + dz*dz);
+                        if (len < 0.1) continue;
+                        const aIdx = getNodeIdx(ax, az);
+                        const bIdx = getNodeIdx(bx, bz);
+                        if (aIdx === bIdx) continue;
+                        edges.push([aIdx, bIdx, len]);
+                        segments.push({ ax, az, bx, bz, aIdx, bIdx });
+                    }
                 });
 
-                // Ensure destination is the final point
-                const last = route[route.length - 1];
-                if (Math.abs(last.lat - toLat) > 0.00001 || Math.abs(last.lng - toLng) > 0.00001) {
-                    route.push({ lat: toLat, lng: toLng });
+                // Adjacency list
+                const adj = nodes.map(() => []);
+                edges.forEach((e, idx) => {
+                    adj[e[0]].push({ to: e[1], w: e[2], eIdx: idx });
+                    adj[e[1]].push({ to: e[0], w: e[2], eIdx: idx });
+                });
+
+                // Spatial grid for fast "closest segment" lookup. Cell size ~40 m
+                // balances build cost (kept small) and query cost (few cells scanned).
+                const CELL_M = 40;
+                const grid = new Map();
+                function cellKey(cx, cz) { return cx + ',' + cz; }
+                segments.forEach((s, i) => {
+                    const minCx = Math.floor(Math.min(s.ax, s.bx) / CELL_M);
+                    const maxCx = Math.floor(Math.max(s.ax, s.bx) / CELL_M);
+                    const minCz = Math.floor(Math.min(s.az, s.bz) / CELL_M);
+                    const maxCz = Math.floor(Math.max(s.az, s.bz) / CELL_M);
+                    for (let cx = minCx; cx <= maxCx; cx++) {
+                        for (let cz = minCz; cz <= maxCz; cz++) {
+                            const k = cellKey(cx, cz);
+                            let arr = grid.get(k);
+                            if (!arr) { arr = []; grid.set(k, arr); }
+                            arr.push(i);
+                        }
+                    }
+                });
+
+                return { nodes, edges, adj, segments, grid, CELL_M };
+            })();
+
+            // Squared distance from point (px,pz) to segment (ax,az)–(bx,bz).
+            // Returns { d2, t, qx, qz } where t∈[0,1] is the clamped projection
+            // parameter and (qx,qz) is the closest point on the segment.
+            function pointSegDist(px, pz, ax, az, bx, bz) {
+                const dx = bx - ax, dz = bz - az;
+                const len2 = dx*dx + dz*dz;
+                let t = len2 > 0 ? ((px - ax) * dx + (pz - az) * dz) / len2 : 0;
+                if (t < 0) t = 0; else if (t > 1) t = 1;
+                const qx = ax + t * dx;
+                const qz = az + t * dz;
+                const ex = px - qx, ez = pz - qz;
+                return { d2: ex*ex + ez*ez, t, qx, qz };
+            }
+
+            // Find the closest point on the road network to (px,pz). Scans a
+            // small window of cells around the query point and grows the radius
+            // until at least one segment is found. Returns null if the network
+            // is empty or the query is impossibly far from any road.
+            function snapToNetwork(px, pz) {
+                const g = WALK_GRAPH.grid;
+                const C = WALK_GRAPH.CELL_M;
+                const segs = WALK_GRAPH.segments;
+                const baseCx = Math.floor(px / C);
+                const baseCz = Math.floor(pz / C);
+
+                // Expand the search ring until we have at least one candidate.
+                // Most hits land in the first ring; suburbs of the map may need 2–3.
+                let best = null;
+                for (let ring = 0; ring <= 6 && !best; ring++) {
+                    for (let dx = -ring; dx <= ring; dx++) {
+                        for (let dz = -ring; dz <= ring; dz++) {
+                            // Only scan the outer shell of each ring (skip interior cells we already scanned)
+                            if (ring > 0 && Math.abs(dx) !== ring && Math.abs(dz) !== ring) continue;
+                            const arr = g.get((baseCx + dx) + ',' + (baseCz + dz));
+                            if (!arr) continue;
+                            for (let k = 0; k < arr.length; k++) {
+                                const s = segs[arr[k]];
+                                const r = pointSegDist(px, pz, s.ax, s.az, s.bx, s.bz);
+                                if (!best || r.d2 < best.d2) {
+                                    best = { d2: r.d2, t: r.t, qx: r.qx, qz: r.qz, segIdx: arr[k] };
+                                }
+                            }
+                        }
+                    }
+                }
+                return best;
+            }
+
+            // Minimal binary heap priority queue, keyed by numeric distance.
+            // Used by Dijkstra below — kept inline to avoid adding a dep.
+            class MinHeap {
+                constructor() { this.h = []; }
+                get size() { return this.h.length; }
+                push(item) {
+                    const h = this.h;
+                    h.push(item);
+                    let i = h.length - 1;
+                    while (i > 0) {
+                        const p = (i - 1) >> 1;
+                        if (h[p].d <= h[i].d) break;
+                        [h[p], h[i]] = [h[i], h[p]];
+                        i = p;
+                    }
+                }
+                pop() {
+                    const h = this.h;
+                    if (!h.length) return null;
+                    const top = h[0];
+                    const last = h.pop();
+                    if (h.length) {
+                        h[0] = last;
+                        let i = 0, n = h.length;
+                        for (;;) {
+                            const l = 2*i + 1, r = 2*i + 2;
+                            let m = i;
+                            if (l < n && h[l].d < h[m].d) m = l;
+                            if (r < n && h[r].d < h[m].d) m = r;
+                            if (m === i) break;
+                            [h[m], h[i]] = [h[i], h[m]];
+                            i = m;
+                        }
+                    }
+                    return top;
+                }
+            }
+
+            // Compute the shortest walking path from (fromX,fromZ) to (toX,toZ)
+            // along the OSM road network. Returns an array of {x,z} waypoints in
+            // scene coordinates, starting at the origin and ending at the target.
+            // Falls back to a straight line if the network is unreachable.
+            function computeRoadRouteXZ(fromX, fromZ, toX, toZ) {
+                const snapFrom = snapToNetwork(fromX, fromZ);
+                const snapTo   = snapToNetwork(toX,   toZ);
+                if (!snapFrom || !snapTo) {
+                    return [{ x: fromX, z: fromZ }, { x: toX, z: toZ }];
                 }
 
+                const nodes = WALK_GRAPH.nodes;
+                const adj   = WALK_GRAPH.adj;
+                const segs  = WALK_GRAPH.segments;
+
+                // Inject two temporary nodes (one on each snap segment) that
+                // connect back to the segment's two endpoints. This avoids
+                // forcing routes through an arbitrary endpoint.
+                const startSeg = segs[snapFrom.segIdx];
+                const endSeg   = segs[snapTo.segIdx];
+                const START = nodes.length;
+                const END   = nodes.length + 1;
+
+                const extraNodes = [
+                    { x: snapFrom.qx, z: snapFrom.qz },
+                    { x: snapTo.qx,   z: snapTo.qz }
+                ];
+                function dist(ax, az, bx, bz) {
+                    const dx = bx - ax, dz = bz - az;
+                    return Math.sqrt(dx*dx + dz*dz);
+                }
+                // Edges from START to start-segment endpoints (and similarly for END).
+                const extraEdges = new Map(); // nodeIdx -> array of {to, w}
+                function addExtra(from, to, w) {
+                    let a = extraEdges.get(from);
+                    if (!a) { a = []; extraEdges.set(from, a); }
+                    a.push({ to, w });
+                }
+                {
+                    const nA = nodes[startSeg.aIdx], nB = nodes[startSeg.bIdx];
+                    addExtra(START, startSeg.aIdx, dist(snapFrom.qx, snapFrom.qz, nA.x, nA.z));
+                    addExtra(START, startSeg.bIdx, dist(snapFrom.qx, snapFrom.qz, nB.x, nB.z));
+                    addExtra(startSeg.aIdx, START, dist(snapFrom.qx, snapFrom.qz, nA.x, nA.z));
+                    addExtra(startSeg.bIdx, START, dist(snapFrom.qx, snapFrom.qz, nB.x, nB.z));
+                }
+                {
+                    const nA = nodes[endSeg.aIdx], nB = nodes[endSeg.bIdx];
+                    addExtra(END, endSeg.aIdx, dist(snapTo.qx, snapTo.qz, nA.x, nA.z));
+                    addExtra(END, endSeg.bIdx, dist(snapTo.qx, snapTo.qz, nB.x, nB.z));
+                    addExtra(endSeg.aIdx, END, dist(snapTo.qx, snapTo.qz, nA.x, nA.z));
+                    addExtra(endSeg.bIdx, END, dist(snapTo.qx, snapTo.qz, nB.x, nB.z));
+                }
+                // Edge case: origin and destination project onto the same segment —
+                // the straight-line segment between the two snap points is the
+                // true shortest path, no graph traversal needed.
+                if (snapFrom.segIdx === snapTo.segIdx) {
+                    return [
+                        { x: fromX, z: fromZ },
+                        { x: snapFrom.qx, z: snapFrom.qz },
+                        { x: snapTo.qx,   z: snapTo.qz },
+                        { x: toX, z: toZ }
+                    ];
+                }
+
+                // Dijkstra from START → END over (adj ∪ extraEdges).
+                const totalNodes = nodes.length + 2;
+                const distArr = new Float64Array(totalNodes);
+                const prev = new Int32Array(totalNodes);
+                distArr.fill(Infinity);
+                prev.fill(-1);
+                distArr[START] = 0;
+
+                const pq = new MinHeap();
+                pq.push({ id: START, d: 0 });
+
+                function neighborsOf(id) {
+                    if (id < nodes.length) {
+                        const base = adj[id];
+                        const extra = extraEdges.get(id);
+                        if (!extra) return base;
+                        return base.concat(extra);
+                    }
+                    return extraEdges.get(id) || [];
+                }
+
+                while (pq.size) {
+                    const cur = pq.pop();
+                    if (cur.d !== distArr[cur.id]) continue; // stale entry
+                    if (cur.id === END) break;
+                    const neigh = neighborsOf(cur.id);
+                    for (let i = 0; i < neigh.length; i++) {
+                        const n = neigh[i];
+                        const nd = cur.d + n.w;
+                        if (nd < distArr[n.to]) {
+                            distArr[n.to] = nd;
+                            prev[n.to] = cur.id;
+                            pq.push({ id: n.to, d: nd });
+                        }
+                    }
+                }
+
+                if (distArr[END] === Infinity) {
+                    return [{ x: fromX, z: fromZ }, { x: toX, z: toZ }];
+                }
+
+                // Reconstruct path (node indices) then convert to waypoints.
+                const path = [];
+                for (let cur = END; cur !== -1; cur = prev[cur]) path.push(cur);
+                path.reverse();
+
+                function nodePos(id) {
+                    if (id < nodes.length) return nodes[id];
+                    return extraNodes[id - nodes.length];
+                }
+                const route = [{ x: fromX, z: fromZ }];
+                path.forEach(id => {
+                    const p = nodePos(id);
+                    const last = route[route.length - 1];
+                    if (!last || Math.hypot(p.x - last.x, p.z - last.z) > 0.5) {
+                        route.push({ x: p.x, z: p.z });
+                    }
+                });
+                const last = route[route.length - 1];
+                if (!last || Math.hypot(toX - last.x, toZ - last.z) > 0.5) {
+                    route.push({ x: toX, z: toZ });
+                }
                 return route;
             }
 
-            // Calculate total walking distance along a route (in meters)
-            function routeTotalMeters(route) {
+            // Calculate total walking distance along an XZ route (in meters)
+            function routeTotalMetersXZ(route) {
                 let total = 0;
                 for (let i = 0; i < route.length - 1; i++) {
-                    total += haversineMeters(route[i].lat, route[i].lng, route[i+1].lat, route[i+1].lng);
+                    const dx = route[i+1].x - route[i].x;
+                    const dz = route[i+1].z - route[i].z;
+                    total += Math.sqrt(dx*dx + dz*dz);
                 }
                 return total;
             }
@@ -2534,35 +2727,292 @@
             }
 
             // Draw walk-time lines from a landmark to all dorms
-            let _walkTimeLabelEls = [];
+            // Active walk-time label DOM elements keyed by dorm name. Preserved
+            // across frames so the CSS fade-in plays once on the frame they're
+            // created — we only create them when the hovered landmark or
+            // dorm-to-quad mode changes, otherwise we reuse and reposition.
+            let _walkTimeLabelEls = new Map();
+            // The key (landmark name or DORM_FILTER_SENTINEL) the current
+            // walk-time label DOM elements were built for. Used so we only
+            // destroy & recreate labels when the hover target actually
+            // changes — otherwise the per-frame CSS fade-in animation keeps
+            // restarting and the pills stay stuck at opacity:0 (never visible).
+            let _walkTimeLabelKey = null;
 
-            // ── Walk routes toggle ──────────────────────────────────────────
-            // Off by default; user can enable via the toggle button.
-            let walkRoutesEnabled = false;
+            function _removeAllWalkTimeLabels() {
+                _walkTimeLabelEls.forEach(el => el.remove());
+                _walkTimeLabelEls.clear();
+            }
 
-            const walkRoutesToggleBtn = document.getElementById('walk-routes-toggle');
-            if (walkRoutesToggleBtn) {
-                walkRoutesToggleBtn.addEventListener('click', () => {
-                    walkRoutesEnabled = !walkRoutesEnabled;
-                    walkRoutesToggleBtn.setAttribute('aria-pressed', String(walkRoutesEnabled));
-                    walkRoutesToggleBtn.classList.toggle('walk-routes-toggle--active', walkRoutesEnabled);
-                    // If turning off while a landmark is hovered, clear existing lines
-                    if (!walkRoutesEnabled) clearWalkTimeLines();
-                    // If turning on while a landmark is already hovered, draw immediately
-                    else if (_hoveredLandmarkName) drawWalkTimeLines(_hoveredLandmarkName);
-                });
+            // Per-landmark route cache so we don't redo 7 Dijkstras on every
+            // camera-tracking redraw. Entry shape:
+            //   { routes: [ { dorm, route, routeDist, timeStr } ], lmCoords }
+            // Keyed by landmark name. Cleared when hover ends.
+            const _walkRouteCache = new Map();
+
+            // Track which landmark's 3D ribbons are currently in the scene so
+            // we only rebuild geometry when the hovered landmark actually changes.
+            let _walkRouteLastLandmark = null;
+
+            // ── Walk routes feature flag ────────────────────────────────────
+            // Hardcoded to true by default — the UI toggle has been removed so
+            // hovering a non-dorm building always reveals routed walk lines and
+            // per-dorm travel times. Flip this to `false` to disable the feature
+            // wholesale without removing the implementation; all draw/clear
+            // call sites still gate on this constant.
+            const WALK_ROUTES_ENABLED = true;
+
+            // ── 3D route mesh construction ─────────────────────────────────
+            // Build a thin ribbon of merged BoxGeometry segments that hugs the
+            // ground. Y is set just above the road layer (0.10) so it doesn't
+            // z-fight with roads but stays below every building. Because the
+            // mesh lives in the scene, standard depth testing hides the line
+            // wherever a building sits between the camera and the route.
+            const WALK_ROUTE_Y       = 0.30;  // just above roads (0.10) / path (0.06)
+            const WALK_ROUTE_WIDTH_M = 4.2;   // ribbon width in meters (thicker so routes read clearly on hover)
+            const WALK_ROUTE_THICK_M = 0.14;  // thin slab; taller than roads so it peeks through
+
+            // Per-dorm material cache — lambert so it picks up scene lighting
+            // and matches the overall 3D look instead of flat-shaded lines.
+            const _walkRouteMaterials = {};
+            function walkRouteMaterial(color) {
+                if (!_walkRouteMaterials[color]) {
+                    _walkRouteMaterials[color] = new THREE.MeshLambertMaterial({
+                        color: new THREE.Color(color),
+                        transparent: true,
+                        opacity: 0.95,
+                    });
+                }
+                return _walkRouteMaterials[color];
+            }
+
+            // Build a merged ribbon mesh from a list of XZ waypoints.
+            function buildRouteMesh(route, colorHex) {
+                if (!route || route.length < 2) return null;
+                const geos = [];
+                for (let i = 0; i < route.length - 1; i++) {
+                    const ax = route[i].x,   az = route[i].z;
+                    const bx = route[i+1].x, bz = route[i+1].z;
+                    const dx = bx - ax, dz = bz - az;
+                    const len = Math.sqrt(dx*dx + dz*dz);
+                    if (len < 0.15) continue;
+                    // Slightly overlap the next segment on each end so joints
+                    // look continuous even when the route bends sharply.
+                    const g = new THREE.BoxGeometry(WALK_ROUTE_WIDTH_M, WALK_ROUTE_THICK_M, len + 0.6);
+                    const m4 = new THREE.Matrix4();
+                    m4.makeRotationY(Math.atan2(dx, dz));
+                    m4.setPosition((ax+bx)/2, WALK_ROUTE_Y, (az+bz)/2);
+                    g.applyMatrix4(m4);
+                    geos.push(g);
+                }
+                if (!geos.length) return null;
+                const merged = mergeGeometries(geos, false);
+                geos.forEach(g => g.dispose());
+                if (!merged) return null;
+                const mesh = new THREE.Mesh(merged, walkRouteMaterial(colorHex));
+                mesh.receiveShadow = false;
+                mesh.castShadow = false;
+                return mesh;
+            }
+
+            // Tiny cylinder cap at the dorm end of each route.
+            function buildRouteEndcap(x, z, colorHex) {
+                const geo = new THREE.CylinderGeometry(2.8, 2.8, 1.4, 16);
+                const mesh = new THREE.Mesh(geo, walkRouteMaterial(colorHex));
+                mesh.position.set(x, WALK_ROUTE_Y + 0.7, z);
+                return mesh;
+            }
+
+            function clearWalkRouteMeshes() {
+                while (walkRouteGroup.children.length) {
+                    const m = walkRouteGroup.children.pop();
+                    if (m.geometry) m.geometry.dispose();
+                    walkRouteGroup.remove(m);
+                }
+            }
+
+            // ── Label position scoring ─────────────────────────────────────
+            // For each route we pick the on-route midpoint candidate that best
+            // avoids every other on-screen label, walk-time pill, and building
+            // footprint. We sample a handful of positions along the route and
+            // a handful of perpendicular offsets per position, score each, and
+            // commit the lowest-scoring option.
+            const WALK_LABEL_SAMPLE_FRACS = [0.50, 0.38, 0.62, 0.28, 0.72, 0.45, 0.55];
+            const WALK_LABEL_OFFSET_PX    = [18, -18, 26, -26, 36, -36, 48, -48];
+            const WALK_LABEL_SIZE_EST     = { w: 82, h: 34 };  // approximate pill size for scoring
+
+            function pickLabelScreenPos(route, totalDist, avoidRects, wrapRect) {
+                const halfW = wrapRect.width / 2;
+                const halfH = wrapRect.height / 2;
+
+                // Walk once to build cumulative distances; we'll pick fractional
+                // midpoints against that array.
+                const cumul = [0];
+                for (let i = 0; i < route.length - 1; i++) {
+                    const dx = route[i+1].x - route[i].x;
+                    const dz = route[i+1].z - route[i].z;
+                    cumul.push(cumul[cumul.length - 1] + Math.sqrt(dx*dx + dz*dz));
+                }
+
+                function pointAt(dist) {
+                    // Binary-search-like scan — route lengths are short so linear is fine.
+                    for (let i = 0; i < cumul.length - 1; i++) {
+                        if (cumul[i+1] >= dist) {
+                            const segLen = cumul[i+1] - cumul[i];
+                            const frac = segLen > 0 ? (dist - cumul[i]) / segLen : 0;
+                            const dx = route[i+1].x - route[i].x;
+                            const dz = route[i+1].z - route[i].z;
+                            return {
+                                x: route[i].x + dx * frac,
+                                z: route[i].z + dz * frac,
+                                dirX: dx, dirZ: dz
+                            };
+                        }
+                    }
+                    const last = route[route.length - 1];
+                    const prev = route[route.length - 2] || last;
+                    return { x: last.x, z: last.z, dirX: last.x - prev.x, dirZ: last.z - prev.z };
+                }
+
+                function projectToScreen(wx, wz) {
+                    const v = new THREE.Vector3(wx, WALK_ROUTE_Y + 0.5, wz);
+                    const p = v.project(camera);
+                    if (p.z > 1) return null;
+                    return {
+                        x: (p.x * halfW) + halfW,
+                        y: (-p.y * halfH) + halfH,
+                        depth: p.z
+                    };
+                }
+
+                let best = null;
+
+                for (const frac of WALK_LABEL_SAMPLE_FRACS) {
+                    const pt = pointAt(totalDist * frac);
+                    const baseScreen = projectToScreen(pt.x, pt.z);
+                    if (!baseScreen) continue;
+
+                    // Perpendicular in screen space: compute the projected tangent
+                    // and rotate 90°.
+                    const tip = projectToScreen(pt.x + pt.dirX * 0.5, pt.z + pt.dirZ * 0.5);
+                    let tanX = 0, tanY = -1;
+                    if (tip) {
+                        const dx = tip.x - baseScreen.x;
+                        const dy = tip.y - baseScreen.y;
+                        const len = Math.sqrt(dx*dx + dy*dy);
+                        if (len > 0.001) { tanX = dx / len; tanY = dy / len; }
+                    }
+                    const perpX = -tanY;
+                    const perpY =  tanX;
+
+                    for (const off of WALK_LABEL_OFFSET_PX) {
+                        const lx = baseScreen.x + perpX * off;
+                        const ly = baseScreen.y + perpY * off;
+                        const r = {
+                            x: lx - WALK_LABEL_SIZE_EST.w / 2,
+                            y: ly - WALK_LABEL_SIZE_EST.h / 2,
+                            w: WALK_LABEL_SIZE_EST.w,
+                            h: WALK_LABEL_SIZE_EST.h
+                        };
+
+                        // Reject offscreen candidates outright
+                        if (r.x < 4 || r.y < 4 ||
+                            r.x + r.w > wrapRect.width - 4 ||
+                            r.y + r.h > wrapRect.height - 4) continue;
+
+                        let score = 0;
+                        let hardFail = false;
+                        for (const ar of avoidRects) {
+                            if (rectsOverlap(r, ar.rect, 2)) {
+                                if (ar.hard) { hardFail = true; break; }
+                                score += ar.cost || 200;
+                            }
+                        }
+                        if (hardFail) continue;
+
+                        // Prefer midway-ish placement (frac close to 0.5) and
+                        // slightly prefer the "upper" side of the route line.
+                        score += Math.abs(frac - 0.5) * 40;
+                        score += Math.abs(off) * 0.15;
+                        if (perpY > 0) score += Math.abs(off) * 0.2; // mildly prefer above
+                        // Penalise wrap-edges mildly so labels gravitate inward
+                        score += Math.max(0, 30 - r.x) * 0.5;
+                        score += Math.max(0, 30 - r.y) * 0.5;
+                        score += Math.max(0, r.x + r.w - (wrapRect.width - 30)) * 0.5;
+                        score += Math.max(0, r.y + r.h - (wrapRect.height - 30)) * 0.5;
+
+                        if (!best || score < best.score) {
+                            best = { screenX: lx, screenY: ly, rect: r, score };
+                            if (score === 0) break; // perfect placement
+                        }
+                    }
+                    if (best && best.score === 0) break;
+                }
+
+                return best; // may be null if everything overlapped hard rects
+            }
+
+            // ── Debug helper: log why pickLabelScreenPos returned null ──
+            function debugPickLabelScreenPos(route, totalDist, avoidRects, wrapRect) {
+                const halfW = wrapRect.width / 2;
+                const halfH = wrapRect.height / 2;
+                let rejectedOffscreen = 0, rejectedHard = 0, tried = 0;
+                const cumul = [0];
+                for (let i = 0; i < route.length - 1; i++) {
+                    const dx = route[i+1].x - route[i].x;
+                    const dz = route[i+1].z - route[i].z;
+                    cumul.push(cumul[cumul.length - 1] + Math.sqrt(dx*dx + dz*dz));
+                }
+                function pointAt(dist) {
+                    for (let i = 0; i < cumul.length - 1; i++) {
+                        if (cumul[i+1] >= dist) {
+                            const segLen = cumul[i+1] - cumul[i];
+                            const frac = segLen > 0 ? (dist - cumul[i]) / segLen : 0;
+                            const dx = route[i+1].x - route[i].x;
+                            const dz = route[i+1].z - route[i].z;
+                            return { x: route[i].x + dx * frac, z: route[i].z + dz * frac, dirX: dx, dirZ: dz };
+                        }
+                    }
+                    const last = route[route.length - 1];
+                    const prev = route[route.length - 2] || last;
+                    return { x: last.x, z: last.z, dirX: last.x - prev.x, dirZ: last.z - prev.z };
+                }
+                function projectToScreen(wx, wz) {
+                    const v = new THREE.Vector3(wx, WALK_ROUTE_Y + 0.5, wz);
+                    const p = v.project(camera);
+                    if (p.z > 1) return null;
+                    return { x: (p.x * halfW) + halfW, y: (-p.y * halfH) + halfH };
+                }
+                for (const frac of WALK_LABEL_SAMPLE_FRACS) {
+                    const pt = pointAt(totalDist * frac);
+                    const baseScreen = projectToScreen(pt.x, pt.z);
+                    if (!baseScreen) { rejectedOffscreen++; continue; }
+                    for (const off of WALK_LABEL_OFFSET_PX) {
+                        tried++;
+                        const lx = baseScreen.x + off;
+                        const ly = baseScreen.y;
+                        const r = { x: lx - WALK_LABEL_SIZE_EST.w/2, y: ly - WALK_LABEL_SIZE_EST.h/2, w: WALK_LABEL_SIZE_EST.w, h: WALK_LABEL_SIZE_EST.h };
+                        if (r.x < 4 || r.y < 4 || r.x + r.w > wrapRect.width - 4 || r.y + r.h > wrapRect.height - 4) { rejectedOffscreen++; continue; }
+                        let hard = false;
+                        for (const ar of avoidRects) { if (rectsOverlap(r, ar.rect, 2) && ar.hard) { hard = true; break; } }
+                        if (hard) rejectedHard++;
+                    }
+                }
+                console.log('[walkTime] debug pick: wrapRect', wrapRect.width, 'x', wrapRect.height, '| tried:', tried, '| rejectedOffscreen:', rejectedOffscreen, '| rejectedHard:', rejectedHard, '| routeLen:', route.length, '| totalDist:', totalDist.toFixed(1));
             }
 
             function drawWalkTimeLines(landmarkName) {
-                const ctx = walkTimeCanvas.getContext('2d');
                 const r = wrap.getBoundingClientRect();
-                ctx.clearRect(0, 0, walkTimeCanvas.width, walkTimeCanvas.height);
-                _walkTimeLabelEls.forEach(el => el.remove());
-                _walkTimeLabelEls = [];
 
                 // Don't draw walk-time lines for green spaces (quads)
                 const lmType = landmarkTypeByName[landmarkName] || 'building';
-                if (lmType === 'quad') return;
+                if (lmType === 'quad') {
+                    clearWalkRouteMeshes();
+                    _removeAllWalkTimeLabels();
+                    _walkTimeLabelKey = null;
+                    _walkRouteLastLandmark = null;
+                    return;
+                }
 
                 const lmCoords = getLandmarkLatLng(landmarkName);
                 if (!lmCoords) return;
@@ -2570,166 +3020,305 @@
                 const lmAnchor = landmarkAnchor[landmarkName];
                 if (!lmAnchor) return;
 
-                // Project landmark anchor to screen
-                const lmProj = lmAnchor.clone().project(camera);
-                if (lmProj.z > 1) return;
-                const lmScreenX = (lmProj.x * 0.5 + 0.5) * r.width;
-                const lmScreenY = (-lmProj.y * 0.5 + 0.5) * r.height;
-
-                // Get the landmark's building type color
-                const lmColor = BUILDING_TYPE_COLORS[lmType] || '#9a9a9a';
-
-                DORMS.forEach((dorm, idx) => {
-                    const dormAnchorPt = dormAnchor[dorm.name];
-                    if (!dormAnchorPt) return;
-
-                    // Compute the walking route along the street grid
-                    const route = computeWalkingRoute(lmCoords.lat, lmCoords.lng, dorm.lat, dorm.lng);
-
-                    // Calculate walking time from route distance
-                    const routeDist = routeTotalMeters(route);
-                    const walkMin = routeDist / WALK_SPEED_M_PER_MIN;
-                    const timeStr = walkMin < 1 ? '<1 min' : Math.round(walkMin) + ' min';
-
-                    // Get unique color for this dorm
-                    const dormColor = DORM_ROUTE_COLORS[dorm.name] || '#7a1f1f';
-
-                    // Project all route waypoints to screen space
-                    const screenPts = [];
-                    route.forEach(wp => {
-                        const worldPos = latLngToXZ(wp.lat, wp.lng);
-                        const vec = new THREE.Vector3(worldPos.x, 2, worldPos.z);
-                        const proj = vec.project(camera);
-                        if (proj.z <= 1) {
-                            screenPts.push({
-                                x: (proj.x * 0.5 + 0.5) * r.width,
-                                y: (-proj.y * 0.5 + 0.5) * r.height
-                            });
-                        }
+                // ── Compute (or reuse) per-dorm routes ──
+                let cached = _walkRouteCache.get(landmarkName);
+                if (!cached) {
+                    const fromXZ = latLngToXZ(lmCoords.lat, lmCoords.lng);
+                    cached = { routes: [] };
+                    DORMS.forEach(d => {
+                        const toXZ = latLngToXZ(d.lat, d.lng);
+                        const rr = computeRoadRouteXZ(fromXZ.x, fromXZ.z, toXZ.x, toXZ.z);
+                        const rd = routeTotalMetersXZ(rr);
+                        const wm = rd / WALK_SPEED_M_PER_MIN;
+                        cached.routes.push({
+                            dormName: d.name,
+                            route: rr,
+                            routeDist: rd,
+                            walkMin: wm,
+                            timeStr: wm < 1 ? '<1 min' : Math.round(wm) + ' min'
+                        });
                     });
+                    _walkRouteCache.set(landmarkName, cached);
+                }
 
-                    if (screenPts.length < 2) return;
+                // ── Rebuild route ribbons only when the hovered landmark changes ──
+                // The 3D meshes are independent of the camera, so there's no
+                // reason to re-merge geometry on every frame. Labels re-solve
+                // below because their placement is screen-space.
+                if (_walkRouteLastLandmark !== landmarkName) {
+                    clearWalkRouteMeshes();
+                    DORMS.forEach((dorm, idx) => {
+                        const entry = cached.routes[idx];
+                        if (!entry) return;
+                        const dormColor = DORM_ROUTE_COLORS[dorm.name] || '#7a1f1f';
+                        const mesh = buildRouteMesh(entry.route, dormColor);
+                        if (mesh) walkRouteGroup.add(mesh);
+                        const last = entry.route[entry.route.length - 1];
+                        if (last) walkRouteGroup.add(buildRouteEndcap(last.x, last.z, dormColor));
+                    });
+                    const lmColor = BUILDING_TYPE_COLORS[lmType] || '#9a9a9a';
+                    const firstRoute = cached.routes[0] && cached.routes[0].route;
+                    const origin = firstRoute && firstRoute[0];
+                    if (origin) walkRouteGroup.add(buildRouteEndcap(origin.x, origin.z, lmColor));
+                    _walkRouteLastLandmark = landmarkName;
+                }
 
-                    // Draw the routed line — solid, with unique dorm color
-                    ctx.save();
+                // ── Labels: always reposition (camera-dependent) ──
+                // IMPORTANT: we only destroy/recreate label DOM nodes when the
+                // hovered landmark actually changes. On every other frame we
+                // reuse the existing nodes and just move them. Creating fresh
+                // DOM every frame restarts the CSS fade-in animation and the
+                // labels never become visible.
+                const rebuildLabels = (_walkTimeLabelKey !== landmarkName);
+                if (rebuildLabels) {
+                    _removeAllWalkTimeLabels();
+                    _walkTimeLabelKey = landmarkName;
+                }
 
-                    // Outer glow for visibility
-                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-                    ctx.lineWidth = 5;
-                    ctx.lineCap = 'round';
-                    ctx.lineJoin = 'round';
-                    ctx.setLineDash([]);
-                    ctx.beginPath();
-                    ctx.moveTo(screenPts[0].x, screenPts[0].y);
-                    for (let i = 1; i < screenPts.length; i++) {
-                        ctx.lineTo(screenPts[i].x, screenPts[i].y);
+                // Build "avoid" rect list for label scoring. Buildings are
+                // hard (never overlap), existing dorm/landmark labels are hard,
+                // and previously-placed walk-time labels are hard so they
+                // never stack.
+                const avoidRects = [];
+
+                // Buildings (dorms + landmarks footprints projected to screen).
+                // These are SOFT obstacles: routes naturally pass between/near
+                // buildings, so making them hard would reject every candidate
+                // position and no labels would render. High cost keeps labels
+                // off buildings whenever there's any alternative.
+                Object.keys(buildingWorldBBoxes).forEach(name => {
+                    const sr = projectBBoxToScreen(buildingWorldBBoxes[name], camera, r);
+                    if (sr && sr.w > 0 && sr.h > 0) {
+                        avoidRects.push({ rect: sr, hard: false, cost: 800 });
                     }
-                    ctx.stroke();
-
-                    // Main solid line in dorm's unique color
-                    ctx.strokeStyle = dormColor;
-                    ctx.lineWidth = 3;
-                    ctx.lineCap = 'round';
-                    ctx.lineJoin = 'round';
-                    ctx.setLineDash([]);
-                    ctx.beginPath();
-                    ctx.moveTo(screenPts[0].x, screenPts[0].y);
-                    for (let i = 1; i < screenPts.length; i++) {
-                        ctx.lineTo(screenPts[i].x, screenPts[i].y);
-                    }
-                    ctx.stroke();
-
-                    ctx.restore();
-
-                    // Draw endpoint dot at dorm
-                    const lastPt = screenPts[screenPts.length - 1];
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.arc(lastPt.x, lastPt.y, 5, 0, Math.PI * 2);
-                    ctx.fillStyle = dormColor;
-                    ctx.fill();
-                    ctx.strokeStyle = '#fff';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-                    ctx.restore();
-
-                    // Place time label at the midpoint of the route (by distance)
-                    const halfDist = routeDist / 2;
-                    let accumulated = 0;
-                    let labelWp = route[Math.floor(route.length / 2)];
-                    for (let i = 0; i < route.length - 1; i++) {
-                        const segDist = haversineMeters(route[i].lat, route[i].lng, route[i+1].lat, route[i+1].lng);
-                        if (accumulated + segDist >= halfDist) {
-                            // Interpolate within this segment
-                            const frac = (halfDist - accumulated) / segDist;
-                            labelWp = {
-                                lat: route[i].lat + (route[i+1].lat - route[i].lat) * frac,
-                                lng: route[i].lng + (route[i+1].lng - route[i].lng) * frac
-                            };
-                            break;
-                        }
-                        accumulated += segDist;
-                    }
-
-                    // Project label position to screen
-                    const labelWorld = latLngToXZ(labelWp.lat, labelWp.lng);
-                    const labelVec = new THREE.Vector3(labelWorld.x, 2, labelWorld.z);
-                    const labelProj = labelVec.project(camera);
-                    if (labelProj.z > 1) return;
-                    const labelX = (labelProj.x * 0.5 + 0.5) * r.width;
-                    const labelY = (-labelProj.y * 0.5 + 0.5) * r.height;
-
-                    // Offset label perpendicular to the route direction at midpoint
-                    const midIdx = Math.floor(screenPts.length / 2);
-                    const prevIdx = Math.max(0, midIdx - 1);
-                    const nextIdx = Math.min(screenPts.length - 1, midIdx + 1);
-                    const dx = screenPts[nextIdx].x - screenPts[prevIdx].x;
-                    const dy = screenPts[nextIdx].y - screenPts[prevIdx].y;
-                    const len = Math.sqrt(dx * dx + dy * dy);
-                    const perpX = len > 0 ? -dy / len : 0;
-                    const perpY = len > 0 ? dx / len : 0;
-                    const offsetDist = 16;
-
-                    // Create DOM label for crisp text
-                    const label = document.createElement('div');
-                    label.className = 'walk-time-label';
-                    label.style.setProperty('--route-color', dormColor);
-                    label.innerHTML = '<span class="walk-time-label__time" style="border-color:' + dormColor + '; color:' + dormColor + ';">' + timeStr + '</span>' +
-                                      '<span class="walk-time-label__dorm" style="color:' + dormColor + ';">' + dorm.label + '</span>';
-                    label.style.left = (labelX + perpX * offsetDist) + 'px';
-                    label.style.top = (labelY + perpY * offsetDist) + 'px';
-                    walkTimeLabelContainer.appendChild(label);
-                    _walkTimeLabelEls.push(label);
                 });
 
-                // Draw landmark origin dot (on top)
-                ctx.save();
-                ctx.beginPath();
-                ctx.arc(lmScreenX, lmScreenY, 6, 0, Math.PI * 2);
-                ctx.fillStyle = lmColor;
-                ctx.fill();
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                ctx.restore();
+                // Dorm labels — soft obstacle (prefer to avoid but don't hard-block,
+                // since routes end at dorms so midpoints are often near their labels)
+                DORMS.forEach(d => {
+                    const el = dormOverlayEls[d.name];
+                    if (!el || el.style.opacity === '0') return;
+                    const rr = getElRect(el, r);
+                    if (rr.w > 1 && rr.h > 1) avoidRects.push({ rect: rr, hard: false, cost: 600 });
+                });
+
+                // Landmark labels (visible ones) — soft obstacle
+                Object.keys(landmarkOverlayEls).forEach(name => {
+                    const el = landmarkOverlayEls[name];
+                    if (!el || el.style.opacity === '0') return;
+                    const rr = getElRect(el, r);
+                    if (rr.w > 1 && rr.h > 1) avoidRects.push({ rect: rr, hard: false, cost: 400 });
+                });
+
+                // ── Place each walk-time label at the best position ──
+                // Order by route length so shorter routes claim their ideal
+                // midpoints first — longer routes have more room to deflect.
+                const orderedIdx = DORMS.map((_, i) => i)
+                    .sort((a, b) => cached.routes[a].routeDist - cached.routes[b].routeDist);
+
+                orderedIdx.forEach((idx) => {
+                    const dorm = DORMS[idx];
+                    const entry = cached.routes[idx];
+                    if (!entry) return;
+                    const dormColor = DORM_ROUTE_COLORS[dorm.name] || '#7a1f1f';
+
+                    // ── Fallback: place label at the route midpoint projected to screen ──
+                    // If the smart placement algorithm finds no valid slot (all candidates
+                    // blocked by hard-rect obstacles), we fall back to the raw midpoint so
+                    // the label always appears rather than silently disappearing.
+                    let pick = pickLabelScreenPos(entry.route, entry.routeDist, avoidRects, r);
+                    if (!pick && entry.route.length >= 2) {
+                        const midIdx = Math.floor(entry.route.length / 2);
+                        const mp = entry.route[midIdx];
+                        const halfW = r.width / 2;
+                        const halfH = r.height / 2;
+                        const v = new THREE.Vector3(mp.x, WALK_ROUTE_Y + 0.5, mp.z);
+                        const p = v.project(camera);
+                        if (p.z <= 1) {
+                            const sx = (p.x * halfW) + halfW;
+                            const sy = (-p.y * halfH) + halfH;
+                            // Include a rect so this fallback pick can be added
+                            // to avoidRects without breaking rectsOverlap on the
+                            // next iteration.
+                            pick = {
+                                screenX: sx,
+                                screenY: sy,
+                                rect: {
+                                    x: sx - WALK_LABEL_SIZE_EST.w / 2,
+                                    y: sy - WALK_LABEL_SIZE_EST.h / 2,
+                                    w: WALK_LABEL_SIZE_EST.w,
+                                    h: WALK_LABEL_SIZE_EST.h
+                                }
+                            };
+                        }
+                    }
+                    if (!pick) return;
+
+                    let label;
+                    if (rebuildLabels) {
+                        label = document.createElement('div');
+                        label.className = 'walk-time-label';
+                        label.style.setProperty('--route-color', dormColor);
+                        label.innerHTML =
+                            '<span class="walk-time-label__time" style="background:' + dormColor + ';">' + entry.timeStr + '</span>' +
+                            '<span class="walk-time-label__dorm" style="color:' + dormColor + ';">' + dorm.label + '</span>';
+                        walkTimeLabelContainer.appendChild(label);
+                        _walkTimeLabelEls.set(dorm.name, label);
+                    } else {
+                        // Reuse the existing element for this dorm — keyed by
+                        // dorm name, so ordering changes between frames are OK.
+                        label = _walkTimeLabelEls.get(dorm.name);
+                        if (!label) {
+                            // Fall back to creating one if missing (shouldn't
+                            // happen, but keeps the feature robust).
+                            label = document.createElement('div');
+                            label.className = 'walk-time-label';
+                            label.style.setProperty('--route-color', dormColor);
+                            label.innerHTML =
+                                '<span class="walk-time-label__time" style="background:' + dormColor + ';">' + entry.timeStr + '</span>' +
+                                '<span class="walk-time-label__dorm" style="color:' + dormColor + ';">' + dorm.label + '</span>';
+                            walkTimeLabelContainer.appendChild(label);
+                            _walkTimeLabelEls.set(dorm.name, label);
+                        }
+                    }
+                    label.style.left = pick.screenX + 'px';
+                    label.style.top  = pick.screenY + 'px';
+
+                    // This pill becomes a hard obstacle for the remaining labels.
+                    avoidRects.push({ rect: pick.rect, hard: true });
+                });
             }
 
             function clearWalkTimeLines() {
-                const ctx = walkTimeCanvas.getContext('2d');
-                ctx.clearRect(0, 0, walkTimeCanvas.width, walkTimeCanvas.height);
-                _walkTimeLabelEls.forEach(el => el.remove());
-                _walkTimeLabelEls = [];
+                clearWalkRouteMeshes();
+                _removeAllWalkTimeLabels();
+                _walkTimeLabelKey = null;
+                _walkRouteLastLandmark = null;
+                // Drop cached routes so a new hover recomputes from scratch.
+                _walkRouteCache.clear();
+            }
+
+            // ── Dorm-to-Quad walk routes ────────────────────────────────────
+            // When the Dorms filter is active, draw walk routes from every dorm
+            // to the Main Quad so students can see how far each dorm is.
+            // Routes are keyed by the special sentinel '_DORM_FILTER_QUAD'.
+            const DORM_FILTER_SENTINEL = '_DORM_FILTER_QUAD';
+
+            function drawDormToQuadRoutes() {
+                if (!WALK_ROUTES_ENABLED) return;
+
+                const quadLandmark = LANDMARKS.find(l => l.name === 'Main Quad');
+                if (!quadLandmark) return;
+                const toXZ = latLngToXZ(quadLandmark.lat, quadLandmark.lng);
+
+                // Build/reuse cached routes (dorm → quad)
+                let cached = _walkRouteCache.get(DORM_FILTER_SENTINEL);
+                if (!cached) {
+                    cached = { routes: [] };
+                    DORMS.forEach(d => {
+                        const fromXZ = latLngToXZ(d.lat, d.lng);
+                        const rr = computeRoadRouteXZ(fromXZ.x, fromXZ.z, toXZ.x, toXZ.z);
+                        const rd = routeTotalMetersXZ(rr);
+                        const wm = rd / WALK_SPEED_M_PER_MIN;
+                        cached.routes.push({
+                            dormName: d.name,
+                            route: rr,
+                            routeDist: rd,
+                            walkMin: wm,
+                            timeStr: wm < 1 ? '<1 min' : Math.round(wm) + ' min'
+                        });
+                    });
+                    _walkRouteCache.set(DORM_FILTER_SENTINEL, cached);
+                }
+
+                // Rebuild 3D ribbons only when switching to this mode
+                if (_walkRouteLastLandmark !== DORM_FILTER_SENTINEL) {
+                    clearWalkRouteMeshes();
+                    DORMS.forEach((dorm, idx) => {
+                        const entry = cached.routes[idx];
+                        if (!entry) return;
+                        const dormColor = DORM_ROUTE_COLORS[dorm.name] || '#7a1f1f';
+                        const mesh = buildRouteMesh(entry.route, dormColor);
+                        if (mesh) walkRouteGroup.add(mesh);
+                        // Endcap at the dorm end
+                        const first = entry.route[0];
+                        if (first) walkRouteGroup.add(buildRouteEndcap(first.x, first.z, dormColor));
+                    });
+                    // Single endcap at the Quad end (use a neutral green)
+                    const firstRoute = cached.routes[0] && cached.routes[0].route;
+                    const quadEnd = firstRoute && firstRoute[firstRoute.length - 1];
+                    if (quadEnd) walkRouteGroup.add(buildRouteEndcap(quadEnd.x, quadEnd.z, '#4a7c59'));
+                    _walkRouteLastLandmark = DORM_FILTER_SENTINEL;
+                }
+
+                // ── Walk-time labels (reposition each frame, but only
+                // create/destroy DOM nodes when switching modes so the CSS
+                // fade-in animation actually has time to play out) ──
+                const rebuildPills = (_walkTimeLabelKey !== DORM_FILTER_SENTINEL);
+                if (rebuildPills) {
+                    _removeAllWalkTimeLabels();
+                    _walkTimeLabelKey = DORM_FILTER_SENTINEL;
+                }
+
+                const r = wrap.getBoundingClientRect();
+                const halfW = r.width / 2;
+                const halfH = r.height / 2;
+
+                cached.routes.forEach((entry, idx) => {
+                    const dorm = DORMS[idx];
+                    if (!dorm || !entry) return;
+                    const dormColor = DORM_ROUTE_COLORS[dorm.name] || '#7a1f1f';
+                    const route = entry.route;
+                    if (!route || route.length < 2) return;
+
+                    // Place label near the midpoint of the route
+                    const midIdx = Math.floor(route.length / 2);
+                    const mp = route[midIdx];
+                    const v = new THREE.Vector3(mp.x, WALK_ROUTE_Y + 0.5, mp.z);
+                    const p = v.project(camera);
+                    if (p.z > 1) return; // behind camera
+                    const sx = (p.x * halfW) + halfW;
+                    const sy = (-p.y * halfH) + halfH;
+
+                    let pill = _walkTimeLabelEls.get(dorm.name);
+                    if (!pill) {
+                        pill = document.createElement('div');
+                        pill.className = 'walk-time-label';
+                        pill.style.cssText = [
+                            'position:absolute',
+                            'transform:translate(-50%,-50%)',
+                            'background:' + dormColor,
+                            'color:#fff',
+                            'font-size:11px',
+                            'font-weight:600',
+                            'padding:2px 7px',
+                            'border-radius:10px',
+                            'white-space:nowrap',
+                            'pointer-events:none',
+                            'box-shadow:0 1px 4px rgba(0,0,0,0.4)',
+                        ].join(';');
+                        pill.textContent = entry.timeStr;
+                        walkTimeLabelContainer.appendChild(pill);
+                        _walkTimeLabelEls.set(dorm.name, pill);
+                    }
+                    pill.style.left = sx + 'px';
+                    pill.style.top = sy + 'px';
+                });
             }
 
             // Color mapping for connector lines (matches building category colors)
+            // All non-dorm building type colors stay in the WARM / NEUTRAL
+            // family so they don't visually compete with the cold walk-route
+            // ribbons. Each color meets WCAG AA contrast against a white
+            // label background (≥4.5:1 for small text).
             const BUILDING_TYPE_COLORS = {
-                building: '#9a9a9a',   // gray (slightly darker for line visibility)
-                library:  '#5b8abf',   // steel blue
-                dining:   '#d4a054',   // warm amber
-                gym:      '#4da6a6',   // teal
-                museum:   '#8b5e3c',   // warm brown
-                culture:  '#8b5e3c',   // warm brown (culture)
-                dorm:     '#7a1f1f',   // maroon
+                building: '#6b6b6b',   // neutral slate (slightly darker for visibility)
+                library:  '#9a3412',   // burnt sienna (warm)
+                dining:   '#b45309',   // warm amber
+                gym:      '#be123c',   // warm crimson
+                museum:   '#713f12',   // warm espresso
+                culture:  '#713f12',   // warm espresso (culture == museum)
+                dorm:     '#7a1f1f',   // maroon (warm)
             };
 
             // Project a world-space Box3 to a screen-space AABB { x, y, w, h }
@@ -3547,6 +4136,12 @@
 
             function onLandmarkLabelHover(name) {
                 if (_hoveredLandmarkName === name) return;
+                // Cancel any pending debounced clear — the cursor moved back to a
+                // landmark before the clear fired, so we should keep the state.
+                if (_landmarkHoverClearRaf !== null) {
+                    cancelAnimationFrame(_landmarkHoverClearRaf);
+                    _landmarkHoverClearRaf = null;
+                }
                 // Clear any previous hover state
                 clearLandmarkLabelHover();
                 _hoveredLandmarkName = name;
@@ -3557,32 +4152,18 @@
                 // Add hover class for CSS expansion
                 hoveredEl.classList.add('landmark-label-2d--hovered');
 
-                // Get the hovered building's type
-                const hoveredType = landmarkTypeByName[name];
+                // Grow the hovered landmark building (same lerp system as dorms)
+                setLandmarkScale(name, HOVER_SCALE);
 
-                // Also expand ALL labels of the same type (at a smaller scale)
-                Object.keys(landmarkOverlayEls).forEach(otherName => {
-                    if (otherName === name) return;
-                    const otherType = landmarkTypeByName[otherName];
-                    if (otherType === hoveredType) {
-                        const otherEl = landmarkOverlayEls[otherName];
-                        if (otherEl) otherEl.classList.add('landmark-label-2d--hovered-peer');
-                    }
-                });
+                // Keep the filter bar visible during hover — clicking a building
+                // auto-selects its type in the legend, so the bar should stay shown.
 
-                // Hide the legend during hover
-                const legendEl = document.querySelector('.map-legend');
-                if (legendEl) legendEl.style.opacity = '0';
-
-                // Hide all other landmark labels EXCEPT those sharing the same building type
+                // Hide ALL other landmark labels (same-type included) so only
+                // the hovered building stays labeled.
                 Object.keys(landmarkOverlayEls).forEach(otherName => {
                     if (otherName === name) return;
                     const otherEl = landmarkOverlayEls[otherName];
                     if (!otherEl || otherEl.style.opacity === '0') return;
-
-                    const otherType = landmarkTypeByName[otherName];
-                    // Keep labels that share the same building type
-                    if (otherType === hoveredType) return;
 
                     otherEl.style.opacity = '0';
                     otherEl.style.pointerEvents = 'none';
@@ -3595,11 +4176,9 @@
                     dormEl.classList.add('dorm-label-2d--landmark-hovered');
                 });
 
-                // Turn all non-same-type landmark buildings grey
+                // Turn ALL other landmark buildings grey (no same-type exception)
                 Object.keys(landmarkMeshesByName).forEach(otherName => {
                     if (otherName === name) return;
-                    const otherType = landmarkTypeByName[otherName];
-                    if (otherType === hoveredType) return;
                     const meshes = landmarkMeshesByName[otherName];
                     if (!meshes) return;
                     meshes.forEach(m => {
@@ -3609,23 +4188,27 @@
                 });
 
                 // Draw walk-time lines from this landmark to all 7 dorms
-                if (walkRoutesEnabled) drawWalkTimeLines(name);
+                if (WALK_ROUTES_ENABLED) drawWalkTimeLines(name);
             }
 
             function clearLandmarkLabelHover() {
+                // Cancel any pending debounced clear
+                if (_landmarkHoverClearRaf !== null) {
+                    cancelAnimationFrame(_landmarkHoverClearRaf);
+                    _landmarkHoverClearRaf = null;
+                }
                 if (_hoveredLandmarkName) {
                     const el = landmarkOverlayEls[_hoveredLandmarkName];
                     if (el) el.classList.remove('landmark-label-2d--hovered');
-                    // Also remove hover-peer class from all same-type labels
-                    const hoveredType = landmarkTypeByName[_hoveredLandmarkName];
-                    Object.keys(landmarkOverlayEls).forEach(otherName => {
-                        if (otherName === _hoveredLandmarkName) return;
-                        if (landmarkTypeByName[otherName] === hoveredType) {
-                            const otherEl = landmarkOverlayEls[otherName];
-                            if (otherEl) otherEl.classList.remove('landmark-label-2d--hovered-peer');
-                        }
-                    });
+                    // Reset the landmark's scale back to normal
+                    setLandmarkScale(_hoveredLandmarkName, 1.0);
                 }
+                // Strip any lingering peer highlight classes (added by
+                // _applyLegendTypeFilter when a chip click pins a type).
+                Object.keys(landmarkOverlayEls).forEach(otherName => {
+                    const otherEl = landmarkOverlayEls[otherName];
+                    if (otherEl) otherEl.classList.remove('landmark-label-2d--hovered-peer');
+                });
                 // Restore all hidden landmark labels
                 _landmarkHoverHidden.forEach(hiddenName => {
                     const el = landmarkOverlayEls[hiddenName];
@@ -3648,8 +4231,8 @@
                     });
                 });
 
-                // Restore the legend
-                const legendEl = document.querySelector('.map-legend');
+                // Restore the filter bar
+                const legendEl = document.querySelector('.map-filter-bar');
                 if (legendEl) legendEl.style.opacity = '1';
 
                 // Restore dorm rank circles and label positions
@@ -3658,7 +4241,7 @@
                 });
 
                 // Clear walk-time lines
-                if (walkRoutesEnabled) clearWalkTimeLines();
+                if (WALK_ROUTES_ENABLED) clearWalkTimeLines();
 
                 _hoveredLandmarkName = null;
             }
@@ -3667,9 +4250,183 @@
             Object.keys(landmarkOverlayEls).forEach(name => {
                 const el = landmarkOverlayEls[name];
                 el.style.pointerEvents = 'auto';
-                el.addEventListener('mouseenter', () => onLandmarkLabelHover(name));
-                el.addEventListener('mouseleave', () => clearLandmarkLabelHover());
+                el.addEventListener('mouseenter', () => {
+                    // Auto-select this building's type in the legend filter on hover.
+                    // Do this FIRST because onLegendItemClick() internally calls
+                    // _clearLegendTypeFilter() → clearLandmarkLabelHover(), which
+                    // would wipe the hover state if we applied it beforehand.
+                    const type = landmarkTypeByName[name];
+                    if (type && type !== 'quad' && _pinnedLegendType !== type) {
+                        onLegendItemClick(type);
+                        _legendPinnedByHover = true; // mark as hover-triggered
+                    }
+                    // _applyLegendTypeFilter() stashes its own landmark name into
+                    // _hoveredLandmarkName. Reset it here so onLandmarkLabelHover
+                    // doesn't early-return when the auto-pick happens to match.
+                    _hoveredLandmarkName = null;
+                    // Now apply the focused hover treatment (hide other labels,
+                    // grey other meshes, scale up hovered building). This runs
+                    // after the legend filter so its effects stick.
+                    onLandmarkLabelHover(name);
+                });
+                el.addEventListener('mouseleave', () => {
+                    // If the filter was set by hovering this building, clear it on leave.
+                    // If it was set by a manual chip click, leave it alone.
+                    if (_legendPinnedByHover && landmarkTypeByName[name] === _pinnedLegendType) {
+                        _clearLegendTypeFilter();
+                        return;
+                    }
+                    clearLandmarkLabelHover();
+                    // Re-apply pinned legend state after clearing hover
+                    if (_pinnedLegendType) _applyLegendTypeFilter(_pinnedLegendType);
+                });
             });
+
+            // ── Legend click / pin logic ────────────────────────────────────
+            // Tracks which building type is currently "pinned" via a legend click.
+            let _pinnedLegendType = null;
+            // True when the pin was set by hovering a building (not a manual chip click).
+            // Used so mouseleave clears the filter only when it was hover-triggered.
+            let _legendPinnedByHover = false;
+
+            // Apply the same visual filter as a landmark hover but for an entire
+            // building type, triggered by clicking a legend item.
+            function _applyLegendTypeFilter(type) {
+                if (type === 'dorm') {
+                    // Highlight all dorms: grey all landmark buildings, keep dorm
+                    // labels visible, hide landmark labels.
+                    Object.keys(landmarkOverlayEls).forEach(lName => {
+                        const el = landmarkOverlayEls[lName];
+                        if (!el) return;
+                        el.style.opacity = '0';
+                        el.style.pointerEvents = 'none';
+                        _landmarkHoverHidden.add(lName);
+                    });
+                    Object.keys(landmarkMeshesByName).forEach(lName => {
+                        const meshes = landmarkMeshesByName[lName];
+                        if (!meshes) return;
+                        meshes.forEach(m => {
+                            if (!m._origMaterial) m._origMaterial = m.material;
+                            m.material = HOVER_GREY_MAT;
+                        });
+                    });
+                    // Expand all dorm labels (peer style)
+                    Object.values(dormOverlayEls).forEach(dormEl => {
+                        dormEl.classList.add('dorm-label-2d--landmark-hovered');
+                    });
+                    // Draw walk routes from every dorm to the Main Quad
+                    drawDormToQuadRoutes();
+                } else {
+                    // For a landmark type: reuse the existing landmark hover logic
+                    // by finding the first landmark of that type and hovering it.
+                    // This highlights all same-type buildings and greys the rest.
+                    const firstName = Object.keys(landmarkTypeByName).find(n => landmarkTypeByName[n] === type);
+                    if (!firstName) return;
+
+                    // Manually replicate onLandmarkLabelHover without hiding the legend
+                    _hoveredLandmarkName = firstName;
+                    const hoveredEl = landmarkOverlayEls[firstName];
+                    if (hoveredEl) hoveredEl.classList.add('landmark-label-2d--hovered');
+
+                    // Expand all same-type labels as peers
+                    Object.keys(landmarkOverlayEls).forEach(otherName => {
+                        if (otherName === firstName) return;
+                        if (landmarkTypeByName[otherName] === type) {
+                            const otherEl = landmarkOverlayEls[otherName];
+                            if (otherEl) otherEl.classList.add('landmark-label-2d--hovered-peer');
+                        }
+                    });
+
+                    // Hide labels of other types
+                    Object.keys(landmarkOverlayEls).forEach(otherName => {
+                        if (otherName === firstName) return;
+                        const otherEl = landmarkOverlayEls[otherName];
+                        if (!otherEl || otherEl.style.opacity === '0') return;
+                        if (landmarkTypeByName[otherName] === type) return;
+                        otherEl.style.opacity = '0';
+                        otherEl.style.pointerEvents = 'none';
+                        _landmarkHoverHidden.add(otherName);
+                    });
+
+                    // Grey out non-matching landmark buildings
+                    Object.keys(landmarkMeshesByName).forEach(otherName => {
+                        if (landmarkTypeByName[otherName] === type) return;
+                        const meshes = landmarkMeshesByName[otherName];
+                        if (!meshes) return;
+                        meshes.forEach(m => {
+                            if (!m._origMaterial) m._origMaterial = m.material;
+                            m.material = HOVER_GREY_MAT;
+                        });
+                    });
+
+                    // Dorms get the landmark-hovered treatment (hide rank circles)
+                    Object.values(dormOverlayEls).forEach(dormEl => {
+                        dormEl.classList.add('dorm-label-2d--landmark-hovered');
+                    });
+                }
+            }
+
+            function _clearLegendTypeFilter() {
+                _pinnedLegendType = null;
+                _legendPinnedByHover = false;
+                // Update chip UI
+                document.querySelectorAll('.map-filter-chip').forEach(el => {
+                    el.classList.remove('map-filter-chip--dimmed');
+                    el.setAttribute('aria-pressed', 'false');
+                });
+                // Remove active state from panel
+                const panel = document.querySelector('.map-filter-bar');
+                if (panel) panel.classList.remove('map-filter-bar--active');
+                // Clear the underlying hover state
+                clearLandmarkLabelHover();
+                // Clear any dorm-to-quad walk routes
+                if (WALK_ROUTES_ENABLED) clearWalkTimeLines();
+            }
+
+            function onLegendItemClick(type) {
+                // Toggle off if already pinned
+                if (_pinnedLegendType === type) {
+                    _clearLegendTypeFilter();
+                    return;
+                }
+
+                // Clear any existing state first
+                _clearLegendTypeFilter();
+                _pinnedLegendType = type;
+                _legendPinnedByHover = false; // set by chip click
+
+                // Update chip visual states
+                document.querySelectorAll('.map-filter-chip').forEach(el => {
+                    const elType = el.dataset.legendType;
+                    if (elType === type) {
+                        el.classList.remove('map-filter-chip--dimmed');
+                        el.setAttribute('aria-pressed', 'true');
+                    } else {
+                        el.classList.add('map-filter-chip--dimmed');
+                        el.setAttribute('aria-pressed', 'false');
+                    }
+                });
+
+                // Mark panel as active (shows Clear button)
+                const panel = document.querySelector('.map-filter-bar');
+                if (panel) panel.classList.add('map-filter-bar--active');
+
+                _applyLegendTypeFilter(type);
+            }
+
+            // Wire up filter chip clicks
+            document.querySelectorAll('.map-filter-chip[data-legend-type]').forEach(el => {
+                el.addEventListener('click', () => onLegendItemClick(el.dataset.legendType));
+            });
+
+            // Wire up Clear button
+            const _filterClearBtn = document.getElementById('map-filter-clear');
+            if (_filterClearBtn) {
+                _filterClearBtn.addEventListener('click', () => _clearLegendTypeFilter());
+            }
+
+            // Clear pinned legend state when user hovers a real building
+            // (handled inline in the pointermove handler above)
 
             // ── Main entry point called each frame ───────────────────────
             // If the camera moved, schedule a re-solve after a short settle
@@ -3805,6 +4562,7 @@
                 }
 
                 tickDormScales();
+                tickLandmarkScales();
                 applyCameraPose();
                 renderer.render(scene, camera);
 
@@ -3816,7 +4574,10 @@
                 updateRoadLabels2D();
 
                 // Redraw walk-time lines if a landmark is hovered (tracks camera movement)
-                if (walkRoutesEnabled && _hoveredLandmarkName) drawWalkTimeLines(_hoveredLandmarkName);
+                if (WALK_ROUTES_ENABLED && _hoveredLandmarkName) drawWalkTimeLines(_hoveredLandmarkName);
+
+                // Redraw dorm-to-quad routes if the dorm filter is active (tracks camera movement)
+                if (WALK_ROUTES_ENABLED && _pinnedLegendType === 'dorm') drawDormToQuadRoutes();
 
                 // Connector tracks the camera so the line stays glued to
                 // the building as we zoom in.
