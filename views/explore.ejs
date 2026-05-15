@@ -901,16 +901,152 @@
                 scene.add(grass);
             });
 
+            // ── COLOR SCHEMES (toggle-able) ─────────────────────────────────
+            // Three visual palettes the user can cycle through via the small
+            // "🎨 …" button in the top-right of the map. Each scheme is built
+            // so building-type colors read as categorically distinct from
+            // each other AND from the walk-route colors. See applyColorScheme
+            // below for everything that swaps on toggle.
+            //
+            //   • building      — flat hex used for filter chips, label
+            //                     text/background/border, label connectors,
+            //                     and the origin endcap on hover routes.
+            //   • buildingMesh  — 3D Lambert mesh colors (usually a hair
+            //                     brighter than `building` so shaded roofs
+            //                     still pop).
+            //   • dormBase/Hover/Select — dorm mesh colors.
+            //   • routes        — per-dorm walk-ribbon colors.
+            //   • routeEndcap   — endcap placed at Main Quad in dorm-filter mode.
+            const COLOR_SCHEMES = {
+                warmCool: {
+                    label: 'Warm / Cool',
+                    building: {
+                        dorm:     '#991B1B',
+                        library:  '#EA580C',
+                        dining:   '#CA8A04',
+                        gym:      '#DB2777',
+                        museum:   '#78350F',
+                        culture:  '#78350F',
+                        building: '#525252',
+                    },
+                    buildingMesh: {
+                        dorm:     '#991B1B',
+                        library:  '#DC5224',
+                        dining:   '#D99520',
+                        gym:      '#E04A8E',
+                        museum:   '#8B4513',
+                        culture:  '#8B4513',
+                        building: '#B5B5B5',
+                    },
+                    dormBase:   '#991B1B',
+                    dormHover:  '#DC2626',
+                    dormSelect: '#F97316',
+                    routes: {
+                        'Burton-Judson':             '#1E3A8A',
+                        'I-House':                   '#0E7490',
+                        'Snell_Hitchcock':           '#0F766E',
+                        'Max Palevsky':              '#6D28D9',
+                        'Campus North':              '#0369A1',
+                        'Renee_Granville-Grossman':  '#4338CA',
+                        'Woodlawn':                  '#047857',
+                    },
+                    routeEndcap: '#4A7C59',
+                },
+                vividTeal: {
+                    label: 'Vivid / Teal',
+                    building: {
+                        dorm:     '#DC2626',
+                        library:  '#EA580C',
+                        dining:   '#CA8A04',
+                        gym:      '#DB2777',
+                        museum:   '#7C3AED',
+                        culture:  '#7C3AED',
+                        building: '#475569',
+                    },
+                    buildingMesh: {
+                        dorm:     '#DC2626',
+                        library:  '#F97316',
+                        dining:   '#EAB308',
+                        gym:      '#EC4899',
+                        museum:   '#8B5CF6',
+                        culture:  '#8B5CF6',
+                        building: '#94A3B8',
+                    },
+                    dormBase:   '#DC2626',
+                    dormHover:  '#EF4444',
+                    dormSelect: '#FBBF24',
+                    // All-teal route family, spanning seven lightnesses so each
+                    // dorm is still individually identifiable while the routes
+                    // collectively read as "one category".
+                    routes: {
+                        'Burton-Judson':             '#134E4A',
+                        'I-House':                   '#115E59',
+                        'Snell_Hitchcock':           '#0F766E',
+                        'Max Palevsky':              '#0D9488',
+                        'Campus North':              '#14B8A6',
+                        'Renee_Granville-Grossman':  '#0891B2',
+                        'Woodlawn':                  '#0E7490',
+                    },
+                    routeEndcap: '#134E4A',
+                },
+                earthJewel: {
+                    label: 'Earth / Jewel',
+                    // All-brown building family (varying lightness) — buildings
+                    // collectively read as the "ground truth" backdrop while
+                    // the vivid jewel-tone routes pop on hover.
+                    building: {
+                        dorm:     '#78350F',
+                        library:  '#9A3412',
+                        dining:   '#B45309',
+                        gym:      '#A16207',
+                        museum:   '#7C2D12',
+                        culture:  '#7C2D12',
+                        building: '#57534E',
+                    },
+                    buildingMesh: {
+                        dorm:     '#92400E',
+                        library:  '#C2410C',
+                        dining:   '#D97706',
+                        gym:      '#CA8A04',
+                        museum:   '#9A3412',
+                        culture:  '#9A3412',
+                        building: '#A8A29E',
+                    },
+                    dormBase:   '#92400E',
+                    dormHover:  '#C2410C',
+                    dormSelect: '#F59E0B',
+                    routes: {
+                        'Burton-Judson':             '#2563EB',
+                        'I-House':                   '#0891B2',
+                        'Snell_Hitchcock':           '#059669',
+                        'Max Palevsky':              '#7C3AED',
+                        'Campus North':              '#DB2777',
+                        'Renee_Granville-Grossman':  '#4F46E5',
+                        'Woodlawn':                  '#16A34A',
+                    },
+                    routeEndcap: '#1E40AF',
+                },
+            };
+            const SCHEME_KEYS = Object.keys(COLOR_SCHEMES);
+            let ACTIVE_SCHEME_KEY = 'warmCool';
+            try {
+                const saved = localStorage.getItem('explorerColorScheme');
+                if (saved && COLOR_SCHEMES[saved]) ACTIVE_SCHEME_KEY = saved;
+            } catch (e) { /* localStorage unavailable */ }
+            function activeScheme() { return COLOR_SCHEMES[ACTIVE_SCHEME_KEY]; }
+
             // ── Render landmark (non-dorm) buildings ────────────────────────
-            // Color by building type. All non-dorm mesh colors are warm or
-            // neutral so the cold walk-route ribbons stay visually distinct.
+            // Color by building type; the active color scheme decides the hues
+            // (see COLOR_SCHEMES above). applyColorScheme() mutates each
+            // material's `.color` in place when the scheme changes.
+            const _initMeshColors = activeScheme().buildingMesh;
             const LANDMARK_MATS = {
-                building: new THREE.MeshLambertMaterial({ color: 0xcfcfcf }),  // neutral slate
-                library:  new THREE.MeshLambertMaterial({ color: 0xc27256 }),  // muted sienna
-                dining:   new THREE.MeshLambertMaterial({ color: 0xd68a3c }),  // warm amber
-                gym:      new THREE.MeshLambertMaterial({ color: 0xcf6a7d }),  // dusty rose
-                museum:   new THREE.MeshLambertMaterial({ color: 0x9c6b3d }),  // warm tan
-                culture:  new THREE.MeshLambertMaterial({ color: 0x9c6b3d }),  // warm tan
+                building: new THREE.MeshLambertMaterial({ color: new THREE.Color(_initMeshColors.building) }),
+                library:  new THREE.MeshLambertMaterial({ color: new THREE.Color(_initMeshColors.library) }),
+                dining:   new THREE.MeshLambertMaterial({ color: new THREE.Color(_initMeshColors.dining) }),
+                gym:      new THREE.MeshLambertMaterial({ color: new THREE.Color(_initMeshColors.gym) }),
+                museum:   new THREE.MeshLambertMaterial({ color: new THREE.Color(_initMeshColors.museum) }),
+                culture:  new THREE.MeshLambertMaterial({ color: new THREE.Color(_initMeshColors.culture) }),
             };
             const LANDMARK_MAT = LANDMARK_MATS.building; // fallback
             // Per-landmark anchor world positions for 2D label projection
@@ -1095,9 +1231,9 @@
             // Tweak this single number to pan the default view north or south.
             const CAMERA_Z_OFFSET = 79;
 
-            const DORM_BASE_COLOR  = new THREE.Color('#7a1f1f');
-            const DORM_HOVER_COLOR = new THREE.Color('#a83434');
-            const DORM_SELECT_COLOR= new THREE.Color('#d97a2c');
+            const DORM_BASE_COLOR  = new THREE.Color(activeScheme().dormBase);
+            const DORM_HOVER_COLOR = new THREE.Color(activeScheme().dormHover);
+            const DORM_SELECT_COLOR= new THREE.Color(activeScheme().dormSelect);
             const dormMeshes = [];
             const dormByName = {};
             // Per-dorm "anchor" world position used by the hover card
@@ -2382,19 +2518,10 @@
             }
 
             // ── Unique dorm route colors ────────────────────────────────────
-            // Each dorm gets a distinct, high-contrast COLD color so routes
-            // read as the "walk-to" information layer while dorm buildings
-            // (warm maroon) stay visually separate. All seven colors clear
-            // WCAG AA contrast on the white pill text (≥4.5:1).
-            const DORM_ROUTE_COLORS = {
-                'Burton-Judson':           '#1e3a8a',  // deep navy blue
-                'I-House':                 '#0e7490',  // dark cyan
-                'Snell_Hitchcock':         '#0f766e',  // deep teal
-                'Max Palevsky':            '#6d28d9',  // cold violet
-                'Campus North':            '#0369a1',  // ocean blue
-                'Renee_Granville-Grossman':'#4338ca',  // indigo
-                'Woodlawn':                '#047857',  // cold emerald
-            };
+            // Each dorm gets a distinct walk-route color. The default palette
+            // is defined by the active entry in COLOR_SCHEMES — this `let`
+            // binding is rebuilt by applyColorScheme() on toggle.
+            let DORM_ROUTE_COLORS = Object.assign({}, activeScheme().routes);
 
             // ── Real-road walking routes (OSM shortest path) ────────────────
             // Routes walk paths along the actual UChicago road/sidewalk network
@@ -3244,10 +3371,10 @@
                         const first = entry.route[0];
                         if (first) walkRouteGroup.add(buildRouteEndcap(first.x, first.z, dormColor));
                     });
-                    // Single endcap at the Quad end (use a neutral green)
+                    // Single endcap at the Quad end (scheme-driven)
                     const firstRoute = cached.routes[0] && cached.routes[0].route;
                     const quadEnd = firstRoute && firstRoute[firstRoute.length - 1];
-                    if (quadEnd) walkRouteGroup.add(buildRouteEndcap(quadEnd.x, quadEnd.z, '#4a7c59'));
+                    if (quadEnd) walkRouteGroup.add(buildRouteEndcap(quadEnd.x, quadEnd.z, activeScheme().routeEndcap));
                     _walkRouteLastLandmark = DORM_FILTER_SENTINEL;
                 }
 
@@ -3307,19 +3434,13 @@
             }
 
             // Color mapping for connector lines (matches building category colors)
-            // All non-dorm building type colors stay in the WARM / NEUTRAL
-            // family so they don't visually compete with the cold walk-route
-            // ribbons. Each color meets WCAG AA contrast against a white
-            // label background (≥4.5:1 for small text).
-            const BUILDING_TYPE_COLORS = {
-                building: '#6b6b6b',   // neutral slate (slightly darker for visibility)
-                library:  '#9a3412',   // burnt sienna (warm)
-                dining:   '#b45309',   // warm amber
-                gym:      '#be123c',   // warm crimson
-                museum:   '#713f12',   // warm espresso
-                culture:  '#713f12',   // warm espresso (culture == museum)
-                dorm:     '#7a1f1f',   // maroon (warm)
-            };
+            // All non-dorm building type colors are supplied by the active
+            // color scheme (see COLOR_SCHEMES at the top of the script). This
+            // `let` is rebuilt by applyColorScheme() when the user toggles.
+            let BUILDING_TYPE_COLORS = Object.assign(
+                { dorm: activeScheme().dormBase },
+                activeScheme().building
+            );
 
             // Project a world-space Box3 to a screen-space AABB { x, y, w, h }
             function projectBBoxToScreen(bbox, cam, wrapRect) {
@@ -4424,6 +4545,166 @@
             if (_filterClearBtn) {
                 _filterClearBtn.addEventListener('click', () => _clearLegendTypeFilter());
             }
+
+            // ── Color-scheme toggle ──────────────────────────────────────────
+            // Re-applies every color-driven surface in the scene when the user
+            // cycles schemes via the small "🎨 …" button (added just below).
+            //
+            //   1. Landmark mesh materials (LANDMARK_MATS) — mutate .color
+            //      in place so every existing mesh picks up the new hue
+            //      without rebuilding geometry.
+            //   2. Filter-chip swatches — rewrite the inline --chip-color var.
+            //   3. Landmark label CSS — inject a dynamic <style> block that
+            //      overrides .landmark-label-2d--{type} text/background/border
+            //      (those rules live in styles.css and we override by id).
+            //   4. Dorm base/hover/select colors + all rendered dorm meshes.
+            //   5. DORM_ROUTE_COLORS + BUILDING_TYPE_COLORS tables.
+            //   6. Walk-route material cache (blown away; next hover rebuilds).
+            //   7. Any currently-drawn walk-route meshes (re-draw next frame).
+            const _schemeStyleEl = (function() {
+                const s = document.createElement('style');
+                s.id = 'explorer-color-scheme-overrides';
+                document.head.appendChild(s);
+                return s;
+            })();
+
+            // Approximate contrast-friendly tints for label backgrounds —
+            // 14% alpha of the type color on white reads clearly at small
+            // sizes without fighting the 3D buildings behind them.
+            function _rgba(hex, alpha) {
+                const h = hex.replace('#', '');
+                const r = parseInt(h.substring(0, 2), 16);
+                const g = parseInt(h.substring(2, 4), 16);
+                const b = parseInt(h.substring(4, 6), 16);
+                return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+            }
+
+            function _buildLabelCSS(scheme) {
+                // Same four type buckets the LANDMARK_TYPE_CLASS map produces.
+                const types = ['library', 'dining', 'gym', 'culture'];
+                const colorByClass = {
+                    library: scheme.building.library,
+                    dining:  scheme.building.dining,
+                    gym:     scheme.building.gym,
+                    culture: scheme.building.culture,
+                };
+                return types.map(function(t) {
+                    const c = colorByClass[t];
+                    return (
+                        '.landmark-label-2d--' + t + ' .landmark-label-2d__text {' +
+                            'color:' + c + ';' +
+                            'background:' + _rgba(c, 0.12) + ';' +
+                            'border-color:' + _rgba(c, 0.35) + ';' +
+                        '}' +
+                        '.landmark-label-2d--' + t + '.landmark-label-2d--hovered .landmark-label-2d__text {' +
+                            'background:' + _rgba(c, 0.22) + ';' +
+                            'border-color:' + _rgba(c, 0.55) + ';' +
+                        '}'
+                    );
+                }).join('\n');
+            }
+
+            function applyColorScheme(key) {
+                if (!COLOR_SCHEMES[key]) return;
+                ACTIVE_SCHEME_KEY = key;
+                try { localStorage.setItem('explorerColorScheme', key); } catch (e) {}
+                const scheme = activeScheme();
+
+                // 1. Landmark mesh materials
+                Object.keys(LANDMARK_MATS).forEach(function(type) {
+                    const hex = scheme.buildingMesh[type];
+                    if (hex) LANDMARK_MATS[type].color.set(hex);
+                });
+
+                // 2. Filter-chip swatches
+                document.querySelectorAll('.map-filter-chip[data-legend-type]').forEach(function(el) {
+                    const t = el.dataset.legendType;
+                    const hex = scheme.building[t];
+                    if (hex) el.style.setProperty('--chip-color', hex);
+                });
+
+                // 3. Landmark label CSS
+                _schemeStyleEl.textContent = _buildLabelCSS(scheme);
+
+                // 4. Dorm colors (update constants + live meshes)
+                DORM_BASE_COLOR.set(scheme.dormBase);
+                DORM_HOVER_COLOR.set(scheme.dormHover);
+                DORM_SELECT_COLOR.set(scheme.dormSelect);
+                if (typeof dormByName === 'object') {
+                    Object.keys(dormByName).forEach(function(name) {
+                        const target = (name === selectedName) ? DORM_SELECT_COLOR
+                                     : (hovered && hovered.userData.name === name) ? DORM_HOVER_COLOR
+                                     : DORM_BASE_COLOR;
+                        setDormColor(name, target);
+                    });
+                }
+
+                // 5. Route + building color tables
+                DORM_ROUTE_COLORS = Object.assign({}, scheme.routes);
+                BUILDING_TYPE_COLORS = Object.assign(
+                    { dorm: scheme.dormBase },
+                    scheme.building
+                );
+
+                // 6. Walk-route material cache — drop so next rebuild picks up
+                //    the fresh hex → THREE.Color mapping.
+                Object.keys(_walkRouteMaterials).forEach(function(k) { delete _walkRouteMaterials[k]; });
+
+                // 7. Force any in-scene walk-route geometry to rebuild on the
+                //    next animate() tick by resetting the "last drawn" marker.
+                if (typeof clearWalkRouteMeshes === 'function') clearWalkRouteMeshes();
+                _walkRouteLastLandmark = null;
+                if (typeof _removeAllWalkTimeLabels === 'function') _removeAllWalkTimeLabels();
+                _walkTimeLabelKey = null;
+                // If dorm-filter mode is pinned, redraw quad routes right now.
+                if (WALK_ROUTES_ENABLED && _pinnedLegendType === 'dorm') {
+                    try { drawDormToQuadRoutes(); } catch (e) {}
+                }
+
+                // Update the toggle button label
+                if (_schemeToggleBtn) {
+                    const next = SCHEME_KEYS[(SCHEME_KEYS.indexOf(key) + 1) % SCHEME_KEYS.length];
+                    _schemeToggleBtn.textContent = '🎨 ' + scheme.label;
+                    _schemeToggleBtn.title = 'Color scheme: ' + scheme.label
+                        + ' — click for ' + COLOR_SCHEMES[next].label;
+                }
+            }
+
+            // Build the small toggle button (top-right of the map).
+            const _schemeToggleBtn = document.createElement('button');
+            _schemeToggleBtn.type = 'button';
+            _schemeToggleBtn.className = 'scheme-toggle-btn';
+            _schemeToggleBtn.style.cssText = [
+                'position:absolute',
+                'top:16px',
+                'right:16px',
+                'z-index:25',
+                'padding:7px 12px',
+                'border-radius:999px',
+                'border:1px solid rgba(0,0,0,0.12)',
+                'background:rgba(255,255,255,0.94)',
+                'backdrop-filter:blur(12px)',
+                '-webkit-backdrop-filter:blur(12px)',
+                'font-family:Inter,sans-serif',
+                'font-size:0.72rem',
+                'font-weight:600',
+                'color:#333',
+                'cursor:pointer',
+                'box-shadow:0 2px 10px rgba(0,0,0,0.10)',
+                'user-select:none',
+                'letter-spacing:0.02em'
+            ].join(';');
+            _schemeToggleBtn.addEventListener('click', function() {
+                const idx = SCHEME_KEYS.indexOf(ACTIVE_SCHEME_KEY);
+                const next = SCHEME_KEYS[(idx + 1) % SCHEME_KEYS.length];
+                applyColorScheme(next);
+            });
+            // Insert into the canvas wrap so it floats over the 3D map.
+            const _wrapForToggle = document.getElementById('campus-3d-canvas-wrap');
+            if (_wrapForToggle) _wrapForToggle.appendChild(_schemeToggleBtn);
+
+            // Apply the stored-or-default scheme once all the pieces exist.
+            applyColorScheme(ACTIVE_SCHEME_KEY);
 
             // Clear pinned legend state when user hovers a real building
             // (handled inline in the pointermove handler above)
