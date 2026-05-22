@@ -1,0 +1,14 @@
+{
+  "githubUrl": "https://github.com/asharma2027/Room-for-Improvement",
+  "firebaseConfig": {
+    "apiKey": "AIzaSyBYdgNMlhBfJF9_B-8lywdK-UEmpGA0-tE",
+    "authDomain": "roomforimprovement-535be.firebaseapp.com",
+    "projectId": "roomforimprovement-535be",
+    "storageBucket": "roomforimprovement-535be.firebasestorage.app",
+    "messagingSenderId": "896986334028",
+    "appId": "1:896986334028:web:3335ec28131b3ce94005e9",
+    "databaseURL": "https://roomforimprovement-535be-default-rtdb.firebaseio.com"
+  },
+  "username": "User1",
+  "userColor": "#dc2626"
+}
