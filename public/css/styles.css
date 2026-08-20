@@ -2956,23 +2956,30 @@ table tbody tr:hover {
   transition: opacity 0.18s ease;
 }
 
-/* ── Dorm labels — large + bold ── */
+/* ── Dorm labels ── */
 .dorm-label-2d {
   /* gap controlled inline via JS (CIRCLE_PX_BELOW_LABEL) */
   /* No transform transition — top/left are set every frame by JS */
   transition: opacity 0.18s ease;
 }
-.dorm-label-2d__text {
+
+/* Shared pill: same size, text color, and background on every map label
+   (dorms, landmarks, roads) so names stay readable without type colors. */
+.dorm-label-2d__text,
+.landmark-label-2d__text,
+.road-label-2d__text {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: #fff;
-  background: rgba(122, 31, 31, 0.92);
-  padding: 0.2em 0.6em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #1f1f1f;
+  background: rgba(255, 255, 255, 0.94);
+  padding: 0.18em 0.55em;
   border-radius: 4px;
   white-space: nowrap;
   line-height: 1.3;
   letter-spacing: 0.01em;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  user-select: none;
 }
 .dorm-label-2d__circle {
   width: 32px;
@@ -3008,7 +3015,7 @@ table tbody tr:hover {
   transition: transform 0.05s ease;
 }
 
-/* ── Landmark (non-dorm) labels — small + light ── */
+/* ── Landmark (non-dorm) labels ── */
 /* Override the shared -100% vertical shift so labels sit centered on the
    projected anchor point (mid-building) rather than floating above it. */
 .landmark-label-2d {
@@ -3018,29 +3025,18 @@ table tbody tr:hover {
   cursor: default;
 }
 .landmark-label-2d__text {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 0.6rem;
-  font-weight: 500;
-  color: #444;
-  background: rgba(255, 255, 255, 0.82);
-  padding: 0.14em 0.45em;
-  border-radius: 3px;
-  white-space: nowrap;
-  line-height: 1.3;
-  letter-spacing: 0.01em;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, font-size 0.18s ease, padding 0.18s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
 
-/* Hovered landmark label: expand and emphasize */
+/* Hovered landmark label: expand and emphasize without changing colors */
 .landmark-label-2d--hovered {
   z-index: 10;
   transform: translate(-50%, -50%) scale(1.5);
 }
 .landmark-label-2d--hovered .landmark-label-2d__text {
-  background: rgba(255, 255, 255, 0.96);
+  background: rgba(255, 255, 255, 0.98);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-  font-weight: 700;
+  font-weight: 800;
   border-color: rgba(0, 0, 0, 0.18);
 }
 
@@ -3050,47 +3046,9 @@ table tbody tr:hover {
   transform: translate(-50%, -50%) scale(1.09);
 }
 .landmark-label-2d--hovered-peer .landmark-label-2d__text {
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.98);
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.10);
-  border-color: rgba(0, 0, 0, 0.12);
-}
-
-/* Type-specific landmark label colors */
-.landmark-label-2d--library .landmark-label-2d__text {
-  color: #7c2d12;
-  background: rgba(255, 232, 218, 0.88);
-  border-color: rgba(154, 52, 18, 0.25);
-}
-.landmark-label-2d--library.landmark-label-2d--hovered .landmark-label-2d__text {
-  background: rgba(255, 232, 218, 0.98);
-  border-color: rgba(154, 52, 18, 0.45);
-}
-.landmark-label-2d--dining .landmark-label-2d__text {
-  color: #7c2d12;
-  background: rgba(255, 237, 213, 0.88);
-  border-color: rgba(180, 83, 9, 0.25);
-}
-.landmark-label-2d--dining.landmark-label-2d--hovered .landmark-label-2d__text {
-  background: rgba(255, 237, 213, 0.98);
-  border-color: rgba(180, 83, 9, 0.45);
-}
-.landmark-label-2d--gym .landmark-label-2d__text {
-  color: #9f1239;
-  background: rgba(255, 225, 230, 0.88);
-  border-color: rgba(190, 18, 60, 0.25);
-}
-.landmark-label-2d--gym.landmark-label-2d--hovered .landmark-label-2d__text {
-  background: rgba(255, 225, 230, 0.98);
-  border-color: rgba(190, 18, 60, 0.45);
-}
-.landmark-label-2d--culture .landmark-label-2d__text {
-  color: #5a2e08;
-  background: rgba(245, 225, 200, 0.88);
-  border-color: rgba(113, 63, 18, 0.25);
-}
-.landmark-label-2d--culture.landmark-label-2d--hovered .landmark-label-2d__text {
-  background: rgba(245, 225, 200, 0.98);
-  border-color: rgba(113, 63, 18, 0.45);
+  border-color: rgba(0, 0, 0, 0.16);
 }
 
 /* ── Walk routes toggle button ── */
@@ -3143,8 +3101,8 @@ table tbody tr:hover {
 
 /* ── Road name labels ── */
 /* Rendered in a separate overlay below dorm/landmark labels.
-   Intentionally low-contrast and small so they read as map
-   context without competing with building labels. */
+   Same pill style as other map labels; they still fade out when
+   zoomed in so they don't compete at close range. */
 .road-labels-overlay {
   position: absolute;
   inset: 0;
@@ -3157,18 +3115,6 @@ table tbody tr:hover {
   pointer-events: none;
   transform: translate(-50%, -50%);
   transition: opacity 0.25s ease;
-}
-.road-label-2d__text {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 0.5rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.82);
-  white-space: nowrap;
-  /* No background — the label sits directly on the road surface color,
-     which provides enough contrast without a pill/badge treatment. */
-  user-select: none;
 }
 
 /* ── Map filter panel (bottom-right, desktop) ── */
@@ -3391,9 +3337,10 @@ table tbody tr:hover {
     max-width: 360px;
   }
   .explore-map-3d-hint { display: none; }
-  .dorm-label-2d__text { font-size: 0.72rem; }
+  .dorm-label-2d__text,
+  .landmark-label-2d__text,
+  .road-label-2d__text { font-size: 0.68rem; }
   .dorm-label-2d__circle { width: 26px; height: 26px; font-size: 0.58rem; }
-  .landmark-label-2d__text { font-size: 0.52rem; }
 }
 
 /* ============================================================

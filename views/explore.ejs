@@ -909,8 +909,9 @@
             // below for everything that swaps on toggle.
             //
             //   • building      — flat hex used for filter chips, label
-            //                     text/background/border, label connectors,
-            //                     and the origin endcap on hover routes.
+            //                     connectors, and the origin endcap on
+            //                     hover routes. Map name labels use a
+            //                     shared dark-on-white pill, not these hues.
             //   • buildingMesh  — 3D Lambert mesh colors (usually a hair
             //                     brighter than `building` so shaded roofs
             //                     still pop).
@@ -1102,7 +1103,8 @@
                 'DuSable Black History Museum':                   'DuSable Museum',
             };
 
-            // Type-specific label CSS class suffixes for color coding
+            // Type-specific label CSS class suffixes (used for same-type
+            // hover-peer highlighting, not for label colors).
             const LANDMARK_TYPE_CLASS = {
                 library: 'library',
                 dining:  'dining',
@@ -4554,55 +4556,12 @@
             //      in place so every existing mesh picks up the new hue
             //      without rebuilding geometry.
             //   2. Filter-chip swatches — rewrite the inline --chip-color var.
-            //   3. Landmark label CSS — inject a dynamic <style> block that
-            //      overrides .landmark-label-2d--{type} text/background/border
-            //      (those rules live in styles.css and we override by id).
-            //   4. Dorm base/hover/select colors + all rendered dorm meshes.
-            //   5. DORM_ROUTE_COLORS + BUILDING_TYPE_COLORS tables.
-            //   6. Walk-route material cache (blown away; next hover rebuilds).
-            //   7. Any currently-drawn walk-route meshes (re-draw next frame).
-            const _schemeStyleEl = (function() {
-                const s = document.createElement('style');
-                s.id = 'explorer-color-scheme-overrides';
-                document.head.appendChild(s);
-                return s;
-            })();
-
-            // Approximate contrast-friendly tints for label backgrounds —
-            // 14% alpha of the type color on white reads clearly at small
-            // sizes without fighting the 3D buildings behind them.
-            function _rgba(hex, alpha) {
-                const h = hex.replace('#', '');
-                const r = parseInt(h.substring(0, 2), 16);
-                const g = parseInt(h.substring(2, 4), 16);
-                const b = parseInt(h.substring(4, 6), 16);
-                return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
-            }
-
-            function _buildLabelCSS(scheme) {
-                // Same four type buckets the LANDMARK_TYPE_CLASS map produces.
-                const types = ['library', 'dining', 'gym', 'culture'];
-                const colorByClass = {
-                    library: scheme.building.library,
-                    dining:  scheme.building.dining,
-                    gym:     scheme.building.gym,
-                    culture: scheme.building.culture,
-                };
-                return types.map(function(t) {
-                    const c = colorByClass[t];
-                    return (
-                        '.landmark-label-2d--' + t + ' .landmark-label-2d__text {' +
-                            'color:' + c + ';' +
-                            'background:' + _rgba(c, 0.12) + ';' +
-                            'border-color:' + _rgba(c, 0.35) + ';' +
-                        '}' +
-                        '.landmark-label-2d--' + t + '.landmark-label-2d--hovered .landmark-label-2d__text {' +
-                            'background:' + _rgba(c, 0.22) + ';' +
-                            'border-color:' + _rgba(c, 0.55) + ';' +
-                        '}'
-                    );
-                }).join('\n');
-            }
+            //   3. Dorm base/hover/select colors + all rendered dorm meshes.
+            //   4. DORM_ROUTE_COLORS + BUILDING_TYPE_COLORS tables.
+            //   5. Walk-route material cache (blown away; next hover rebuilds).
+            //   6. Any currently-drawn walk-route meshes (re-draw next frame).
+            // Map labels stay on a shared dark-on-white pill regardless of
+            // scheme so names stay readable without type-coded colors.
 
             function applyColorScheme(key) {
                 if (!COLOR_SCHEMES[key]) return;
@@ -4623,10 +4582,7 @@
                     if (hex) el.style.setProperty('--chip-color', hex);
                 });
 
-                // 3. Landmark label CSS
-                _schemeStyleEl.textContent = _buildLabelCSS(scheme);
-
-                // 4. Dorm colors (update constants + live meshes)
+                // 3. Dorm colors (update constants + live meshes)
                 DORM_BASE_COLOR.set(scheme.dormBase);
                 DORM_HOVER_COLOR.set(scheme.dormHover);
                 DORM_SELECT_COLOR.set(scheme.dormSelect);
@@ -4639,18 +4595,18 @@
                     });
                 }
 
-                // 5. Route + building color tables
+                // 4. Route + building color tables
                 DORM_ROUTE_COLORS = Object.assign({}, scheme.routes);
                 BUILDING_TYPE_COLORS = Object.assign(
                     { dorm: scheme.dormBase },
                     scheme.building
                 );
 
-                // 6. Walk-route material cache — drop so next rebuild picks up
+                // 5. Walk-route material cache — drop so next rebuild picks up
                 //    the fresh hex → THREE.Color mapping.
                 Object.keys(_walkRouteMaterials).forEach(function(k) { delete _walkRouteMaterials[k]; });
 
-                // 7. Force any in-scene walk-route geometry to rebuild on the
+                // 6. Force any in-scene walk-route geometry to rebuild on the
                 //    next animate() tick by resetting the "last drawn" marker.
                 if (typeof clearWalkRouteMeshes === 'function') clearWalkRouteMeshes();
                 _walkRouteLastLandmark = null;
