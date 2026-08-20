@@ -69,6 +69,66 @@
         50% { background-position: 100% 50%; }
         100% { background-position: 0% 50%; }
       }
+
+      /* Side-by-side visualizer + latest submission */
+      .room-details-split {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(300px, 600px);
+        gap: 24px;
+        margin-bottom: 2rem;
+        align-items: start;
+      }
+      .room-details-split > .stat-card {
+        max-width: 600px;
+        width: 100%;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      .room-viz-card {
+        background: rgba(255, 255, 255, 0.96);
+        border: 1px solid #e4e7ec;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+        min-width: 0;
+      }
+      .room-viz-scene {
+        position: relative;
+        background: linear-gradient(180deg, #a9afc6 0%, #c0c3d2 42%, #b8bccd 100%);
+        height: 548px;
+        overflow: hidden;
+      }
+      .room-viz-scene svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      .room-viz-scene .noise-wave {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: roomVizPulse 1.25s ease-out infinite;
+      }
+      .room-viz-scene .noise-wave.w2 { animation-delay: .28s; }
+      .room-viz-scene .noise-wave.w3 { animation-delay: .56s; }
+      @keyframes roomVizPulse {
+        0% { opacity: .95; transform: scale(.9); }
+        65% { opacity: .18; transform: scale(1.08); }
+        100% { opacity: 0; transform: scale(1.18); }
+      }
+      .room-viz-scene .draft {
+        animation: roomVizDraft 1.5s linear infinite;
+      }
+      .room-viz-scene .draft.d2 { animation-delay: .4s; }
+      .room-viz-scene .draft.d3 { animation-delay: .8s; }
+      @keyframes roomVizDraft {
+        from { transform: translateX(0); opacity: 0; }
+        15% { opacity: .85; }
+        to { transform: translateX(38px); opacity: 0; }
+      }
+      @media (max-width: 900px) {
+        .room-details-split { grid-template-columns: 1fr; }
+        .room-viz-scene { height: 500px; }
+      }
     </style>
 
       <main>
@@ -105,7 +165,132 @@
         </div>
 
         <!-- Current (Latest) Data -->
-        <div class="stat-card" id="latest-submission-card" style="margin-bottom: 2rem;">
+        <div class="room-details-split">
+        <section class="room-viz-card" aria-label="Data-driven room visualization">
+          <div class="room-viz-scene">
+            <svg id="scene" viewBox="0 0 980 560" role="img" aria-label="Data-driven isometric room visualization">
+              <defs>
+                <linearGradient id="bgGlow" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#a2a8c2"/>
+                  <stop offset="1" stop-color="#b9bdcd"/>
+                </linearGradient>
+                <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feDropShadow dx="0" dy="10" stdDeviation="9" flood-opacity=".22"/>
+                </filter>
+                <filter id="softGlow">
+                  <feGaussianBlur stdDeviation="8" result="b"/>
+                  <feMerge>
+                    <feMergeNode in="b"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+                <linearGradient id="outsideSky" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#dcecff"/>
+                  <stop offset="1" stop-color="#a9c4db"/>
+                </linearGradient>
+                <clipPath id="windowClip">
+                  <polygon id="windowClipShape" points="689,205 724,225 724,283 689,264"/>
+                </clipPath>
+                <mask id="rightWallWindowMask" maskUnits="userSpaceOnUse" x="550" y="40" width="240" height="390">
+                  <rect x="550" y="40" width="240" height="390" fill="white"/>
+                  <polygon id="windowCutout" points="689,205 724,225 724,283 689,264" fill="black"/>
+                </mask>
+              </defs>
+
+              <rect width="980" height="560" fill="url(#bgGlow)"/>
+
+              <g id="culturePeople" transform="translate(52 184)" filter="url(#shadow)"></g>
+
+              <g id="tempBadge" transform="translate(92 342)" filter="url(#shadow)">
+                <rect x="0" y="0" width="30" height="145" rx="15" fill="#f4f6fa" stroke="#6f7885" stroke-width="3"/>
+                <rect x="9" y="17" width="12" height="104" rx="6" fill="#d9deea"/>
+                <rect id="thermoMercury" x="9" y="69" width="12" height="52" rx="6" fill="#76c7ff"/>
+                <circle id="thermoBulb" cx="15" cy="128" r="18" fill="#76c7ff" stroke="#6f7885" stroke-width="3"/>
+              </g>
+
+              <g id="roomComposite">
+                <polygon id="roomShadow" points="382,170 565,74 788,204 786,459 562,521 381,406" fill="#70788a" opacity=".18"/>
+
+                <g id="windowExterior" clip-path="url(#windowClip)">
+                  <rect x="660" y="175" width="100" height="150" fill="url(#outsideSky)"/>
+                  <circle cx="709" cy="216" r="12" fill="#fff8cf" opacity=".78"/>
+                  <path d="M655 284 L678 268 L694 277 L713 255 L737 274 L764 260 L772 332 L650 332 Z" fill="#8799a9" opacity=".55"/>
+                  <path d="M650 300 L683 282 L709 294 L736 279 L770 296 L770 332 L650 332 Z" fill="#6f8292" opacity=".68"/>
+                </g>
+
+                <g id="roomGroup" filter="url(#shadow)">
+                  <polygon id="leftWall" points="370,160 565,58 565,322 370,425" fill="#d9dee8" stroke="#8d94a7" stroke-width="2"/>
+                  <polygon id="rightWall" points="565,58 770,177 770,412 565,322" fill="#e1e5ed" stroke="#8d94a7" stroke-width="2" mask="url(#rightWallWindowMask)"/>
+                  <polygon id="floor" points="370,425 565,322 770,412 575,518" fill="#edf0f6" stroke="#8d94a7" stroke-width="2"/>
+
+                  <g id="panelSeams" stroke="#bac1d0" stroke-width="2" opacity=".95">
+                    <line x1="418.75" y1="134.5" x2="418.75" y2="399.25"/>
+                    <line x1="467.5" y1="109" x2="467.5" y2="373.5"/>
+                    <line x1="516.25" y1="83.5" x2="516.25" y2="347.75"/>
+                    <line x1="370" y1="226.25" x2="565" y2="124"/>
+                    <line x1="370" y1="292.5" x2="565" y2="190"/>
+                    <line x1="370" y1="358.75" x2="565" y2="256"/>
+                    <line x1="616.25" y1="87.75" x2="616.25" y2="344.5"/>
+                    <line x1="667.5" y1="117.5" x2="667.5" y2="367"/>
+                    <line x1="718.75" y1="147.25" x2="718.75" y2="389.5"/>
+                    <line x1="565" y1="124" x2="770" y2="235.75"/>
+                    <line x1="565" y1="190" x2="770" y2="294.5"/>
+                    <line x1="565" y1="256" x2="770" y2="353.25"/>
+                    <line x1="418.75" y1="399.25" x2="623.75" y2="491.5"/>
+                    <line x1="467.5" y1="373.5" x2="672.5" y2="465"/>
+                    <line x1="516.25" y1="347.75" x2="721.25" y2="438.5"/>
+                    <line x1="421.25" y1="448.25" x2="616.25" y2="344.5"/>
+                    <line x1="472.5" y1="471.5" x2="667.5" y2="367"/>
+                    <line x1="523.75" y1="494.75" x2="718.75" y2="389.5"/>
+                  </g>
+                </g>
+
+                <polygon id="lightWash" points="370,160 565,58 565,322 370,425" fill="#ffffff" opacity=".08"/>
+                <polygon id="tempWash" points="370,425 565,322 770,412 575,518" fill="#7bd2ff" opacity=".05"/>
+
+                <path d="M395 435 L560 349" stroke="#dfe4f0" stroke-width="4" opacity=".8"/>
+                <path d="M570 331 L744 407" stroke="#dfe4f0" stroke-width="4" opacity=".6"/>
+
+                <g id="windowGroup" filter="url(#shadow)">
+                  <polygon id="windowGlass" points="689,205 724,225 724,283 689,264" fill="#d9f1ff" opacity=".16" stroke="#edf8ff" stroke-width="1"/>
+                  <polygon id="windowFrameTop" points="681,199 732,228 724,225 689,205" fill="#707887" stroke="#59616f" stroke-width="1.4"/>
+                  <polygon id="windowFrameRight" points="732,228 732,292 724,283 724,225" fill="#666f7e" stroke="#59616f" stroke-width="1.4"/>
+                  <polygon id="windowFrameBottom" points="732,292 681,268 689,264 724,283" fill="#5f6877" stroke="#59616f" stroke-width="1.4"/>
+                  <polygon id="windowFrameLeft" points="681,268 681,199 689,205 689,264" fill="#7a8290" stroke="#59616f" stroke-width="1.4"/>
+                  <line id="windowMullionV" x1="706.5" y1="215" x2="706.5" y2="273.5" stroke="#6a7381" stroke-width="3" opacity=".95"/>
+                  <line id="windowMullionH" x1="689" y1="234.5" x2="724" y2="254" stroke="#6a7381" stroke-width="3" opacity=".95"/>
+                  <path id="windowGlint" d="M694 213 L717 226" fill="none" stroke="#ffffff" stroke-width="2" opacity=".42" stroke-linecap="round"/>
+                </g>
+
+                <g id="draftVisual">
+                  <path class="draft" d="M705 220 q18 -12 32 2" fill="none" stroke="#69e4ff" stroke-width="4" stroke-linecap="round"/>
+                  <path class="draft d2" d="M704 239 q18 -12 32 2" fill="none" stroke="#69e4ff" stroke-width="4" stroke-linecap="round"/>
+                  <path class="draft d3" d="M703 258 q18 -12 32 2" fill="none" stroke="#69e4ff" stroke-width="4" stroke-linecap="round"/>
+                </g>
+
+                <g id="noiseVisual" transform="translate(300 300)">
+                  <path class="noise-wave" d="M0 0 q24 -16 46 0" fill="none" stroke="#d14a3d" stroke-width="5" stroke-linecap="round"/>
+                  <path class="noise-wave w2" d="M-14 21 q39 -24 74 0" fill="none" stroke="#d14a3d" stroke-width="5" stroke-linecap="round"/>
+                  <path class="noise-wave w3" d="M-28 45 q55 -32 102 0" fill="none" stroke="#d14a3d" stroke-width="5" stroke-linecap="round"/>
+                </g>
+
+                <g id="furniture" filter="url(#shadow)">
+                  <polygon points="472,380 520,355 566,376 518,402" fill="#f4f5f8" stroke="#bfc5d0" stroke-width="1.7"/>
+                  <polygon points="472,380 518,402 518,410 472,388" fill="#e1e4ea" stroke="#bfc5d0" stroke-width="1.3"/>
+                  <polygon points="518,402 566,376 566,384 518,410" fill="#d6dae2" stroke="#bfc5d0" stroke-width="1.3"/>
+                  <polygon points="476,389 484,393 484,430 476,426" fill="#cfd4dd" stroke="#aeb6c3" stroke-width="1.2"/>
+                  <polygon points="512,406 520,410 520,447 512,443" fill="#c5cbd5" stroke="#aeb6c3" stroke-width="1.2"/>
+                  <polygon points="557,384 564,380 564,417 557,421" fill="#bbc3ce" stroke="#aeb6c3" stroke-width="1.2"/>
+                  <polygon points="520,401 527,397 527,432 520,436" fill="#c2c9d3" stroke="#aeb6c3" stroke-width="1.2"/>
+                  <polygon points="497,373 520,361 541,371 519,383" fill="#d7b0bf" opacity=".72"/>
+                </g>
+
+                <g id="person" transform="translate(610 342)" filter="url(#shadow)"></g>
+              </g>
+            </svg>
+          </div>
+        </section>
+        <div class="stat-card" id="latest-submission-card" style="margin-bottom: 0;">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
             <h2 style="margin-top: 0; border: none;">Latest Submission</h2>
             <!-- Submit Review CTA -->
@@ -236,6 +421,7 @@
             <p><em>No prior submissions for this room.</em></p>
           <% } %>
         </div>
+        </div>
 
         <!-- Historical Data -->
         <div class="wrapper">
@@ -270,6 +456,250 @@
             // Clean URL without refresh
             var newUrl = window.location.pathname;
             history.replaceState({}, '', newUrl);
+          }
+        })();
+      </script>
+      <script>
+        (function() {
+          var vizScalars = {
+            'room size': <%- JSON.stringify((latestEntry && latestEntry.scalars && latestEntry.scalars['room size']) || null) %>,
+            'natural light': <%- JSON.stringify((latestEntry && latestEntry.scalars && latestEntry.scalars['natural light']) || null) %>,
+            'my room gets a lot of outside noise': <%- JSON.stringify((latestEntry && latestEntry.scalars && latestEntry.scalars['my room gets a lot of outside noise']) || null) %>,
+            'temperature control': <%- JSON.stringify((latestEntry && latestEntry.scalars && latestEntry.scalars['temperature control']) || null) %>,
+            'my house has a good culture': <%- JSON.stringify((latestEntry && latestEntry.scalars && latestEntry.scalars['my house has a good culture']) || null) %>
+          };
+          var vizTags = <%- JSON.stringify((latestEntry && latestEntry.tags) ? latestEntry.tags : []) %>;
+
+          function clampScore(val, fallback) {
+            var n = Number(val);
+            if (!isFinite(n)) return fallback;
+            n = Math.round(n);
+            if (n < 1) return 1;
+            if (n > 5) return 5;
+            return n;
+          }
+
+          function hasTag(needle) {
+            var n = String(needle).toLowerCase();
+            return (vizTags || []).some(function(t) {
+              return String(t).toLowerCase().indexOf(n) !== -1;
+            });
+          }
+
+          var $ = function(id) { return document.getElementById(id); };
+
+          function setPoints(el, pts) {
+            el.setAttribute('points', pts.map(function(p) { return p[0] + ',' + p[1]; }).join(' '));
+          }
+
+          var personFigure = {
+            fill: '#0c1117',
+            stroke: '#ffffff',
+            outlineWidth: 8,
+            limbWidth: 5.2,
+            headRadius: 17,
+            torso: { x: -15, y: 19, width: 30, height: 61, rx: 12 },
+            legs: {
+              left: { x: -20, y: 72, width: 14, height: 43, rx: 4 },
+              right: { x: 6, y: 72, width: 14, height: 43, rx: 4 }
+            }
+          };
+
+          var poseLibrary = {
+            mope: {
+              bodyRotate: 12, headDx: 4, headDy: 5,
+              leftArm: { x1: -14, y1: 33, x2: -17, y2: 67 },
+              rightArm: { x1: 14, y1: 33, x2: 17, y2: 67 }
+            },
+            low: {
+              bodyRotate: 6, headDx: 2, headDy: 2,
+              leftArm: { x1: -14, y1: 33, x2: -24, y2: 62 },
+              rightArm: { x1: 14, y1: 33, x2: 24, y2: 62 }
+            },
+            neutral: {
+              bodyRotate: 0, headDx: 0, headDy: 0,
+              leftArm: { x1: -14, y1: 32, x2: -30, y2: 50 },
+              rightArm: { x1: 14, y1: 32, x2: 30, y2: 50 }
+            },
+            social: {
+              bodyRotate: -2, headDx: 0, headDy: -0.5,
+              leftArm: { x1: -14, y1: 32, x2: -34, y2: 8 },
+              rightArm: { x1: 14, y1: 32, x2: 34, y2: 8 }
+            },
+            happy: {
+              bodyRotate: -3, headDx: 0, headDy: -1,
+              leftArm: { x1: -14, y1: 32, x2: -34, y2: -4 },
+              rightArm: { x1: 14, y1: 32, x2: 34, y2: -4 }
+            }
+          };
+
+          function limbMarkup(x1, y1, x2, y2) {
+            return ''
+              + '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + personFigure.stroke + '" stroke-width="' + personFigure.outlineWidth + '" stroke-linecap="round"/>'
+              + '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + personFigure.fill + '" stroke-width="' + personFigure.limbWidth + '" stroke-linecap="round"/>';
+          }
+
+          function personMarkup(cfg) {
+            cfg = cfg || {};
+            var x = cfg.x || 0;
+            var y = cfg.y || 0;
+            var scale = cfg.scale == null ? 1 : cfg.scale;
+            var p = poseLibrary[cfg.pose] || poseLibrary.neutral;
+            return ''
+              + '<g transform="translate(' + x + ' ' + y + ') scale(' + scale + ')">'
+              + '<g transform="rotate(' + p.bodyRotate + ' 0 30)">'
+              + limbMarkup(p.leftArm.x1, p.leftArm.y1, p.leftArm.x2, p.leftArm.y2)
+              + limbMarkup(p.rightArm.x1, p.rightArm.y1, p.rightArm.x2, p.rightArm.y2)
+              + '<rect x="' + personFigure.torso.x + '" y="' + personFigure.torso.y + '" width="' + personFigure.torso.width + '" height="' + personFigure.torso.height + '" rx="' + personFigure.torso.rx + '" fill="' + personFigure.fill + '" stroke="' + personFigure.stroke + '" stroke-width="3"/>'
+              + '<rect x="' + personFigure.legs.left.x + '" y="' + personFigure.legs.left.y + '" width="' + personFigure.legs.left.width + '" height="' + personFigure.legs.left.height + '" rx="' + personFigure.legs.left.rx + '" fill="' + personFigure.fill + '" stroke="' + personFigure.stroke + '" stroke-width="3"/>'
+              + '<rect x="' + personFigure.legs.right.x + '" y="' + personFigure.legs.right.y + '" width="' + personFigure.legs.right.width + '" height="' + personFigure.legs.right.height + '" rx="' + personFigure.legs.right.rx + '" fill="' + personFigure.fill + '" stroke="' + personFigure.stroke + '" stroke-width="3"/>'
+              + '</g>'
+              + '<circle cx="' + p.headDx + '" cy="' + p.headDy + '" r="' + personFigure.headRadius + '" fill="' + personFigure.fill + '" stroke="' + personFigure.stroke + '" stroke-width="3"/>'
+              + '</g>';
+          }
+
+          function cultureLayout(score) {
+            switch (score) {
+              case 1:
+                return [
+                  {x: 24, y: 10, scale: 0.46, pose: 'mope'},
+                  {x: 88, y: 4, scale: 0.46, pose: 'mope'},
+                  {x: 150, y: 12, scale: 0.46, pose: 'mope'},
+                  {x: 52, y: 70, scale: 0.46, pose: 'mope'},
+                  {x: 122, y: 74, scale: 0.46, pose: 'mope'}
+                ];
+              case 2:
+                return [
+                  {x: 34, y: 10, scale: 0.46, pose: 'low'},
+                  {x: 88, y: 6, scale: 0.46, pose: 'low'},
+                  {x: 142, y: 12, scale: 0.46, pose: 'low'},
+                  {x: 62, y: 66, scale: 0.46, pose: 'neutral'},
+                  {x: 116, y: 70, scale: 0.46, pose: 'low'}
+                ];
+              case 3:
+                return [
+                  {x: 44, y: 8, scale: 0.46, pose: 'neutral'},
+                  {x: 92, y: 4, scale: 0.46, pose: 'neutral'},
+                  {x: 140, y: 8, scale: 0.46, pose: 'neutral'},
+                  {x: 68, y: 62, scale: 0.46, pose: 'neutral'},
+                  {x: 116, y: 62, scale: 0.46, pose: 'neutral'}
+                ];
+              case 4:
+                return [
+                  {x: 56, y: 8, scale: 0.46, pose: 'social'},
+                  {x: 96, y: 0, scale: 0.46, pose: 'social'},
+                  {x: 136, y: 8, scale: 0.46, pose: 'social'},
+                  {x: 74, y: 58, scale: 0.46, pose: 'social'},
+                  {x: 118, y: 58, scale: 0.46, pose: 'social'}
+                ];
+              case 5:
+              default:
+                return [
+                  {x: 60, y: 8, scale: 0.46, pose: 'happy'},
+                  {x: 98, y: 0, scale: 0.46, pose: 'happy'},
+                  {x: 136, y: 8, scale: 0.46, pose: 'happy'},
+                  {x: 76, y: 58, scale: 0.46, pose: 'happy'},
+                  {x: 118, y: 58, scale: 0.46, pose: 'happy'}
+                ];
+            }
+          }
+
+          function renderCulturePeople(score) {
+            $('culturePeople').innerHTML = cultureLayout(score).map(function(cfg) { return personMarkup(cfg); }).join('');
+          }
+
+          function renderMainPerson() {
+            $('person').innerHTML = personMarkup({x: 0, y: 0, scale: 1, pose: 'neutral'});
+          }
+
+          function updateWindowGeometry(outer, inner) {
+            setPoints($('windowGlass'), inner);
+            setPoints($('windowClipShape'), inner);
+            setPoints($('windowCutout'), inner);
+            setPoints($('windowFrameTop'), [outer[0], outer[1], inner[1], inner[0]]);
+            setPoints($('windowFrameRight'), [outer[1], outer[2], inner[2], inner[1]]);
+            setPoints($('windowFrameBottom'), [outer[2], outer[3], inner[3], inner[2]]);
+            setPoints($('windowFrameLeft'), [outer[3], outer[0], inner[0], inner[3]]);
+
+            function mid(a, b) { return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]; }
+            var topMid = mid(inner[0], inner[1]);
+            var bottomMid = mid(inner[3], inner[2]);
+            var leftMid = mid(inner[0], inner[3]);
+            var rightMid = mid(inner[1], inner[2]);
+            $('windowMullionV').setAttribute('x1', topMid[0]);
+            $('windowMullionV').setAttribute('y1', topMid[1]);
+            $('windowMullionV').setAttribute('x2', bottomMid[0]);
+            $('windowMullionV').setAttribute('y2', bottomMid[1]);
+            $('windowMullionH').setAttribute('x1', leftMid[0]);
+            $('windowMullionH').setAttribute('y1', leftMid[1]);
+            $('windowMullionH').setAttribute('x2', rightMid[0]);
+            $('windowMullionH').setAttribute('y2', rightMid[1]);
+
+            var gx1 = inner[0][0] + (inner[1][0] - inner[0][0]) * 0.18;
+            var gy1 = inner[0][1] + (inner[1][1] - inner[0][1]) * 0.18 + 5;
+            var gx2 = inner[0][0] + (inner[1][0] - inner[0][0]) * 0.70;
+            var gy2 = inner[0][1] + (inner[1][1] - inner[0][1]) * 0.70 + 9;
+            $('windowGlint').setAttribute('d', 'M' + gx1 + ' ' + gy1 + ' L' + gx2 + ' ' + gy2);
+          }
+
+          function updateScene() {
+            var size = clampScore(vizScalars['room size'], 3);
+            var light = clampScore(vizScalars['natural light'], 3);
+            var noise = clampScore(vizScalars['my room gets a lot of outside noise'], 3);
+            var temp = clampScore(vizScalars['temperature control'], 3);
+            var culture = clampScore(vizScalars['my house has a good culture'], 3);
+
+            var s = 1 + (size - 3) * 0.045;
+            var cx = 572, cy = 290;
+            $('roomComposite').setAttribute('transform', 'translate(' + cx + ' ' + cy + ') scale(' + s + ') translate(' + (-cx) + ' ' + (-cy) + ')');
+
+            var lightOpacity = 0.04 + light * 0.06;
+            $('lightWash').setAttribute('opacity', lightOpacity);
+            $('scene').style.filter = 'brightness(' + (0.84 + light * 0.075) + ') saturate(' + (0.94 + light * 0.03) + ')';
+
+            var noiseIntensity = noise / 5;
+            $('noiseVisual').style.opacity = Math.max(0.03, noiseIntensity);
+            $('noiseVisual').style.transform = 'translate(300px, 300px) scale(' + (0.85 + noiseIntensity * 0.5) + ')';
+
+            var coolScore = (temp - 1) / 4;
+            var r = Math.round(232 - 105 * coolScore);
+            var g = Math.round(127 + 104 * coolScore);
+            var b = Math.round(96 + 159 * coolScore);
+            var tempColor = 'rgb(' + r + ',' + g + ',' + b + ')';
+            $('tempWash').setAttribute('fill', tempColor);
+            $('tempWash').setAttribute('opacity', temp <= 2 ? 0.13 : 0.06);
+
+            var thermostatColor = temp <= 3 ? '#ff8a5b' : '#76c7ff';
+            $('thermoBulb').setAttribute('fill', thermostatColor);
+            $('thermoMercury').setAttribute('fill', thermostatColor);
+            $('thermoMercury').setAttribute('y', String(105 - temp * 13));
+            $('thermoMercury').setAttribute('height', String(16 + temp * 13));
+
+            renderCulturePeople(culture);
+
+            var drafty = hasTag('drafty windows');
+            var flex = hasTag('furniture layout flexibility');
+            var smallWindows = hasTag('particularly small windows');
+
+            $('draftVisual').style.display = drafty ? '' : 'none';
+            $('furniture').style.display = flex ? '' : 'none';
+
+            if (smallWindows) {
+              updateWindowGeometry(
+                [[681,199],[732,228],[732,292],[681,268]],
+                [[689,205],[724,225],[724,283],[689,264]]
+              );
+            } else {
+              updateWindowGeometry(
+                [[672,189],[744,229],[744,308],[672,272]],
+                [[682,196],[735,226],[735,298],[682,266]]
+              );
+            }
+          }
+
+          if ($('scene')) {
+            renderMainPerson();
+            updateScene();
           }
         })();
       </script>
