@@ -909,8 +909,9 @@
             // below for everything that swaps on toggle.
             //
             //   • building      — flat hex used for filter chips, label
-            //                     text/background/border, label connectors,
-            //                     and the origin endcap on hover routes.
+            //                     connectors, and the origin endcap on
+            //                     hover routes. Map name labels use a
+            //                     shared dark-on-white pill, not these hues.
             //   • buildingMesh  — 3D Lambert mesh colors (usually a hair
             //                     brighter than `building` so shaded roofs
             //                     still pop).
@@ -1102,7 +1103,8 @@
                 'DuSable Black History Museum':                   'DuSable Museum',
             };
 
-            // Type-specific label CSS class suffixes for color coding
+            // Type-specific label CSS class suffixes (used for same-type
+            // hover-peer highlighting, not for label colors).
             const LANDMARK_TYPE_CLASS = {
                 library: 'library',
                 dining:  'dining',
@@ -1191,6 +1193,8 @@
                 textEl.className = 'landmark-label-2d__text';
                 textEl.textContent = shortName || l.name;
                 el.appendChild(textEl);
+                el.style.opacity = '0';
+                el.style.pointerEvents = 'none';
                 labelsOverlay.appendChild(el);
                 landmarkOverlayEls[l.name] = el;
             });
@@ -1203,7 +1207,7 @@
                 landmarkAnchor[q.name] = new THREE.Vector3(pos.x, 6, pos.z);
                 landmarkTypeByName[q.name] = q.type;
                 const el = document.createElement('div');
-                el.className = 'landmark-label-2d';
+                el.className = 'landmark-label-2d landmark-label-2d--always';
                 const textEl = document.createElement('div');
                 textEl.className = 'landmark-label-2d__text';
                 textEl.textContent = LANDMARK_SHORT[q.name] || q.name;
@@ -1896,6 +1900,9 @@
             canvas.addEventListener('pointermove', (ev) => {
                 const hit = pickAt(ev.clientX, ev.clientY);
                 if (hit) {
+                    // Dorms are instant — drop any pending landmark dwell timer
+                    // so a delayed hover can't fire after we've moved onto a dorm.
+                    cancelLandmarkHoverDelay();
                     // Clear any landmark hover when hovering a dorm — but only
                     // after a 1-frame delay so that cursor jitter at the boundary
                     // between a dorm and an adjacent landmark doesn't cause all
@@ -1934,15 +1941,20 @@
                     if (landmarkHit && landmarkHit.userData && landmarkHit.userData.name) {
                         if (hovered) setHover(null);
                         canvas.style.cursor = 'pointer';
-                        // Clear pinned legend filter when user hovers a real building
-                        if (_pinnedLegendType) {
-                            _pinnedLegendType = null;
-                            document.querySelectorAll('.map-filter-chip').forEach(el => {
-                                el.classList.remove('map-filter-chip--dimmed');
-                                el.setAttribute('aria-pressed', 'false');
-                            });
-                        }
-                        onLandmarkLabelHover(landmarkHit.userData.name);
+                        const landmarkName = landmarkHit.userData.name;
+                        // Non-dorm / non-quad buildings wait LANDMARK_HOVER_DELAY_MS
+                        // before labels, greying, and scale kick in. Quads are instant.
+                        requestLandmarkHover(landmarkName, function() {
+                            // Clear pinned legend filter once the hover actually fires
+                            if (_pinnedLegendType) {
+                                _pinnedLegendType = null;
+                                document.querySelectorAll('.map-filter-chip').forEach(el => {
+                                    el.classList.remove('map-filter-chip--dimmed');
+                                    el.setAttribute('aria-pressed', 'false');
+                                });
+                            }
+                            onLandmarkLabelHover(landmarkName);
+                        });
                         // Only hide dorm hover card if NOT zoomed into a selected dorm
                         if (!selectedName) {
                             hideHoverCard();
@@ -1950,6 +1962,7 @@
                     } else {
                         if (hovered) setHover(null);
                         canvas.style.cursor = 'default';
+                        cancelLandmarkHoverDelay();
                         // Clear landmark hover if we left the building
                         if (_hoveredLandmarkName) clearLandmarkLabelHover();
                         // Re-apply pinned legend filter if one is active
@@ -1970,6 +1983,7 @@
                     ev.relatedTarget.classList.contains('landmark-label-2d') ||
                     ev.relatedTarget.closest('.landmark-label-2d')
                 );
+                if (!movingToLabel) cancelLandmarkHoverDelay();
                 if (_hoveredLandmarkName && !movingToLabel) clearLandmarkLabelHover();
                 // Re-apply pinned legend filter if one is active
                 if (_pinnedLegendType && !movingToLabel) _applyLegendTypeFilter(_pinnedLegendType);
@@ -2080,6 +2094,34 @@
             let _hoveredLandmarkName = null;
             const _landmarkHoverHidden = new Set(); // names hidden during current hover
             let _landmarkHoverClearRaf = null; // rAF id for debounced clear
+            // Dwell time before non-dorm / non-quad buildings show hover +
+            // labels. Dorms and named quads stay instant. Tune this value
+            // (milliseconds) without touching the rest of the hover logic.
+            const LANDMARK_HOVER_DELAY_MS = 1000;
+            let _landmarkHoverDelayTimer = null;
+            let _pendingLandmarkHoverName = null;
+            let _pendingLandmarkHoverApply = null;
+            // Pinned legend type — declared here so label visibility helpers
+            // can read it (the click/pin wiring lives further down).
+            let _pinnedLegendType = null;
+            let _legendPinnedByHover = false;
+
+            function isQuadLandmark(name) {
+                return landmarkTypeByName[name] === 'quad';
+            }
+
+            // Dorm labels stay up always. Named quad labels stay up always.
+            // Every other building name shows only while hovered, or while
+            // its type is pinned in the filter bar.
+            function landmarkLabelShouldShow(name) {
+                if (isQuadLandmark(name)) return true;
+                if (name === _hoveredLandmarkName) return true;
+                if (_pinnedLegendType && _pinnedLegendType !== 'dorm'
+                    && landmarkTypeByName[name] === _pinnedLegendType) {
+                    return true;
+                }
+                return false;
+            }
 
             // ── Update 2D overlay label positions each frame ──────────────
             // Projects each dorm's anchor from world space to screen pixels
@@ -2129,16 +2171,20 @@
                     if (!el || !anchor) return;
 
                     const proj = anchor.clone().project(camera);
-                    if (proj.z > 1) { el.style.opacity = '0'; return; }
+                    if (proj.z > 1) {
+                        el.style.opacity = '0';
+                        el.style.pointerEvents = 'none';
+                        return;
+                    }
 
                     const sx = (proj.x * halfW) + halfW;
                     const sy = (-proj.y * halfH) + halfH;
 
                     const nudge = landmarkNudgeOffset[name] || { dx: 0, dy: 0 };
-                    // Don't restore opacity on labels hidden by hover interaction
-                    if (!_landmarkHoverHidden.has(name)) {
-                        el.style.opacity = '1';
-                    }
+                    const show = landmarkLabelShouldShow(name)
+                        && (isQuadLandmark(name) || !_landmarkHoverHidden.has(name));
+                    el.style.opacity = show ? '1' : '0';
+                    el.style.pointerEvents = show ? 'auto' : 'none';
                     el.style.left = (sx + nudge.dx) + 'px';
                     el.style.top  = (sy + nudge.dy) + 'px';
                 });
@@ -4255,6 +4301,50 @@
             // Shared grey material for hover dimming
             const HOVER_GREY_MAT = new THREE.MeshLambertMaterial({ color: 0xcccccc });
 
+            function cancelLandmarkHoverDelay() {
+                if (_landmarkHoverDelayTimer !== null) {
+                    clearTimeout(_landmarkHoverDelayTimer);
+                    _landmarkHoverDelayTimer = null;
+                }
+                _pendingLandmarkHoverName = null;
+                _pendingLandmarkHoverApply = null;
+            }
+
+            // Dorms and named quads apply immediately. Every other building
+            // waits LANDMARK_HOVER_DELAY_MS of continuous hover first.
+            function requestLandmarkHover(name, applyFn) {
+                applyFn = applyFn || function() { onLandmarkLabelHover(name); };
+                if (isQuadLandmark(name)) {
+                    cancelLandmarkHoverDelay();
+                    applyFn();
+                    return;
+                }
+                if (_hoveredLandmarkName === name) {
+                    // Cursor returned to the already-hovered building before the
+                    // 1-frame dorm-boundary clear fired — keep the hover.
+                    if (_landmarkHoverClearRaf !== null) {
+                        cancelAnimationFrame(_landmarkHoverClearRaf);
+                        _landmarkHoverClearRaf = null;
+                    }
+                    return;
+                }
+                if (_pendingLandmarkHoverName === name) {
+                    _pendingLandmarkHoverApply = applyFn;
+                    return;
+                }
+                cancelLandmarkHoverDelay();
+                if (_hoveredLandmarkName) clearLandmarkLabelHover();
+                _pendingLandmarkHoverName = name;
+                _pendingLandmarkHoverApply = applyFn;
+                _landmarkHoverDelayTimer = setTimeout(function() {
+                    const fn = _pendingLandmarkHoverApply;
+                    _landmarkHoverDelayTimer = null;
+                    _pendingLandmarkHoverName = null;
+                    _pendingLandmarkHoverApply = null;
+                    if (fn) fn();
+                }, LANDMARK_HOVER_DELAY_MS);
+            }
+
             function onLandmarkLabelHover(name) {
                 if (_hoveredLandmarkName === name) return;
                 // Cancel any pending debounced clear — the cursor moved back to a
@@ -4270,8 +4360,10 @@
                 const hoveredEl = landmarkOverlayEls[name];
                 if (!hoveredEl) return;
 
-                // Add hover class for CSS expansion
+                // Add hover class for CSS expansion and reveal the name
                 hoveredEl.classList.add('landmark-label-2d--hovered');
+                hoveredEl.style.opacity = '1';
+                hoveredEl.style.pointerEvents = 'auto';
 
                 // Grow the hovered landmark building (same lerp system as dorms)
                 setLandmarkScale(name, HOVER_SCALE);
@@ -4280,9 +4372,10 @@
                 // auto-selects its type in the legend, so the bar should stay shown.
 
                 // Hide ALL other landmark labels (same-type included) so only
-                // the hovered building stays labeled.
+                // the hovered building stays labeled. Named quads stay visible.
                 Object.keys(landmarkOverlayEls).forEach(otherName => {
                     if (otherName === name) return;
+                    if (isQuadLandmark(otherName)) return;
                     const otherEl = landmarkOverlayEls[otherName];
                     if (!otherEl || otherEl.style.opacity === '0') return;
 
@@ -4313,6 +4406,7 @@
             }
 
             function clearLandmarkLabelHover() {
+                cancelLandmarkHoverDelay();
                 // Cancel any pending debounced clear
                 if (_landmarkHoverClearRaf !== null) {
                     cancelAnimationFrame(_landmarkHoverClearRaf);
@@ -4323,6 +4417,10 @@
                     if (el) el.classList.remove('landmark-label-2d--hovered');
                     // Reset the landmark's scale back to normal
                     setLandmarkScale(_hoveredLandmarkName, 1.0);
+                    if (el && !isQuadLandmark(_hoveredLandmarkName)) {
+                        el.style.opacity = '0';
+                        el.style.pointerEvents = 'none';
+                    }
                 }
                 // Strip any lingering peer highlight classes (added by
                 // _applyLegendTypeFilter when a chip click pins a type).
@@ -4330,12 +4428,14 @@
                     const otherEl = landmarkOverlayEls[otherName];
                     if (otherEl) otherEl.classList.remove('landmark-label-2d--hovered-peer');
                 });
-                // Restore all hidden landmark labels
+                // Restore hidden landmark labels only if they should stay shown
+                // (named quads). Other buildings go back to hover-only.
                 _landmarkHoverHidden.forEach(hiddenName => {
                     const el = landmarkOverlayEls[hiddenName];
                     if (el) {
-                        el.style.opacity = '1';
-                        el.style.pointerEvents = '';
+                        const show = isQuadLandmark(hiddenName);
+                        el.style.opacity = show ? '1' : '0';
+                        el.style.pointerEvents = show ? 'auto' : 'none';
                     }
                 });
                 _landmarkHoverHidden.clear();
@@ -4370,27 +4470,45 @@
             // Attach hover listeners to all landmark label elements
             Object.keys(landmarkOverlayEls).forEach(name => {
                 const el = landmarkOverlayEls[name];
-                el.style.pointerEvents = 'auto';
+                if (isQuadLandmark(name)) el.style.pointerEvents = 'auto';
                 el.addEventListener('mouseenter', () => {
-                    // Auto-select this building's type in the legend filter on hover.
-                    // Do this FIRST because onLegendItemClick() internally calls
-                    // _clearLegendTypeFilter() → clearLandmarkLabelHover(), which
-                    // would wipe the hover state if we applied it beforehand.
-                    const type = landmarkTypeByName[name];
-                    if (type && type !== 'quad' && _pinnedLegendType !== type) {
-                        onLegendItemClick(type);
-                        _legendPinnedByHover = true; // mark as hover-triggered
+                    const applyFromLabel = () => {
+                        // Auto-select this building's type in the legend filter on hover.
+                        // Do this FIRST because onLegendItemClick() internally calls
+                        // _clearLegendTypeFilter() → clearLandmarkLabelHover(), which
+                        // would wipe the hover state if we applied it beforehand.
+                        const type = landmarkTypeByName[name];
+                        if (type && type !== 'quad' && _pinnedLegendType !== type) {
+                            onLegendItemClick(type);
+                            _legendPinnedByHover = true; // mark as hover-triggered
+                        }
+                        // _applyLegendTypeFilter() stashes its own landmark name into
+                        // _hoveredLandmarkName. Reset it here so onLandmarkLabelHover
+                        // doesn't early-return when the auto-pick happens to match.
+                        _hoveredLandmarkName = null;
+                        // Now apply the focused hover treatment (hide other labels,
+                        // grey other meshes, scale up hovered building). This runs
+                        // after the legend filter so its effects stick.
+                        onLandmarkLabelHover(name);
+                    };
+                    // Quads stay instant. If this building is already hovered
+                    // (e.g. the 3D mesh dwell already fired), apply immediately
+                    // so moving onto the label can still pin the legend type.
+                    if (isQuadLandmark(name) || _hoveredLandmarkName === name) {
+                        cancelLandmarkHoverDelay();
+                        applyFromLabel();
+                        return;
                     }
-                    // _applyLegendTypeFilter() stashes its own landmark name into
-                    // _hoveredLandmarkName. Reset it here so onLandmarkLabelHover
-                    // doesn't early-return when the auto-pick happens to match.
-                    _hoveredLandmarkName = null;
-                    // Now apply the focused hover treatment (hide other labels,
-                    // grey other meshes, scale up hovered building). This runs
-                    // after the legend filter so its effects stick.
-                    onLandmarkLabelHover(name);
+                    requestLandmarkHover(name, applyFromLabel);
                 });
-                el.addEventListener('mouseleave', () => {
+                el.addEventListener('mouseleave', (ev) => {
+                    // Moving back onto the 3D canvas — pointermove owns hover from here.
+                    const movingToCanvas = ev.relatedTarget === canvas
+                        || (ev.relatedTarget && canvas.contains(ev.relatedTarget));
+                    if (movingToCanvas) return;
+                    cancelLandmarkHoverDelay();
+                    // Dwell never fired — nothing to tear down.
+                    if (!_hoveredLandmarkName) return;
                     // If the filter was set by hovering this building, clear it on leave.
                     // If it was set by a manual chip click, leave it alone.
                     if (_legendPinnedByHover && landmarkTypeByName[name] === _pinnedLegendType) {
@@ -4404,21 +4522,19 @@
             });
 
             // ── Legend click / pin logic ────────────────────────────────────
-            // Tracks which building type is currently "pinned" via a legend click.
-            let _pinnedLegendType = null;
-            // True when the pin was set by hovering a building (not a manual chip click).
-            // Used so mouseleave clears the filter only when it was hover-triggered.
-            let _legendPinnedByHover = false;
+            // _pinnedLegendType / _legendPinnedByHover are declared above
+            // with the other landmark hover state.
 
             // Apply the same visual filter as a landmark hover but for an entire
             // building type, triggered by clicking a legend item.
             function _applyLegendTypeFilter(type) {
                 if (type === 'dorm') {
                     // Highlight all dorms: grey all landmark buildings, keep dorm
-                    // labels visible, hide landmark labels.
+                    // labels visible, hide landmark labels except named quads.
                     Object.keys(landmarkOverlayEls).forEach(lName => {
                         const el = landmarkOverlayEls[lName];
                         if (!el) return;
+                        if (isQuadLandmark(lName)) return;
                         el.style.opacity = '0';
                         el.style.pointerEvents = 'none';
                         _landmarkHoverHidden.add(lName);
@@ -4447,23 +4563,32 @@
                     // Manually replicate onLandmarkLabelHover without hiding the legend
                     _hoveredLandmarkName = firstName;
                     const hoveredEl = landmarkOverlayEls[firstName];
-                    if (hoveredEl) hoveredEl.classList.add('landmark-label-2d--hovered');
+                    if (hoveredEl) {
+                        hoveredEl.classList.add('landmark-label-2d--hovered');
+                        hoveredEl.style.opacity = '1';
+                        hoveredEl.style.pointerEvents = 'auto';
+                    }
 
-                    // Expand all same-type labels as peers
+                    // Expand all same-type labels as peers and reveal them
                     Object.keys(landmarkOverlayEls).forEach(otherName => {
                         if (otherName === firstName) return;
                         if (landmarkTypeByName[otherName] === type) {
                             const otherEl = landmarkOverlayEls[otherName];
-                            if (otherEl) otherEl.classList.add('landmark-label-2d--hovered-peer');
+                            if (otherEl) {
+                                otherEl.classList.add('landmark-label-2d--hovered-peer');
+                                otherEl.style.opacity = '1';
+                                otherEl.style.pointerEvents = 'auto';
+                            }
                         }
                     });
 
-                    // Hide labels of other types
+                    // Hide labels of other types; named quads stay visible
                     Object.keys(landmarkOverlayEls).forEach(otherName => {
                         if (otherName === firstName) return;
                         const otherEl = landmarkOverlayEls[otherName];
                         if (!otherEl || otherEl.style.opacity === '0') return;
                         if (landmarkTypeByName[otherName] === type) return;
+                        if (isQuadLandmark(otherName)) return;
                         otherEl.style.opacity = '0';
                         otherEl.style.pointerEvents = 'none';
                         _landmarkHoverHidden.add(otherName);
@@ -4554,55 +4679,12 @@
             //      in place so every existing mesh picks up the new hue
             //      without rebuilding geometry.
             //   2. Filter-chip swatches — rewrite the inline --chip-color var.
-            //   3. Landmark label CSS — inject a dynamic <style> block that
-            //      overrides .landmark-label-2d--{type} text/background/border
-            //      (those rules live in styles.css and we override by id).
-            //   4. Dorm base/hover/select colors + all rendered dorm meshes.
-            //   5. DORM_ROUTE_COLORS + BUILDING_TYPE_COLORS tables.
-            //   6. Walk-route material cache (blown away; next hover rebuilds).
-            //   7. Any currently-drawn walk-route meshes (re-draw next frame).
-            const _schemeStyleEl = (function() {
-                const s = document.createElement('style');
-                s.id = 'explorer-color-scheme-overrides';
-                document.head.appendChild(s);
-                return s;
-            })();
-
-            // Approximate contrast-friendly tints for label backgrounds —
-            // 14% alpha of the type color on white reads clearly at small
-            // sizes without fighting the 3D buildings behind them.
-            function _rgba(hex, alpha) {
-                const h = hex.replace('#', '');
-                const r = parseInt(h.substring(0, 2), 16);
-                const g = parseInt(h.substring(2, 4), 16);
-                const b = parseInt(h.substring(4, 6), 16);
-                return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
-            }
-
-            function _buildLabelCSS(scheme) {
-                // Same four type buckets the LANDMARK_TYPE_CLASS map produces.
-                const types = ['library', 'dining', 'gym', 'culture'];
-                const colorByClass = {
-                    library: scheme.building.library,
-                    dining:  scheme.building.dining,
-                    gym:     scheme.building.gym,
-                    culture: scheme.building.culture,
-                };
-                return types.map(function(t) {
-                    const c = colorByClass[t];
-                    return (
-                        '.landmark-label-2d--' + t + ' .landmark-label-2d__text {' +
-                            'color:' + c + ';' +
-                            'background:' + _rgba(c, 0.12) + ';' +
-                            'border-color:' + _rgba(c, 0.35) + ';' +
-                        '}' +
-                        '.landmark-label-2d--' + t + '.landmark-label-2d--hovered .landmark-label-2d__text {' +
-                            'background:' + _rgba(c, 0.22) + ';' +
-                            'border-color:' + _rgba(c, 0.55) + ';' +
-                        '}'
-                    );
-                }).join('\n');
-            }
+            //   3. Dorm base/hover/select colors + all rendered dorm meshes.
+            //   4. DORM_ROUTE_COLORS + BUILDING_TYPE_COLORS tables.
+            //   5. Walk-route material cache (blown away; next hover rebuilds).
+            //   6. Any currently-drawn walk-route meshes (re-draw next frame).
+            // Map labels stay on a shared dark-on-white pill regardless of
+            // scheme so names stay readable without type-coded colors.
 
             function applyColorScheme(key) {
                 if (!COLOR_SCHEMES[key]) return;
@@ -4623,10 +4705,7 @@
                     if (hex) el.style.setProperty('--chip-color', hex);
                 });
 
-                // 3. Landmark label CSS
-                _schemeStyleEl.textContent = _buildLabelCSS(scheme);
-
-                // 4. Dorm colors (update constants + live meshes)
+                // 3. Dorm colors (update constants + live meshes)
                 DORM_BASE_COLOR.set(scheme.dormBase);
                 DORM_HOVER_COLOR.set(scheme.dormHover);
                 DORM_SELECT_COLOR.set(scheme.dormSelect);
@@ -4639,18 +4718,18 @@
                     });
                 }
 
-                // 5. Route + building color tables
+                // 4. Route + building color tables
                 DORM_ROUTE_COLORS = Object.assign({}, scheme.routes);
                 BUILDING_TYPE_COLORS = Object.assign(
                     { dorm: scheme.dormBase },
                     scheme.building
                 );
 
-                // 6. Walk-route material cache — drop so next rebuild picks up
+                // 5. Walk-route material cache — drop so next rebuild picks up
                 //    the fresh hex → THREE.Color mapping.
                 Object.keys(_walkRouteMaterials).forEach(function(k) { delete _walkRouteMaterials[k]; });
 
-                // 7. Force any in-scene walk-route geometry to rebuild on the
+                // 6. Force any in-scene walk-route geometry to rebuild on the
                 //    next animate() tick by resetting the "last drawn" marker.
                 if (typeof clearWalkRouteMeshes === 'function') clearWalkRouteMeshes();
                 _walkRouteLastLandmark = null;
@@ -4755,7 +4834,6 @@
                     if (proj.z > 1) { el.style.opacity = '0'; return; }
                     const sx = (proj.x * halfW) + halfW;
                     const sy = (-proj.y * halfH) + halfH;
-                    el.style.opacity = '1';
                     el.style.left = sx + 'px';
                     el.style.top  = sy + 'px';
                 });
